@@ -1,4 +1,4 @@
-package nl.kpgm.af.rest;
+package nl.kpmg.af.rest;
 
 import java.util.List;
 

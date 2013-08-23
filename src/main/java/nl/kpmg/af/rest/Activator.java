@@ -1,4 +1,4 @@
-package nl.kpgm.af.rest;
+package nl.kpmg.af.rest;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
