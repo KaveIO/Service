@@ -24,4 +24,7 @@ To Test
 + or just deploy it to a server from inside Eclipse (easier)
 + goto http://localhost:8080/Services/rest/layer/twitter.json
 
-
+To Deploy On BB
+===============
+(Note this has not been tested)
++ Comment line 21 and uncomment line 22 in AbstractDao.java. I (Jan Amoraal) need to "fix" the code to use properties.
