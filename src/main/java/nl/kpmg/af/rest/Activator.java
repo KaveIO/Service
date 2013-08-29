@@ -7,7 +7,6 @@ import javax.ws.rs.core.Application;
  * @author janos4276
  *
  */
-
 /**
  * This class represents the "main" application entry point.
  * It is required to activate/register the rest service(s).
@@ -18,5 +17,6 @@ import javax.ws.rs.core.Application;
  * or JBoss AS < 7.1.1.
  *
  */
-@ApplicationPath("/rest")
-public class Activator extends Application { }
+@ApplicationPath("")
+public class Activator extends Application {
+}

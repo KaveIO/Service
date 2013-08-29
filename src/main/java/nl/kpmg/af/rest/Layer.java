@@ -8,6 +8,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import com.mongodb.DBObject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 
 import nl.kpmg.af.dao.LayerDao;
 
@@ -15,7 +17,6 @@ import nl.kpmg.af.dao.LayerDao;
  * @author janos4276
  *
  */
-
 /**
  * This class represents the layer rest service. Right now it's a Java re-write
  * of the current middleware layer service.
@@ -25,7 +26,6 @@ import nl.kpmg.af.dao.LayerDao;
  */
 @Path("layer")
 public class Layer {
-
     /**
      * Get the corresponding json for the "n" layer.
      *
@@ -37,6 +37,21 @@ public class Layer {
     @Produces("application/json")
     public List<DBObject> get(@PathParam("n") String n) {
         final LayerDao layerDao = new LayerDao();
-        return layerDao.get(n);
+        return layerDao.get(n, 0);
+    }
+
+    /**
+     * Get the corresponding json for the "n" layer.
+     *
+     * @param n the layer
+     * @return a list
+     */
+    @POST
+    @Path("{n}.json")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public List<DBObject> post(@PathParam("n") String n, Query query) {
+        final LayerDao layerDao = new LayerDao();
+        return layerDao.get(n, query.getLimit());
     }
 }

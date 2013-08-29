@@ -15,7 +15,6 @@ import com.mongodb.DBObject;
  *
  */
 public class LayerDao extends AbstractDao {
-
     /**
      * @param connectionString
      * @param dbName
@@ -24,11 +23,12 @@ public class LayerDao extends AbstractDao {
         super("", "");
     }
 
-    public List<DBObject> get(String n) {
+    public List<DBObject> get(String n, int li) {
         DBCollection collection = getMongoDB().getCollection(n + "Layer");
         BasicDBObject keys = new BasicDBObject();
         keys.put("history", 1);
         DBCursor cursor = collection.find(new BasicDBObject(), keys);
+        cursor.limit(li);
         return cursor.toArray();
     }
 }
