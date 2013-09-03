@@ -12,8 +12,6 @@
         <!-- Latest and coolest -->
         <java.jdk.source.version>1.7</java.jdk.source.version>
         <java.jdk.target.version>1.7</java.jdk.target.version>
-        <!-- MongoDB version -->
-        <mongodb.version>2.10.1</mongodb.version>
         <!-- This the version of resteasy bundled with JBoss AS 7.1.1 Final -->
         <resteasy.version>2.3.2.Final</resteasy.version>
     </properties>
@@ -41,12 +39,12 @@
     </build>
 
     <dependencies>
-        <!-- MongoDB dependencies -->
         <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>${mongodb.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>DataModel</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
         <!-- JBoss dependencies. Note these are "provided" by JBoss AS.
              Need to comment provided for Apache Tomcat and, probaly,
              provide a web.xml
