@@ -19,6 +19,8 @@ import nl.kpmg.af.datamodel.dao.DaoFactory;
 import nl.kpmg.af.datamodel.dao.EventDao;
 import nl.kpmg.af.datamodel.dao.exception.DataModelException;
 import nl.kpmg.af.datamodel.model.Event;
+import nl.kpmg.af.service.response.assembler.EventAssembler;
+import nl.kpmg.af.service.response.dto.EventDto;
 
 /**
  * @author janos4276
@@ -71,14 +73,18 @@ public class Layer {
     @Produces("application/json")
     @Consumes("application/json")
     public Response post(@PathParam("layer") String layer, Request request) {
-        List<Event> res;
+        List<EventDto> result;
         try {
-            res = eventDao.fetchByFilter(layer, request.createMongoQuery(),
-                    request.getLimit(), request.createMongoOrder());
+            List<Event> fetchedEvents = eventDao.fetchByFilter(
+                    layer,
+                    request.createMongoQuery(),
+                    request.getLimit(),
+                    request.createMongoOrder());
+            result = EventAssembler.disassemble(fetchedEvents);
         } catch (DataModelException e) {
             LOGGER.error("Request can not be processed, error has occured", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        return Response.ok(res).build();
+        return Response.ok(result).build();
     }
 }
