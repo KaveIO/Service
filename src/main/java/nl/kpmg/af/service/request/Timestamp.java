@@ -57,7 +57,7 @@ public class Timestamp {
 
         if (pastwindow != null && (after != null || before != null)) {
             LOGGER.error("Invalid list op options");
-            throw new DataModelException("Can't combine pastwindow and after/before query params");
+            throw new DataModelException("Can't use pastwindow and after/before in conjunction");
         }
 
         Date greaterThan = null;

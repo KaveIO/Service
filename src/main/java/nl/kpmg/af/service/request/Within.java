@@ -42,8 +42,7 @@ public class Within {
                 put("coordinates", geom.getCoordinates());
             }
         }));
-        DBObject nearSphere = new BasicDBObject("$geoWithin", geoWithinArguments);
-        DBObject query = new BasicDBObject("location", nearSphere);
+        DBObject query = new BasicDBObject("$geoWithin", geoWithinArguments);
         return query;
     }
 }

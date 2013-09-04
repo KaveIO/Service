@@ -55,8 +55,7 @@ public class Near {
         }));
         nearSphereArguments.put("$maxDistance", dist);
 
-        DBObject nearSphere = new BasicDBObject("$nearSphere", nearSphereArguments);
-        DBObject query = new BasicDBObject("location", nearSphere);
+        DBObject query = new BasicDBObject("$nearSphere", nearSphereArguments);
         return query;
     }
 }

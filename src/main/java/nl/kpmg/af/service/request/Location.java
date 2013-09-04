@@ -60,18 +60,16 @@ public class Location {
 
     public DBObject getMongoCondition() throws DataModelException {
         DBObject condition = new BasicDBObject();
-
         if (near != null && within != null) {
-            condition = new BasicDBObject("$or", new LinkedList() {
-                {
-                    add(near.getMongoCondition());
-                    add(within.getMongoCondition());
-                }
-            });
+            if (near != null && within != null) {
+                // http://docs.mongodb.org/manual/reference/limits/
+                LOGGER.error("Invalid list op options");
+                throw new DataModelException("Can't use near and within in conjunction");
+            }
         } else if (near != null) {
-            condition = near.getMongoCondition();
+            condition = new BasicDBObject("location", near.getMongoCondition());
         } else if (within != null) {
-            condition = within.getMongoCondition();
+            condition = new BasicDBObject("location", within.getMongoCondition());
         }
         return condition;
     }
