@@ -11,8 +11,7 @@ import java.util.HashMap;
 public class Within {
     private GeoJSONPolygon geometry;
 
-    public Within(GeoJSONPolygon geo) {
-        geometry = geo;
+    public Within() {
     }
 
     public GeoJSONPolygon getGeometry() {

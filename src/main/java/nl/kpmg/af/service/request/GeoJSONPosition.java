@@ -14,13 +14,6 @@ public abstract class GeoJSONPosition {
      */
     protected String type;
 
-    /**
-     * Abstract methods to convert the contents of the derived class to a JSON string
-     *
-     * @return a JSON string
-     */
-    public abstract String toJSONString();
-
     public String getType() {
         return type;
     }

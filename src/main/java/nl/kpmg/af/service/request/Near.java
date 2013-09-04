@@ -53,7 +53,7 @@ public class Near {
                 put("coordinates", geom.getCoordinates());
             }
         }));
-        nearSphereArguments.put("$maxDistance", new BasicDBObject("$maxDistance", dist));
+        nearSphereArguments.put("$maxDistance", dist);
 
         DBObject nearSphere = new BasicDBObject("$nearSphere", nearSphereArguments);
         DBObject query = new BasicDBObject("location", nearSphere);

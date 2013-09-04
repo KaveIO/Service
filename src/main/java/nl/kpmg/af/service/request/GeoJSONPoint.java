@@ -27,13 +27,4 @@ public class GeoJSONPoint extends GeoJSONPosition {
     double getLatitude() {
         return coordinates.get(1);
     }
-
-    @Override
-    public String toJSONString() {
-        String coordListString = String.format("%f, %f", getLongiude(), getLatitude());
-        String val = String.format(
-                "{\"type\" : \"%s\" , \"coordinates\" : [%s] }", type, coordListString);
-        return val;
-
-    }
 }
