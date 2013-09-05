@@ -8,8 +8,7 @@ class Request {
     public Integer limit = null;
     public Filter filter = null;
 
-    
-    public MongoOrder getMongoOrder(){
+    public MongoOrder getMongoOrder() {
         MongoOrder or = (sort != null) ? new MongoOrder(sort) : new MongoOrder();
         return or;
     }
