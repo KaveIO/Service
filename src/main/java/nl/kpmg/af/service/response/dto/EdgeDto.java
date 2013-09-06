@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author Hoekstra.Maarten
  */
-public class EdgeDto {
+public final class EdgeDto {
     /**
      * The unique mongo id of this object.
      */

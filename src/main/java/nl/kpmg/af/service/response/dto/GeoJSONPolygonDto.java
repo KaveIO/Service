@@ -6,7 +6,7 @@ import java.util.List;
  *
  * @author Hoekstra.Maarten
  */
-public class GeoJSONPolygonDto extends GeoJSONPositionDto {
+public final class GeoJSONPolygonDto extends GeoJSONPositionDto {
     /**
      * Because JBOSS wants this...
      */

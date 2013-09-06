@@ -5,9 +5,6 @@ import com.mongodb.DBObject;
 import java.util.Date;
 import nl.kpmg.af.service.exception.InvalidRequestException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This class contains the information in the filter which governs the timestamp.
  * There are mutual exclusive options:
@@ -17,11 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Hoekstra.Maarten
  */
-public class Timestamp {
-    /**
-     * The logger for this class.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Timestamp.class);
+public final class Timestamp {
     /**
      * Field name of the timestamp in mongo.
      */
@@ -52,7 +45,7 @@ public class Timestamp {
      * @return Timestamp filter as a mongo query
      * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
      */
-    public final DBObject getMongoCondition() throws InvalidRequestException {
+    public DBObject getMongoCondition() throws InvalidRequestException {
         if (pastwindow != null && (after != null || before != null)) {
             throw new InvalidRequestException("Can't use pastwindow and after/before in conjunction");
         }
@@ -90,42 +83,42 @@ public class Timestamp {
     /**
      * @return Filter field which determines the amount of seconds to look in the past.
      */
-    public final int getPastwindow() {
+    public int getPastwindow() {
         return pastwindow;
     }
 
     /**
      * @param pastwindow Filter field which determines the amount of seconds to look in the past.
      */
-    public final void setPastwindow(final int pastwindow) {
+    public void setPastwindow(final int pastwindow) {
         this.pastwindow = pastwindow;
     }
 
     /**
      * @return Filter field which determines the timestamp of which returned objects need to be younger then.
      */
-    public final int getBefore() {
+    public int getBefore() {
         return before;
     }
 
     /**
      * @param before Filter field which determines the timestamp of which returned objects need to be younger then.
      */
-    public final void setBefore(final int before) {
+    public void setBefore(final int before) {
         this.before = before;
     }
 
     /**
      * @return Filter field which determines the timestamp of which returned objects need to be older then.
      */
-    public final int getAfter() {
+    public int getAfter() {
         return after;
     }
 
     /**
      * @param after Filter field which determines the timestamp of which returned objects need to be older then.
      */
-    public final void setAfter(final int after) {
+    public void setAfter(final int after) {
         this.after = after;
     }
 }

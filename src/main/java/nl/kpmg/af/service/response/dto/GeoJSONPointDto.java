@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author Hoekstra.Maarten
  */
-public class GeoJSONPointDto extends GeoJSONPositionDto {
+public final class GeoJSONPointDto extends GeoJSONPositionDto {
     /**
      * A list with only two values containing the longitude and latitude of this GeoJSON object.
      */

@@ -11,7 +11,7 @@ import java.util.Map;
  *
  * @author Hoekstra.Maarten
  */
-public class EventDto {
+public final class EventDto {
     /**
      * The unique mongo id of this object.
      */

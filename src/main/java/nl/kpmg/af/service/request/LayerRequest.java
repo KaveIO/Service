@@ -14,7 +14,7 @@ import nl.kpmg.af.service.exception.InvalidRequestException;
  *
  * @author Hoekstra.Maarten
  */
-public class LayerRequest {
+public final class LayerRequest {
     /**
      * The order based on timestamp in which the events are returned.
      */
@@ -34,7 +34,7 @@ public class LayerRequest {
      * @return layerRequest as a mongo query
      * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
      */
-    public final MongoQuery createMongoQuery() throws InvalidRequestException {
+    public MongoQuery createMongoQuery() throws InvalidRequestException {
         MongoQuery query = new MongoQuery();
         DBObject queryComponents = query.getDBObj();
         if (filter != null) {
@@ -62,7 +62,7 @@ public class LayerRequest {
      *
      * @return sort as a MongoOrder
      */
-    public final MongoOrder createMongoOrder() {
+    public MongoOrder createMongoOrder() {
         if (sort != null) {
             return new MongoOrder(sort);
         } else {
@@ -73,42 +73,42 @@ public class LayerRequest {
     /**
      * @return The order based on timestamp in which the events are returned.
      */
-    public final int getSort() {
+    public int getSort() {
         return sort;
     }
 
     /**
      * @param sort The order based on timestamp in which the events are returned.
      */
-    public final void setSort(final int sort) {
+    public void setSort(final int sort) {
         this.sort = sort;
     }
 
     /**
      * @return The maximum amount of objects to be returned.
      */
-    public final int getLimit() {
+    public int getLimit() {
         return limit;
     }
 
     /**
      * @param limit The maximum amount of objects to be returned.
      */
-    public final void setLimit(final int limit) {
+    public void setLimit(final int limit) {
         this.limit = limit;
     }
 
     /**
      * @return The more complex filter parameters used to fetch only a subset of all objects.
      */
-    public final LayerFilter getFilter() {
+    public LayerFilter getFilter() {
         return filter;
     }
 
     /**
      * @param filter The more complex filter parameters used to fetch only a subset of all objects.
      */
-    public final void setFilter(final LayerFilter filter) {
+    public void setFilter(final LayerFilter filter) {
         this.filter = filter;
     }
 }

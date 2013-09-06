@@ -10,7 +10,7 @@ import org.bson.types.ObjectId;
  *
  * @author Hoekstra.Maarten
  */
-public class Relation {
+public final class Relation {
     /**
      * Which type of ids are being filtered.
      */
@@ -38,28 +38,28 @@ public class Relation {
     /**
      * @return Which type of ids are being filtered.
      */
-    public final RelationType getType() {
+    public RelationType getType() {
         return type;
     }
 
     /**
      * @param type Which type of ids are being filtered.
      */
-    public final void setType(final RelationType type) {
+    public void setType(final RelationType type) {
         this.type = type;
     }
 
     /**
      * @return List of ids to which the relation should be constrained.
      */
-    public final List<ObjectId> getIds() {
+    public List<ObjectId> getIds() {
         return ids;
     }
 
     /**
      * @param ids List of ids to which the relation should be constrained.
      */
-    public final void setIds(final List<ObjectId> ids) {
+    public void setIds(final List<ObjectId> ids) {
         this.ids = ids;
     }
 }

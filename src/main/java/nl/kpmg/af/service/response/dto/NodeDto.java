@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author Hoekstra.Maarten
  */
-public class NodeDto {
+public final class NodeDto {
     /**
      * The unique mongo id of this object.
      */
