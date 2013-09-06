@@ -6,17 +6,33 @@ import java.io.IOException;
 import java.util.Properties;
 import nl.kpmg.af.datamodel.connection.MongoDatabase;
 import nl.kpmg.af.service.exception.ServiceInitializationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class MongoDBUtil {
+/**
+ * Utility class for initializing the MongoDatabase object.
+ * This is not the prettiest solution imaginable. For now it does suffice though. This setup
+ * keeps all mongo connections pooled and keeps all jboss knowledge in the Service package.
+ *
+ * @author Hoekstra.Maarten
+ */
+public final class MongoDBUtil {
     /**
-     * The logger for this class.
+     * The name of the properties file.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Activator.class);
     private static final String PROPERTIES_FILE_NAME = "mongo.properties";
+    /**
+     * The configuration property name which refers to the configuration directory.
+     */
     private static final String CONFIG_DIR_PROPERTY = "jboss.server.config.dir";
+    /**
+     * The actual mongoDatabase objects which is being managed by this utility.
+     */
     private static MongoDatabase mongoDatabase;
+
+    /**
+     * Private default constructor to make object instantiation impossible.
+     */
+    private MongoDBUtil() {
+    }
 
     static {
         String path = System.getProperty(CONFIG_DIR_PROPERTY) + File.separator + PROPERTIES_FILE_NAME;
@@ -36,6 +52,9 @@ public class MongoDBUtil {
         }
     }
 
+    /**
+     * @return The actual mongoDatabase objects which is being managed by this utility.
+     */
     public static MongoDatabase getMongoDatabase() {
         return mongoDatabase;
     }
