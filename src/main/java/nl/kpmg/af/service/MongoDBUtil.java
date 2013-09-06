@@ -21,8 +21,8 @@ public class MongoDBUtil {
     static {
         String path = System.getProperty(CONFIG_DIR_PROPERTY) + File.separator + PROPERTIES_FILE_NAME;
         Properties properties = new Properties();
-        try {
-            properties.load(new FileInputStream(path));
+        try (FileInputStream fileInputStream = new FileInputStream(path)) {
+            properties.load(fileInputStream);
 
             String url = properties.getProperty("url");
             int port = Integer.parseInt(properties.getProperty("port"));
