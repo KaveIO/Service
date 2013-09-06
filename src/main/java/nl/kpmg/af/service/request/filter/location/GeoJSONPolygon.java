@@ -1,4 +1,4 @@
-package nl.kpmg.af.service.request;
+package nl.kpmg.af.service.request.filter.location;
 
 import java.util.List;
 

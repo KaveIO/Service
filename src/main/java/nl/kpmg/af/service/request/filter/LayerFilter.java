@@ -1,10 +1,14 @@
-package nl.kpmg.af.service.request;
+package nl.kpmg.af.service.request.filter;
+
+import nl.kpmg.af.service.request.filter.location.Location;
+import nl.kpmg.af.service.request.filter.relation.Relation;
+import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
 
 /**
  *
  * @author Hoekstra.Maarten
  */
-public class Filter {
+public class LayerFilter {
     private Timestamp timestamp;
     private Location location;
     private Relation relation;

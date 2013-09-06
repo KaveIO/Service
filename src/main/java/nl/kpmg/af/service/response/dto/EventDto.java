@@ -8,13 +8,13 @@ import java.util.Map;
  * @author Hoekstra.Maarten
  */
 public class EventDto {
-    private String id = null;
-    private String layer = null;
-    private String nodeId = null;
-    private String edgeId = null;
-    private GeoJSONPositionDto location = null;
-    private String priority = null;
-    private Integer timestamp = null;
+    private String id;
+    private String layer;
+    private String nodeId;
+    private String edgeId;
+    private GeoJSONPositionDto location;
+    private String priority;
+    private Integer timestamp;
     private Map value = new HashMap();
 
     public String getId() {

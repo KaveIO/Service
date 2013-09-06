@@ -1,4 +1,4 @@
-package nl.kpmg.af.service.request;
+package nl.kpmg.af.service.request.filter.timestamp;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;

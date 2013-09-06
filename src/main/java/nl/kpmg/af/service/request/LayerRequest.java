@@ -1,5 +1,9 @@
 package nl.kpmg.af.service.request;
 
+import nl.kpmg.af.service.request.filter.LayerFilter;
+import nl.kpmg.af.service.request.filter.location.Location;
+import nl.kpmg.af.service.request.filter.relation.Relation;
+import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
 import com.mongodb.DBObject;
 import nl.kpmg.af.datamodel.dao.MongoOrder;
 import nl.kpmg.af.datamodel.dao.MongoQuery;
@@ -7,14 +11,14 @@ import nl.kpmg.af.datamodel.dao.exception.DataModelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Request {
+public class LayerRequest {
     /**
      * The logger for this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Request.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LayerRequest.class);
     private Integer sort = null;
     private Integer limit = null;
-    private Filter filter = null;
+    private LayerFilter filter = null;
 
     public int getSort() {
         return sort;
@@ -32,11 +36,11 @@ public class Request {
         this.limit = limit;
     }
 
-    public Filter getFilter() {
+    public LayerFilter getFilter() {
         return filter;
     }
 
-    public void setFilter(Filter filter) {
+    public void setFilter(LayerFilter filter) {
         this.filter = filter;
     }
 

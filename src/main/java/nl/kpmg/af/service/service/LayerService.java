@@ -1,6 +1,7 @@
-package nl.kpmg.af.service.rest;
+package nl.kpmg.af.service.service;
 
-import nl.kpmg.af.service.request.Request;
+import nl.kpmg.af.service.MongoDBUtil;
+import nl.kpmg.af.service.request.LayerRequest;
 import java.util.List;
 
 import javax.ws.rs.Path;
@@ -15,7 +16,6 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.kpmg.af.datamodel.dao.DaoFactory;
 import nl.kpmg.af.datamodel.dao.EventDao;
 import nl.kpmg.af.datamodel.dao.exception.DataModelException;
 import nl.kpmg.af.datamodel.model.Event;
@@ -34,13 +34,17 @@ import nl.kpmg.af.service.response.dto.EventDto;
  * the relative path "rest" is defined in Activator.java.
  */
 @Path("layer")
-public class Layer {
+public class LayerService {
     /**
      * The logger for this class.
      */
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(Layer.class);
-    private EventDao eventDao = DaoFactory.getEventDao();
+            .getLogger(LayerService.class);
+    private final EventDao eventDao;
+
+    public LayerService() {
+        eventDao = new EventDao(MongoDBUtil.getMongoDatabase());
+    }
 
     /**
      * Get the corresponding json for the "n" layer.
@@ -72,7 +76,7 @@ public class Layer {
     @Path("{layer}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response post(@PathParam("layer") String layer, Request request) {
+    public Response post(@PathParam("layer") String layer, LayerRequest request) {
         List<EventDto> result;
         try {
             List<Event> fetchedEvents = eventDao.fetchByFilter(
