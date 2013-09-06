@@ -39,84 +39,84 @@ public final class NodeDto {
     /**
      * @return The unique mongo id of this object.
      */
-    public final String getId() {
+    public String getId() {
         return id;
     }
 
     /**
      * @param id The unique mongo id of this object.
      */
-    public final void setId(final String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
     /**
      * @return The type to which this object belongs.
      */
-    public final String getType() {
+    public String getType() {
         return type;
     }
 
     /**
      * @param type The type to which this object belongs.
      */
-    public final void setType(final String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
     /**
      * @return The name of this node.
      */
-    public final String getName() {
+    public String getName() {
         return name;
     }
 
     /**
      * @param name The name of this node.
      */
-    public final void setName(final String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
     /**
      * @return The description of this node.
      */
-    public final String getDescription() {
+    public String getDescription() {
         return description;
     }
 
     /**
      * @param description The description of this node.
      */
-    public final void setDescription(final String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
     /**
      * @return A map with the specific contents of this node.
      */
-    public final Map getMeta() {
+    public Map getMeta() {
         return meta;
     }
 
     /**
      * @param meta A map with the specific contents of this node.
      */
-    public final void setMeta(final Map meta) {
+    public void setMeta(final Map meta) {
         this.meta = meta;
     }
 
     /**
      * @return The location expressed in GeoJSON of this node.
      */
-    public final GeoJSONPointDto getLocation() {
+    public GeoJSONPointDto getLocation() {
         return location;
     }
 
     /**
      * @param location The location expressed in GeoJSON of this node.
      */
-    public final void setLocation(final GeoJSONPointDto location) {
+    public void setLocation(final GeoJSONPointDto location) {
         this.location = location;
     }
 }

@@ -43,63 +43,63 @@ public final class EdgeDto {
     /**
      * @return The unique mongo id of this object.
      */
-    public final String getId() {
+    public String getId() {
         return id;
     }
 
     /**
      * @param id The unique mongo id of this object.
      */
-    public final void setId(final String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
     /**
      * @return type The type to which this object belongs.
      */
-    public final String getType() {
+    public String getType() {
         return type;
     }
 
     /**
      * @param type The type to which this object belongs.
      */
-    public final void setType(final String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
     /**
      * @return The name of this edge.
      */
-    public final String getName() {
+    public String getName() {
         return name;
     }
 
     /**
      * @param name The name of this edge.
      */
-    public final void setName(final String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
     /**
      * @return A map with the specific contents of this edge.
      */
-    public final String getDescription() {
+    public String getDescription() {
         return description;
     }
 
     /**
      * @param description A map with the specific contents of this edge.
      */
-    public final void setDescription(final String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
     /**
      * @return A map with the specific contents of this edge.
      */
-    public final Map getMeta() {
+    public Map getMeta() {
         return meta;
     }
 
@@ -113,28 +113,28 @@ public final class EdgeDto {
     /**
      * @return The mongo id of the source node to this edge.
      */
-    public final String getSourceId() {
+    public String getSourceId() {
         return sourceId;
     }
 
     /**
      * @param sourceId The mongo id of the source node to this edge.
      */
-    public final void setSourceId(final String sourceId) {
+    public void setSourceId(final String sourceId) {
         this.sourceId = sourceId;
     }
 
     /**
      * @return The mongo id of the target node to this edge.
      */
-    public final String getTargetId() {
+    public String getTargetId() {
         return targetId;
     }
 
     /**
      * @param targetId The mongo id of the target node to this edge.
      */
-    public final void setTargetId(final String targetId) {
+    public void setTargetId(final String targetId) {
         this.targetId = targetId;
     }
 }
