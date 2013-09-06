@@ -46,7 +46,7 @@ public final class Within {
     /**
      * @param geometry Polygon for the location filter for the layer request.
      */
-    public void setGeometry(GeoJSONPolygon geometry) {
+    public void setGeometry(final GeoJSONPolygon geometry) {
         this.geometry = geometry;
     }
 }

@@ -29,7 +29,7 @@ public abstract class GeoJSONPosition {
     /**
      * @param type The type of the GeoJSON item.
      */
-    public final void setType(String type) {
+    public final void setType(final String type) {
         this.type = type;
     }
 }
