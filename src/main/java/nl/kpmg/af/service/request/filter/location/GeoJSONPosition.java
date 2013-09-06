@@ -1,24 +1,35 @@
 package nl.kpmg.af.service.request.filter.location;
 
+/**
+ * Abstract class for some shared functionality between GeoJSON data types.
+ *
+ * @author Hoekstra.Maarten
+ */
 public abstract class GeoJSONPosition {
     /**
-     * The position in the list where the X-value (or longitude) is stored
+     * The position in the list where the X-value (or longitude) is stored.
      */
     protected static final int XVAL = 0;
     /**
-     * The position in the list where the Y-value (or latitude) is stored
+     * The position in the list where the Y-value (or latitude) is stored.
      */
     protected static final int YVAL = 1;
     /**
-     * The type of the GeoJSON item
+     * The type of the GeoJSON item.
      */
-    protected String type;
+    private String type;
 
-    public String getType() {
+    /**
+     * @return The type of the GeoJSON item.
+     */
+    public final String getType() {
         return type;
     }
 
-    public void setType(String type) {
+    /**
+     * @param type The type of the GeoJSON item.
+     */
+    public final void setType(String type) {
         this.type = type;
     }
 }

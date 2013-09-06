@@ -5,22 +5,13 @@ import com.mongodb.DBObject;
 import java.util.HashMap;
 
 /**
- *
  * @author Hoekstra.Maarten
  */
-public class Within {
+public final class Within {
+    /**
+     * Polygon for the location filter for the layer request.
+     */
     private GeoJSONPolygon geometry;
-
-    public Within() {
-    }
-
-    public GeoJSONPolygon getGeometry() {
-        return geometry;
-    }
-
-    public void setGeometry(GeoJSONPolygon geo) {
-        geometry = geo;
-    }
 
     /**
      * From the website:
@@ -31,7 +22,7 @@ public class Within {
      * coordinates : [ [ [ <lng1>, <lat1> ] , [ <lng2>, <lat2> ] ... ] ]
      * } } } } )
      *
-     * @return
+     * @return Within as a nearSphere mongo query
      */
     public DBObject getMongoCondition() {
         final GeoJSONPolygon geom = getGeometry();
@@ -44,5 +35,19 @@ public class Within {
         }));
         DBObject query = new BasicDBObject("$geoWithin", geoWithinArguments);
         return query;
+    }
+
+    /**
+     * @return Polygon for the location filter for the layer request.
+     */
+    public GeoJSONPolygon getGeometry() {
+        return geometry;
+    }
+
+    /**
+     * @param geometry Polygon for the location filter for the layer request.
+     */
+    public void setGeometry(GeoJSONPolygon geometry) {
+        this.geometry = geometry;
     }
 }

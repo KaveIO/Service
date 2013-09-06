@@ -5,28 +5,17 @@ import com.mongodb.DBObject;
 import java.util.HashMap;
 
 /**
- *
  * @author Hoekstra.Maarten
  */
-public class Near {
+public final class Near {
+    /**
+     * Adjacency based location filter for the layer request.
+     */
     private GeoJSONPoint geometry;
+    /**
+     * Adjacency distance to given geometry point in meters.
+     */
     private Double distance;
-
-    public GeoJSONPoint getGeometry() {
-        return geometry;
-    }
-
-    public void setGeometry(GeoJSONPoint geometry) {
-        this.geometry = geometry;
-    }
-
-    public Double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(Double distance) {
-        this.distance = distance;
-    }
 
     /**
      * $nearSphere, only gives the first 100 documents!!!!!
@@ -39,7 +28,7 @@ public class Near {
      * $maxDistance : <distance in meters>
      * } } } )
      *
-     * @return
+     * @return Near as a nearSphere mongo query
      * @throws DataModelException
      */
     public DBObject getMongoCondition() {
@@ -57,5 +46,33 @@ public class Near {
 
         DBObject query = new BasicDBObject("$nearSphere", nearSphereArguments);
         return query;
+    }
+
+    /**
+     * @return Adjacency based location filter for the layer request.
+     */
+    public GeoJSONPoint getGeometry() {
+        return geometry;
+    }
+
+    /**
+     * @param geometry Adjacency based location filter for the layer request.
+     */
+    public void setGeometry(final GeoJSONPoint geometry) {
+        this.geometry = geometry;
+    }
+
+    /**
+     * @return Adjacency distance to given geometry point in meters.
+     */
+    public Double getDistance() {
+        return distance;
+    }
+
+    /**
+     * @param distance Adjacency distance to given geometry point in meters.
+     */
+    public void setDistance(final Double distance) {
+        this.distance = distance;
     }
 }

@@ -3,28 +3,39 @@ package nl.kpmg.af.service.request.filter.location;
 import java.util.List;
 
 /**
- *
  * @author Hoekstra.Maarten
  */
-public class GeoJSONPoint extends GeoJSONPosition {
+public final class GeoJSONPoint extends GeoJSONPosition {
     /**
      * A list with only two values containing the longitude and latitude of this GeoJSON object.
      */
     private List<Double> coordinates;
 
+    /**
+     * @return A list with only two values containing the longitude and latitude of this GeoJSON object.
+     */
     public List<Double> getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(List<Double> coordinates) {
+    /**
+     * @param coordinates A list with only two values containing the longitude and latitude of this GeoJSON object.
+     */
+    public void setCoordinates(final List<Double> coordinates) {
         this.coordinates = coordinates;
     }
 
-    double getLongiude() {
-        return coordinates.get(0);
+    /**
+     * @return helper function for directly fetching the longitude from the coordinates list.
+     */
+    public double getLongitude() {
+        return coordinates.get(XVAL);
     }
 
-    double getLatitude() {
-        return coordinates.get(1);
+    /**
+     * @return helper function for directly fetching the latitude from the coordinates list.
+     */
+    public double getLatitude() {
+        return coordinates.get(YVAL);
     }
 }
