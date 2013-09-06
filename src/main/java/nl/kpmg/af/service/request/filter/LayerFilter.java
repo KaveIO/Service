@@ -8,32 +8,59 @@ import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
  *
  * @author Hoekstra.Maarten
  */
-public class LayerFilter {
+public final class LayerFilter {
+    /**
+     * Time based filter for the layer request.
+     */
     private Timestamp timestamp;
+    /**
+     * Location based filter for the layer request.
+     */
     private Location location;
+    /**
+     * Relation based filter for the layer request.
+     */
     private Relation relation;
 
+    /**
+     * @return Time based filter for the layer request.
+     */
     public Timestamp getTimeStamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    /**
+     * @param timestamp Time based filter for the layer request.
+     */
+    public void setTimestamp(final Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 
+    /**
+     * @return Location based filter for the layer request.
+     */
     public Location getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    /**
+     * @param location Location based filter for the layer request.
+     */
+    public void setLocation(final Location location) {
         this.location = location;
     }
 
+    /**
+     * @return Relation based filter for the layer request.
+     */
     public Relation getRelation() {
         return relation;
     }
 
-    public void setRelation(Relation relation) {
+    /**
+     * @param relation Relation based filter for the layer request.
+     */
+    public void setRelation(final Relation relation) {
         this.relation = relation;
     }
 }
