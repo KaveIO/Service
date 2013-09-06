@@ -24,39 +24,42 @@ import nl.kpmg.af.service.response.assembler.NodeAssembler;
 import nl.kpmg.af.service.response.dto.NodeDto;
 
 /**
- * @author janos4276
- *
- */
-/**
- * This class represents the layer rest service. Right now it's a Java re-write
- * of the current middleware layer service.
+ * This class represents the nodes rest service.
+ * Right now it's a Java re-write of the current middleware layer service.
  *
  * This service can be reached via http://jbosshost/Services/rest/layer, where
  * the relative path "rest" is defined in Activator.java.
+ *
+ * @author janos4276
  */
 @Path("nodes")
-public class NodeService {
+public final class NodeService {
     /**
      * The logger for this class.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(NodeService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeService.class);
+    /**
+     * DAO object used for fetching nodes.
+     */
     private final NodeDao nodeDao;
 
+    /**
+     * Default constructor fetches the DAO from MongoDBUtil.
+     */
     public NodeService() {
         nodeDao = new NodeDao(MongoDBUtil.getMongoDatabase());
     }
 
     /**
-     * Get the corresponding json for the "n" layer.
+     * Get the corresponding json for the "collection" collection.
      *
-     * @param layer the layer
-     * @return a list
+     * @param collection the collection of nodes to fetch from
+     * @return the list of nodes
      */
     @GET
     @Path("{collection}")
     @Produces("application/json")
-    public Response get(@PathParam("collection") String collection) {
+    public Response get(@PathParam("collection") final String collection) {
         List<NodeDto> result;
         try {
             List<Node> fetchedNodes = nodeDao.fetchAll(collection);
@@ -69,16 +72,17 @@ public class NodeService {
     }
 
     /**
-     * Get the corresponding json for the "n" layer.
+     * Get the corresponding json for the "collection" collection.
      *
-     * @param n the layer
-     * @return a list
+     * @param collection the collection of nodes to fetch from
+     * @param request the request which determines which nodes to return.
+     * @return a list of nodes
      */
     @POST
     @Path("{collection}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response post(@PathParam("collection") String collection, NodeRequest request) {
+    public Response post(@PathParam("collection") final String collection, final NodeRequest request) {
         List<NodeDto> result;
         try {
             List<Node> fetchedNodes = nodeDao.fetchByFilter(

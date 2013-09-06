@@ -24,42 +24,45 @@ import nl.kpmg.af.service.response.assembler.EventAssembler;
 import nl.kpmg.af.service.response.dto.EventDto;
 
 /**
- * @author janos4276
- *
- */
-/**
- * This class represents the layer rest service. Right now it's a Java re-write
- * of the current middleware layer service.
+ * This class represents the layer rest service.
+ * Right now it's a Java re-write of the current middleware layer service.
  *
  * This service can be reached via http://jbosshost/Services/rest/layer, where
  * the relative path "rest" is defined in Activator.java.
+ *
+ * @author janos4276
  */
 @Path("layer")
-public class LayerService {
+public final class LayerService {
     /**
      * The logger for this class.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(LayerService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LayerService.class);
+    /**
+     * DAO object used for fetching events.
+     */
     private final EventDao eventDao;
 
+    /**
+     * Default constructor fetches the DAO from MongoDBUtil.
+     */
     public LayerService() {
         eventDao = new EventDao(MongoDBUtil.getMongoDatabase());
     }
 
     /**
-     * Get the corresponding json for the "n" layer.
+     * Get the corresponding json for the "collection" collection.
      *
-     * @param layer the layer
-     * @return a list
+     * @param collection the collection of events to fetch from
+     * @return the list of events
      */
     @GET
-    @Path("{layer}")
+    @Path("{collection}")
     @Produces("application/json")
-    public Response get(@PathParam("layer") String layer) {
+    public Response get(@PathParam("collection") final String collection) {
         List<EventDto> result;
         try {
-            List<Event> fetchedEvents = eventDao.fetchAll(layer);
+            List<Event> fetchedEvents = eventDao.fetchAll(collection);
             result = EventAssembler.disassemble(fetchedEvents);
         } catch (DataModelException ex) {
             LOGGER.error("Error has occured. Data could not be fetched.", ex);
@@ -69,20 +72,21 @@ public class LayerService {
     }
 
     /**
-     * Get the corresponding json for the "n" layer.
+     * Get the corresponding json for the "collection" collection.
      *
-     * @param n the layer
-     * @return a list
+     * @param collection the collection of events to fetch from
+     * @param request the request which determines which events to return.
+     * @return a list of events
      */
     @POST
-    @Path("{layer}")
+    @Path("{collection}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response post(@PathParam("layer") String layer, LayerRequest request) {
+    public Response post(@PathParam("collection") final String collection, final LayerRequest request) {
         List<EventDto> result;
         try {
             List<Event> fetchedEvents = eventDao.fetchByFilter(
-                    layer,
+                    collection,
                     request.createMongoQuery(),
                     request.getLimit(),
                     request.createMongoOrder());

@@ -24,39 +24,42 @@ import nl.kpmg.af.service.response.assembler.EdgeAssembler;
 import nl.kpmg.af.service.response.dto.EdgeDto;
 
 /**
- * @author janos4276
- *
- */
-/**
- * This class represents the layer rest service. Right now it's a Java re-write
- * of the current middleware layer service.
+ * This class represents the edges rest service.
+ * Right now it's a Java re-write of the current middleware layer service.
  *
  * This service can be reached via http://jbosshost/Services/rest/layer, where
  * the relative path "rest" is defined in Activator.java.
+ *
+ * @author janos4276
  */
 @Path("edges")
-public class EdgeService {
+public final class EdgeService {
     /**
      * The logger for this class.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(EdgeService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EdgeService.class);
+    /**
+     * DAO object used for fetching edges.
+     */
     private final EdgeDao edgeDao;
 
+    /**
+     * Default constructor fetches the DAO from MongoDBUtil.
+     */
     public EdgeService() {
         edgeDao = new EdgeDao(MongoDBUtil.getMongoDatabase());
     }
 
     /**
-     * Get the corresponding json for the "n" layer.
+     * Get the corresponding json for the "collection" collection.
      *
-     * @param layer the layer
-     * @return a list
+     * @param collection the collection of edges to fetch from
+     * @return the list of edges
      */
     @GET
     @Path("{collection}")
     @Produces("application/json")
-    public Response get(@PathParam("collection") String collection) {
+    public Response get(@PathParam("collection") final String collection) {
         List<EdgeDto> result;
         try {
             List<Edge> fetchedEdges = edgeDao.fetchAll(collection);
@@ -69,16 +72,17 @@ public class EdgeService {
     }
 
     /**
-     * Get the corresponding json for the "n" layer.
+     * Get the corresponding json for the "collection" collection.
      *
-     * @param n the layer
-     * @return a list
+     * @param collection the collection of edges to fetch from
+     * @param request the request which determines which edges to return.
+     * @return a list of edges
      */
     @POST
     @Path("{collection}")
     @Produces("application/json")
     @Consumes("application/json")
-    public Response post(@PathParam("collection") String collection, EdgeRequest request) {
+    public Response post(@PathParam("collection") final String collection, final EdgeRequest request) {
         List<EdgeDto> result;
         try {
             List<Edge> fetchedEdges = edgeDao.fetchByFilter(
