@@ -2,23 +2,29 @@ package nl.kpmg.af.service.response.assembler;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import nl.kpmg.af.datamodel.model.Node;
 import nl.kpmg.af.service.response.dto.GeoJSONPointDto;
 import nl.kpmg.af.service.response.dto.NodeDto;
 
 /**
+ * Utility class for disassembling Node objects into NodeDto objects.
  *
  * @author Hoekstra.Maarten
  */
-public class NodeAssembler {
-    private String type;
-    private String name;
-    private String description;
-    private Map meta;
-    private GeoJSONPointDto location;
+public final class NodeAssembler {
+    /**
+     * Private default constructor to make this class unconstructable.
+     */
+    private NodeAssembler() {
+    }
 
-    public static NodeDto disassemble(Node node) {
+    /**
+     * Disassembles Node object into NodeDto object.
+     *
+     * @param node object to disassemble
+     * @return disassembled node object
+     */
+    public static NodeDto disassemble(final Node node) {
         NodeDto result = new NodeDto();
 
         if (node.getId() != null) {
@@ -34,7 +40,13 @@ public class NodeAssembler {
         return result;
     }
 
-    public static List<NodeDto> disassemble(List<Node> nodes) {
+    /**
+     * Disassembles List of Node objects into List of NodeDto objects.
+     *
+     * @param nodes objects to disassemble
+     * @return disassembled node objects
+     */
+    public static List<NodeDto> disassemble(final List<Node> nodes) {
         List<NodeDto> result = new LinkedList();
         for (Node node : nodes) {
             result.add(NodeAssembler.disassemble(node));

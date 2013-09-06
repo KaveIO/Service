@@ -6,11 +6,24 @@ import nl.kpmg.af.datamodel.model.Edge;
 import nl.kpmg.af.service.response.dto.EdgeDto;
 
 /**
+ * Utility class for disassembling Edge objects into EdgeDto objects.
  *
  * @author Hoekstra.Maarten
  */
-public class EdgeAssembler {
-    public static EdgeDto disassemble(Edge edge) {
+public final class EdgeAssembler {
+    /**
+     * Private default constructor to make this class unconstructable.
+     */
+    private EdgeAssembler() {
+    }
+
+    /**
+     * Disassembles Edge object into EdgeDto object.
+     *
+     * @param edge object to disassemble
+     * @return disassembled event object
+     */
+    public static EdgeDto disassemble(final Edge edge) {
         EdgeDto result = new EdgeDto();
 
         if (edge.getId() != null) {
@@ -31,7 +44,13 @@ public class EdgeAssembler {
         return result;
     }
 
-    public static List<EdgeDto> disassemble(List<Edge> edges) {
+    /**
+     * Disassembles List of Edge objects into List of EdgeDto objects.
+     *
+     * @param edges objects to disassemble
+     * @return disassembled node objects
+     */
+    public static List<EdgeDto> disassemble(final List<Edge> edges) {
         List<EdgeDto> result = new LinkedList();
         for (Edge edge : edges) {
             result.add(EdgeAssembler.disassemble(edge));
