@@ -64,6 +64,17 @@ public final class Timestamp {
             lesserThan = new Date(before * FACTOR_SECONDS_MILLISECONDS);
         }
 
+        return getMongoCondition(greaterThan, lesserThan);
+    }
+
+    /**
+     * Helper function for transforming the calculated greaterThan and lesserThan values into a mongo query.
+     *
+     * @param greaterThan Date value
+     * @param lesserThan Date value
+     * @return greaterThan & lesserThan as a mongo query
+     */
+    private DBObject getMongoCondition(final Date greaterThan, final Date lesserThan) {
         BasicDBObject query = new BasicDBObject();
         BasicDBObject condition;
         if (greaterThan != null || lesserThan != null) {
@@ -76,7 +87,6 @@ public final class Timestamp {
                 condition.append("$lt", lesserThan);
             }
         }
-
         return query;
     }
 
