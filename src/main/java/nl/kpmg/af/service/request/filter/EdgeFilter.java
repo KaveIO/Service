@@ -12,7 +12,7 @@ public final class EdgeFilter {
     private Location location;
 
     /**
-     * @return
+     * @return Location based filter for the layer request.
      */
     public Location getLocation() {
         return location;

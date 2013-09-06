@@ -33,8 +33,7 @@ public final class Within {
                 put("coordinates", geom.getCoordinates());
             }
         }));
-        DBObject query = new BasicDBObject("$geoWithin", geoWithinArguments);
-        return query;
+        return new BasicDBObject("$geoWithin", geoWithinArguments);
     }
 
     /**

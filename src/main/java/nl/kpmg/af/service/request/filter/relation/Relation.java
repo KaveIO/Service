@@ -28,8 +28,7 @@ public final class Relation {
      */
     public DBObject getMongoCondition() throws InvalidRequestException {
         if (type != null && ids.size() > 0) {
-            DBObject query = new BasicDBObject(type.getFieldName(), new BasicDBObject("$in", ids));
-            return query;
+            return new BasicDBObject(type.getFieldName(), new BasicDBObject("$in", ids));
         } else {
             throw new InvalidRequestException("Malformed request");
         }
