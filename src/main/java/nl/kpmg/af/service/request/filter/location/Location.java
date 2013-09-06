@@ -56,11 +56,9 @@ public class Location {
     public DBObject getMongoCondition() throws InvalidRequestException {
         DBObject condition = new BasicDBObject();
         if (near != null && within != null) {
-            if (near != null && within != null) {
-                // http://docs.mongodb.org/manual/reference/limits/
-                LOGGER.error("Invalid list op options");
-                throw new InvalidRequestException("Can't use near and within in conjunction");
-            }
+            // http://docs.mongodb.org/manual/reference/limits/
+            LOGGER.error("Invalid list op options");
+            throw new InvalidRequestException("Can't use near and within in conjunction");
         } else if (near != null) {
             condition = new BasicDBObject("location", near.getMongoCondition());
         } else if (within != null) {
