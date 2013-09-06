@@ -3,7 +3,7 @@ package nl.kpmg.af.service.request;
 import nl.kpmg.af.service.request.filter.location.Location;
 import com.mongodb.DBObject;
 import nl.kpmg.af.datamodel.dao.MongoQuery;
-import nl.kpmg.af.datamodel.dao.exception.DataModelException;
+import nl.kpmg.af.service.exception.InvalidRequestException;
 import nl.kpmg.af.service.request.filter.NodeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class NodeRequest {
         this.filter = filter;
     }
 
-    public MongoQuery createMongoQuery() throws DataModelException {
+    public MongoQuery createMongoQuery() throws InvalidRequestException {
         MongoQuery query = new MongoQuery();
         DBObject queryComponents = query.getDBObj();
         if (filter != null) {

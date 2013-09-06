@@ -2,13 +2,8 @@ package nl.kpmg.af.service.request.filter.location;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import java.util.LinkedList;
-import java.util.Map;
+import nl.kpmg.af.service.exception.InvalidRequestException;
 
-import nl.kpmg.af.datamodel.dao.exception.DataModelException;
-
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,13 +53,13 @@ public class Location {
         this.within = within;
     }
 
-    public DBObject getMongoCondition() throws DataModelException {
+    public DBObject getMongoCondition() throws InvalidRequestException {
         DBObject condition = new BasicDBObject();
         if (near != null && within != null) {
             if (near != null && within != null) {
                 // http://docs.mongodb.org/manual/reference/limits/
                 LOGGER.error("Invalid list op options");
-                throw new DataModelException("Can't use near and within in conjunction");
+                throw new InvalidRequestException("Can't use near and within in conjunction");
             }
         } else if (near != null) {
             condition = new BasicDBObject("location", near.getMongoCondition());

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import nl.kpmg.af.datamodel.dao.EdgeDao;
 import nl.kpmg.af.datamodel.dao.exception.DataModelException;
 import nl.kpmg.af.datamodel.model.Edge;
+import nl.kpmg.af.service.exception.InvalidRequestException;
 import nl.kpmg.af.service.request.EdgeRequest;
 import nl.kpmg.af.service.response.assembler.EdgeAssembler;
 import nl.kpmg.af.service.response.dto.EdgeDto;
@@ -60,8 +61,8 @@ public class EdgeService {
         try {
             List<Edge> fetchedEdges = edgeDao.fetchAll(collection);
             result = EdgeAssembler.disassemble(fetchedEdges);
-        } catch (DataModelException e) {
-            LOGGER.error("Request can not be processed, error has occured", e);
+        } catch (DataModelException ex) {
+            LOGGER.error("Error has occured. Data could not be fetched.", ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
         return Response.ok(result).build();
@@ -85,8 +86,11 @@ public class EdgeService {
                     request.createMongoQuery(),
                     request.getLimit());
             result = EdgeAssembler.disassemble(fetchedEdges);
-        } catch (DataModelException e) {
-            LOGGER.error("Request can not be processed, error has occured", e);
+        } catch (InvalidRequestException ex) {
+            LOGGER.warn("Error has occured. Request can not be processed.", ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (DataModelException ex) {
+            LOGGER.error("Error has occured. Data could not be fetched.", ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
         return Response.ok(result).build();

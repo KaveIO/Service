@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import nl.kpmg.af.datamodel.dao.EventDao;
 import nl.kpmg.af.datamodel.dao.exception.DataModelException;
 import nl.kpmg.af.datamodel.model.Event;
+import nl.kpmg.af.service.exception.InvalidRequestException;
 import nl.kpmg.af.service.response.assembler.EventAssembler;
 import nl.kpmg.af.service.response.dto.EventDto;
 
@@ -60,8 +61,8 @@ public class LayerService {
         try {
             List<Event> fetchedEvents = eventDao.fetchAll(layer);
             result = EventAssembler.disassemble(fetchedEvents);
-        } catch (DataModelException e) {
-            LOGGER.error("Request can not be processed, error has occured", e);
+        } catch (DataModelException ex) {
+            LOGGER.error("Error has occured. Data could not be fetched.", ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
         return Response.ok(result).build();
@@ -86,8 +87,11 @@ public class LayerService {
                     request.getLimit(),
                     request.createMongoOrder());
             result = EventAssembler.disassemble(fetchedEvents);
-        } catch (DataModelException e) {
-            LOGGER.error("Request can not be processed, error has occured", e);
+        } catch (InvalidRequestException ex) {
+            LOGGER.warn("Error has occured. Request can not be processed.", ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (DataModelException ex) {
+            LOGGER.error("Error has occured. Data could not be fetched.", ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
         return Response.ok(result).build();

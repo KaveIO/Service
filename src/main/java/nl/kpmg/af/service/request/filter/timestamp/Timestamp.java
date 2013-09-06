@@ -3,7 +3,7 @@ package nl.kpmg.af.service.request.filter.timestamp;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import java.util.Date;
-import nl.kpmg.af.datamodel.dao.exception.DataModelException;
+import nl.kpmg.af.service.exception.InvalidRequestException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,46 +18,43 @@ import org.slf4j.LoggerFactory;
  * @author Hoekstra.Maarten
  */
 public class Timestamp {
-    // Make getters and setters
-    private Integer pastwindow = null;
-    private Integer before = null;
-    private Integer after = null;
     /**
      * The logger for this class.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(Timestamp.class);
-    private static String MONGO_TIMESTAMP_FIELD = "timestamp";
+    private static final Logger LOGGER = LoggerFactory.getLogger(Timestamp.class);
+    /**
+     * Field name of the timestamp in mongo.
+     */
+    private static final String MONGO_TIMESTAMP_FIELD = "timestamp";
+    /**
+     * Constant multiplication factor to move from seconds to milliseconds.
+     */
+    private static final long FACTOR_SECONDS_MILLISECONDS = 1000L;
+    /**
+     * Filter field which determines the amount of seconds to look in the past.
+     * This can be used to fetch object not older than [pastwindow] seconds ago
+     */
+    private Integer pastwindow = null;
+    /**
+     * Filter field which determines the timestamp of which returned objects need to be younger then.
+     * Timestamp as seconds from epoch
+     */
+    private Integer before = null;
+    /**
+     * Filter field which determines the timestamp of which returned objects need to be older then.
+     * Timestamp as seconds from epoch
+     */
+    private Integer after = null;
 
-    public int getPastwindow() {
-        return pastwindow;
-    }
-
-    public void setPastwindow(int pastwindow) {
-        this.pastwindow = pastwindow;
-    }
-
-    public int getBefore() {
-        return before;
-    }
-
-    public void setBefore(int before) {
-        this.before = before;
-    }
-
-    public int getAfter() {
-        return after;
-    }
-
-    public void setAfter(int after) {
-        this.after = after;
-    }
-
-    public DBObject getMongoCondition() throws DataModelException {
-
+    /**
+     * Transforms this timestamp object in its corresponding DBObject.
+     *
+     * @return Timestamp filter as a mongo query
+     * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
+     */
+    public final DBObject getMongoCondition() throws InvalidRequestException {
         if (pastwindow != null && (after != null || before != null)) {
-            LOGGER.error("Invalid list op options");
-            throw new DataModelException("Can't use pastwindow and after/before in conjunction");
+            throw new InvalidRequestException("Can't use pastwindow and after/before in conjunction");
         }
 
         Date greaterThan = null;
@@ -65,13 +62,13 @@ public class Timestamp {
 
         if (pastwindow != null && after == null && before == null) {
             long now = new Date().getTime();
-            greaterThan = new Date(now - (pastwindow * 1000L));
+            greaterThan = new Date(now - (pastwindow * FACTOR_SECONDS_MILLISECONDS));
         }
         if (pastwindow == null && after != null) {
-            greaterThan = new Date(after * 1000L);
+            greaterThan = new Date(after * FACTOR_SECONDS_MILLISECONDS);
         }
         if (pastwindow == null && before != null) {
-            lesserThan = new Date(before * 1000L);
+            lesserThan = new Date(before * FACTOR_SECONDS_MILLISECONDS);
         }
 
         BasicDBObject query = new BasicDBObject();
@@ -88,5 +85,47 @@ public class Timestamp {
         }
 
         return query;
+    }
+
+    /**
+     * @return Filter field which determines the amount of seconds to look in the past.
+     */
+    public final int getPastwindow() {
+        return pastwindow;
+    }
+
+    /**
+     * @param pastwindow Filter field which determines the amount of seconds to look in the past.
+     */
+    public final void setPastwindow(final int pastwindow) {
+        this.pastwindow = pastwindow;
+    }
+
+    /**
+     * @return Filter field which determines the timestamp of which returned objects need to be younger then.
+     */
+    public final int getBefore() {
+        return before;
+    }
+
+    /**
+     * @param before Filter field which determines the timestamp of which returned objects need to be younger then.
+     */
+    public final void setBefore(final int before) {
+        this.before = before;
+    }
+
+    /**
+     * @return Filter field which determines the timestamp of which returned objects need to be older then.
+     */
+    public final int getAfter() {
+        return after;
+    }
+
+    /**
+     * @param after Filter field which determines the timestamp of which returned objects need to be older then.
+     */
+    public final void setAfter(final int after) {
+        this.after = after;
     }
 }

@@ -3,7 +3,7 @@ package nl.kpmg.af.service.request.filter.relation;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import java.util.List;
-import nl.kpmg.af.datamodel.dao.exception.DataModelException;
+import nl.kpmg.af.service.exception.InvalidRequestException;
 import org.bson.types.ObjectId;
 
 /**
@@ -11,45 +11,55 @@ import org.bson.types.ObjectId;
  * @author Hoekstra.Maarten
  */
 public class Relation {
-    private Type type;
+    /**
+     * Which type of ids are being filtered.
+     */
+    private RelationType type;
+    /**
+     * List of ids to which the relation should be constrained.
+     */
     private List<ObjectId> ids;
 
-    public enum Type {
-        NODE("nodeId"),
-        EDGE("edgeId");
-        private final String fieldName;
-
-        private Type(String fieldName) {
-            this.fieldName = fieldName;
-        }
-
-        public String getFieldName() {
-            return fieldName;
-        }
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public List<ObjectId> getIds() {
-        return ids;
-    }
-
-    public void setIds(List<ObjectId> ids) {
-        this.ids = ids;
-    }
-
-    public DBObject getMongoCondition() throws DataModelException {
+    /**
+     * Transforms this Relation object in its corresponding DBObject.
+     *
+     * @return Relation filter as a mongo query
+     * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
+     */
+    public DBObject getMongoCondition() throws InvalidRequestException {
         if (type != null && ids.size() > 0) {
             DBObject query = new BasicDBObject(type.getFieldName(), new BasicDBObject("$in", ids));
             return query;
         } else {
-            throw new DataModelException("Malformed request");
+            throw new InvalidRequestException("Malformed request");
         }
+    }
+
+    /**
+     * @return Which type of ids are being filtered.
+     */
+    public final RelationType getType() {
+        return type;
+    }
+
+    /**
+     * @param type Which type of ids are being filtered.
+     */
+    public final void setType(final RelationType type) {
+        this.type = type;
+    }
+
+    /**
+     * @return List of ids to which the relation should be constrained.
+     */
+    public final List<ObjectId> getIds() {
+        return ids;
+    }
+
+    /**
+     * @param ids List of ids to which the relation should be constrained.
+     */
+    public final void setIds(final List<ObjectId> ids) {
+        this.ids = ids;
     }
 }
