@@ -58,8 +58,8 @@ public class NodeService {
     public Response get(@PathParam("collection") String collection) {
         List<NodeDto> result;
         try {
-            List<Node> fetchedEvents = nodeDao.fetchAll(collection);
-            result = NodeAssembler.disassemble(fetchedEvents);
+            List<Node> fetchedNodes = nodeDao.fetchAll(collection);
+            result = NodeAssembler.disassemble(fetchedNodes);
         } catch (DataModelException e) {
             LOGGER.error("Request can not be processed, error has occured", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

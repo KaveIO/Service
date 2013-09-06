@@ -58,8 +58,8 @@ public class EdgeService {
     public Response get(@PathParam("collection") String collection) {
         List<EdgeDto> result;
         try {
-            List<Edge> fetchedEvents = edgeDao.fetchAll(collection);
-            result = EdgeAssembler.disassemble(fetchedEvents);
+            List<Edge> fetchedEdges = edgeDao.fetchAll(collection);
+            result = EdgeAssembler.disassemble(fetchedEdges);
         } catch (DataModelException e) {
             LOGGER.error("Request can not be processed, error has occured", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
