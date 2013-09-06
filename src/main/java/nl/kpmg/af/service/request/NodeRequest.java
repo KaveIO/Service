@@ -5,33 +5,28 @@ import com.mongodb.DBObject;
 import nl.kpmg.af.datamodel.dao.MongoQuery;
 import nl.kpmg.af.service.exception.InvalidRequestException;
 import nl.kpmg.af.service.request.filter.NodeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class NodeRequest {
+/**
+ * Top level request object for the node service.
+ *
+ * @author Hoekstra.Maarten
+ */
+public final class NodeRequest {
     /**
-     * The logger for this class.
+     * The maximum amount of objects to be returned.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(NodeRequest.class);
     private Integer limit = null;
+    /**
+     * The more complex filter parameters used to fetch only a subset of all objects.
+     */
     private NodeFilter filter = null;
 
-    public Integer getLimit() {
-        return limit;
-    }
-
-    public void setLimit(Integer limit) {
-        this.limit = limit;
-    }
-
-    public NodeFilter getFilter() {
-        return filter;
-    }
-
-    public void setFilter(NodeFilter filter) {
-        this.filter = filter;
-    }
-
+    /**
+     * Transforms this NodeRequest object in its corresponding DBObject.
+     *
+     * @return NodeRequest as a mongo query
+     * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
+     */
     public MongoQuery createMongoQuery() throws InvalidRequestException {
         MongoQuery query = new MongoQuery();
         DBObject queryComponents = query.getDBObj();
@@ -43,5 +38,33 @@ public class NodeRequest {
             }
         }
         return query;
+    }
+
+    /**
+     * @return The maximum amount of objects to be returned.
+     */
+    public Integer getLimit() {
+        return limit;
+    }
+
+    /**
+     * @param limit The maximum amount of objects to be returned.
+     */
+    public void setLimit(final Integer limit) {
+        this.limit = limit;
+    }
+
+    /**
+     * @return The more complex filter parameters used to fetch only a subset of all objects.
+     */
+    public NodeFilter getFilter() {
+        return filter;
+    }
+
+    /**
+     * @param filter The more complex filter parameters used to fetch only a subset of all objects.
+     */
+    public void setFilter(final NodeFilter filter) {
+        this.filter = filter;
     }
 }
