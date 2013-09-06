@@ -3,62 +3,120 @@ package nl.kpmg.af.service.response.dto;
 import java.util.Map;
 
 /**
+ * Data Transfer Object for Node.
+ * The auto-serialization of JAX-RS is really convenient but will serialize complex objects (such as ObjectId) in an
+ * undesirable fashion. In order to avoid this problem a couple of DTO's are made. These are used to transfer business
+ * objects to client applications.
  *
  * @author Hoekstra.Maarten
  */
 public class NodeDto {
+    /**
+     * The unique mongo id of this object.
+     */
     private String id;
+    /**
+     * The type to which this object belongs.
+     */
     private String type;
+    /**
+     * The name of this node.
+     */
     private String name;
+    /**
+     * The description of this node.
+     */
     private String description;
+    /**
+     * A map with the specific contents of this node.
+     */
     private Map meta;
+    /**
+     * The location expressed in GeoJSON of this node.
+     */
     private GeoJSONPointDto location;
 
-    public String getId() {
+    /**
+     * @return The unique mongo id of this object.
+     */
+    public final String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    /**
+     * @param id The unique mongo id of this object.
+     */
+    public final void setId(final String id) {
         this.id = id;
     }
 
-    public String getType() {
+    /**
+     * @return The type to which this object belongs.
+     */
+    public final String getType() {
         return type;
     }
 
-    public void setType(String type) {
+    /**
+     * @param type The type to which this object belongs.
+     */
+    public final void setType(final String type) {
         this.type = type;
     }
 
-    public String getName() {
+    /**
+     * @return The name of this node.
+     */
+    public final String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    /**
+     * @param name The name of this node.
+     */
+    public final void setName(final String name) {
         this.name = name;
     }
 
-    public String getDescription() {
+    /**
+     * @return The description of this node.
+     */
+    public final String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    /**
+     * @param description The description of this node.
+     */
+    public final void setDescription(final String description) {
         this.description = description;
     }
 
-    public Map getMeta() {
+    /**
+     * @return A map with the specific contents of this node.
+     */
+    public final Map getMeta() {
         return meta;
     }
 
-    public void setMeta(Map meta) {
+    /**
+     * @param meta A map with the specific contents of this node.
+     */
+    public final void setMeta(final Map meta) {
         this.meta = meta;
     }
 
-    public GeoJSONPointDto getLocation() {
+    /**
+     * @return The location expressed in GeoJSON of this node.
+     */
+    public final GeoJSONPointDto getLocation() {
         return location;
     }
 
-    public void setLocation(GeoJSONPointDto location) {
+    /**
+     * @param location The location expressed in GeoJSON of this node.
+     */
+    public final void setLocation(final GeoJSONPointDto location) {
         this.location = location;
     }
 }
