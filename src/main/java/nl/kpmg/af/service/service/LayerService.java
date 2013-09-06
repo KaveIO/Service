@@ -56,14 +56,15 @@ public class LayerService {
     @Path("{layer}")
     @Produces("application/json")
     public Response get(@PathParam("layer") String layer) {
-        List<Event> res;
+        List<EventDto> result;
         try {
-            res = eventDao.fetchAll(layer);
+            List<Event> fetchedEvents = eventDao.fetchAll(layer);
+            result = EventAssembler.disassemble(fetchedEvents);
         } catch (DataModelException e) {
             LOGGER.error("Request can not be processed, error has occured", e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        return Response.ok(res).build();
+        return Response.ok(result).build();
     }
 
     /**
