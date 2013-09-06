@@ -5,7 +5,6 @@ import nl.kpmg.af.service.request.filter.relation.Relation;
 import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
 
 /**
- *
  * @author Hoekstra.Maarten
  */
 public final class LayerFilter {
