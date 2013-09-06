@@ -8,51 +8,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Location part of a filter request.
  *
  * @author Hoekstra.Maarten
  */
-public class Location {
+public final class Location {
     /**
      * The logger for this class.
      */
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(Location.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Location.class);
+    /**
+     * Filter specification for fetching only objects near a specific point.
+     */
     private Near near;
+    /**
+     * Filter specification for fetching only objects within a polygon.
+     */
     private Within within;
 
-    public Location(Near near, Within within) {
-        this.near = near;
-        this.within = within;
-    }
-
-    public Location(Near near) {
-        this(near, null);
-    }
-
-    public Location(Within within) {
-        this(null, within);
-    }
-
-    public Location() {
-        this(null, null);
-    }
-
-    public Near getNear() {
-        return near;
-    }
-
-    public void setNear(Near near) {
-        this.near = near;
-    }
-
-    public Within getWithin() {
-        return within;
-    }
-
-    public void setWithin(Within within) {
-        this.within = within;
-    }
-
+    /**
+     * Transforms this Location object in its corresponding DBObject.
+     *
+     * @return Location as a mongo query
+     * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
+     */
     public DBObject getMongoCondition() throws InvalidRequestException {
         DBObject condition = new BasicDBObject();
         if (near != null && within != null) {
@@ -65,5 +44,33 @@ public class Location {
             condition = new BasicDBObject("location", within.getMongoCondition());
         }
         return condition;
+    }
+
+    /**
+     * @return Filter specification for fetching only objects near a specific point.
+     */
+    public Near getNear() {
+        return near;
+    }
+
+    /**
+     * @param near Filter specification for fetching only objects near a specific point.
+     */
+    public void setNear(final Near near) {
+        this.near = near;
+    }
+
+    /**
+     * @return Filter specification for fetching only objects within a polygon.
+     */
+    public Within getWithin() {
+        return within;
+    }
+
+    /**
+     * @param within Filter specification for fetching only objects within a polygon.
+     */
+    public void setWithin(final Within within) {
+        this.within = within;
     }
 }
