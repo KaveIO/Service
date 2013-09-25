@@ -1,7 +1,10 @@
 package nl.kpmg.af.service.request;
 
 import nl.kpmg.af.service.request.filter.location.Location;
+import nl.kpmg.af.service.request.filter.relation.Relation;
+
 import com.mongodb.DBObject;
+
 import nl.kpmg.af.datamodel.dao.MongoQuery;
 import nl.kpmg.af.service.exception.InvalidRequestException;
 import nl.kpmg.af.service.request.filter.NodeFilter;
@@ -35,6 +38,11 @@ public final class NodeRequest {
             if (location != null) {
                 DBObject locationfilter = location.getMongoCondition();
                 queryComponents.putAll(locationfilter);
+            }            
+            Relation relation = filter.getRelation();
+            if (relation != null) {
+                DBObject relationfilter = relation.getMongoCondition();
+                queryComponents.putAll(relationfilter);
             }
         }
         return query;
