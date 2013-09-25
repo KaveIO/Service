@@ -34,28 +34,31 @@ public final class MongoDBUtil {
     private MongoDBUtil() {
     }
 
-    static {
-        String path = System.getProperty(CONFIG_DIR_PROPERTY) + File.separator + PROPERTIES_FILE_NAME;
-        Properties properties = new Properties();
-        try (FileInputStream fileInputStream = new FileInputStream(path)) {
-            properties.load(fileInputStream);
-
-            String url = properties.getProperty("url");
-            int port = Integer.parseInt(properties.getProperty("port"));
-            String username = properties.getProperty("username");
-            String password = properties.getProperty("password");
-            String database = properties.getProperty("database");
-            mongoDatabase = new MongoDatabase(url, port, username, password, database);
-        } catch (IOException ex) {
-            throw new ServiceInitializationException("Can't load mongo.properties. Please make sure this is available "
-                    + "in your config dir. Redeployment of the Service is necessary for correct operation.", ex);
-        }
-    }
-
     /**
      * @return The actual mongoDatabase objects which is being managed by this utility.
      */
-    public static MongoDatabase getMongoDatabase() {
+    public static synchronized MongoDatabase getMongoDatabase() {
+        if (mongoDatabase == null) {
+            String path = System.getProperty(CONFIG_DIR_PROPERTY) + File.separator + PROPERTIES_FILE_NAME;
+            Properties properties = new Properties();
+            try (FileInputStream fileInputStream = new FileInputStream(path)) {
+                properties.load(fileInputStream);
+
+                String url = properties.getProperty("url");
+                int port = Integer.parseInt(properties.getProperty("port"));
+                String username = properties.getProperty("username");
+                String password = properties.getProperty("password");
+                String database = properties.getProperty("database");
+                mongoDatabase = new MongoDatabase(url, port, username, password, database);
+
+                // This will make sure all Layer, Node and Edge collections contain the correct Indexes.
+                mongoDatabase.ensureIndexes();
+            } catch (IOException ex) {
+                throw new ServiceInitializationException("Can't load mongo.properties. Please make sure this is "
+                        + "available in your config dir. Redeployment of the Service is necessary for correct "
+                        + "operation.", ex);
+            }
+        }
         return mongoDatabase;
     }
 }
