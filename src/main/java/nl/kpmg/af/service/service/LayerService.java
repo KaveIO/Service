@@ -20,6 +20,8 @@ import nl.kpmg.af.datamodel.dao.EventDao;
 import nl.kpmg.af.datamodel.dao.exception.DataModelException;
 import nl.kpmg.af.datamodel.model.Event;
 import nl.kpmg.af.service.exception.InvalidRequestException;
+import nl.kpmg.af.service.request.aggregation.Aggregation;
+import nl.kpmg.af.service.request.aggregation.AggregationType;
 import nl.kpmg.af.service.response.assembler.EventAssembler;
 import nl.kpmg.af.service.response.dto.EventDto;
 
@@ -85,12 +87,24 @@ public final class LayerService {
     public Response post(@PathParam("collection") final String collection, final LayerRequest request) {
         List<EventDto> result;
         try {
-            List<Event> fetchedEvents = eventDao.fetchByFilter(
-                    collection,
-                    request.createMongoQuery(),
-                    request.getLimit(),
-                    request.createMongoOrder());
-            result = EventAssembler.disassemble(fetchedEvents);
+            Aggregation aggregation = request.getAggregation();
+            if (aggregation == null) {
+                List<Event> fetchedEvents = eventDao.fetchByFilter(
+                        collection,
+                        request.createMongoQuery(),
+                        request.getLimit(),
+                        request.createMongoOrder());
+                result = EventAssembler.disassemble(fetchedEvents);
+            } else if (aggregation.getType() == AggregationType.LATEST) {
+                List<Event> fetchedEvents = eventDao.fetchLatestByFilter(
+                        collection,
+                        aggregation.getBy(),
+                        request.createMongoQuery());
+                result = EventAssembler.disassemble(fetchedEvents);
+            } else {
+                LOGGER.warn("Error has occured. An unknown aggregation type has been requested.");
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
         } catch (InvalidRequestException ex) {
             LOGGER.warn("Error has occured. Request can not be processed.", ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

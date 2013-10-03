@@ -8,6 +8,7 @@ import com.mongodb.DBObject;
 import nl.kpmg.af.datamodel.dao.MongoOrder;
 import nl.kpmg.af.datamodel.dao.MongoQuery;
 import nl.kpmg.af.service.exception.InvalidRequestException;
+import nl.kpmg.af.service.request.aggregation.Aggregation;
 
 /**
  * Top level request object for the layer service.
@@ -27,6 +28,10 @@ public final class LayerRequest {
      * The more complex filter parameters used to fetch only a subset of all objects.
      */
     private LayerFilter filter = null;
+    /**
+     * Aggregation parameters which will be applied on the filtered result set.
+     */
+    private Aggregation aggregation = null;
 
     /**
      * Transforms this layerRequest object in its corresponding DBObject.
@@ -110,5 +115,13 @@ public final class LayerRequest {
      */
     public void setFilter(final LayerFilter filter) {
         this.filter = filter;
+    }
+
+    public Aggregation getAggregation() {
+        return aggregation;
+    }
+
+    public void setAggregation(Aggregation aggregation) {
+        this.aggregation = aggregation;
     }
 }
