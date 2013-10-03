@@ -11,7 +11,11 @@ public enum RelationType {
     /**
      * relation type associated edges.
      */
-    EDGE("edgeId");
+    EDGE("edgeId"), 
+    /**
+     * relation type associated MongoIds.
+     */
+    ID("_id");
     /**
      * actual used field for relation.
      */

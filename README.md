@@ -31,18 +31,14 @@ To Deploy On BB
 
 
 
-
-
-POST /layer/LAYER_NAME/IDIDID
-POST /layer/LAYER_NAME
+POST /Service//layer/LAYER_NAME
 {
-		"applicationKey"
 
 		"sort": int          # The result set is always sorted on the timestamp. Value 1 for ascending, value -1 for Descending. default 1
 		"limit": int         # The maximum amount of records the result set can have. 0 is interpreted as infinite. default 0
 		"filter" {
 			"timestamp": {
-				"age": int           # Only returns items which have a timestamp less than 'age' ago. default not filtered
+				"pastwindow": int           # Only returns items which have a timestamp less than 'age' ago. default not filtered
 				"after": int         #
 				"before": int        #
 			}
