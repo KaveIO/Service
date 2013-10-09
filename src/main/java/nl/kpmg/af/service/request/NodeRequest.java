@@ -5,7 +5,7 @@ import nl.kpmg.af.service.request.filter.relation.Relation;
 
 import com.mongodb.DBObject;
 
-import nl.kpmg.af.datamodel.dao.MongoQuery;
+import nl.kpmg.af.datamodel.dao.query.MongoQuery;
 import nl.kpmg.af.service.exception.InvalidRequestException;
 import nl.kpmg.af.service.request.filter.NodeFilter;
 

@@ -2,7 +2,7 @@ package nl.kpmg.af.service.request;
 
 import nl.kpmg.af.service.request.filter.location.Location;
 import com.mongodb.DBObject;
-import nl.kpmg.af.datamodel.dao.MongoQuery;
+import nl.kpmg.af.datamodel.dao.query.MongoQuery;
 import nl.kpmg.af.service.exception.InvalidRequestException;
 import nl.kpmg.af.service.request.filter.EdgeFilter;
 

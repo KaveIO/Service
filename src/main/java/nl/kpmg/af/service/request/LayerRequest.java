@@ -5,8 +5,8 @@ import nl.kpmg.af.service.request.filter.location.Location;
 import nl.kpmg.af.service.request.filter.relation.Relation;
 import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
 import com.mongodb.DBObject;
-import nl.kpmg.af.datamodel.dao.MongoOrder;
-import nl.kpmg.af.datamodel.dao.MongoQuery;
+import nl.kpmg.af.datamodel.dao.query.MongoOrder;
+import nl.kpmg.af.datamodel.dao.query.MongoQuery;
 import nl.kpmg.af.service.exception.InvalidRequestException;
 import nl.kpmg.af.service.request.aggregation.Aggregation;
 
