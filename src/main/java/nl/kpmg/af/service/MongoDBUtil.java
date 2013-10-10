@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+
 import nl.kpmg.af.datamodel.connection.MongoDatabase;
 import nl.kpmg.af.service.exception.ServiceInitializationException;
 
@@ -11,7 +12,7 @@ import nl.kpmg.af.service.exception.ServiceInitializationException;
  * Utility class for initializing the MongoDatabase object.
  * This is not the prettiest solution imaginable. For now it does suffice though. This setup
  * keeps all mongo connections pooled and keeps all jboss knowledge in the Service package.
- *
+ * 
  * @author Hoekstra.Maarten
  */
 public final class MongoDBUtil {

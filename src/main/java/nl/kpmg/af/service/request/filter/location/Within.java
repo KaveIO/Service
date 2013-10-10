@@ -1,8 +1,9 @@
 package nl.kpmg.af.service.request.filter.location;
 
+import java.util.HashMap;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import java.util.HashMap;
 
 /**
  * @author Hoekstra.Maarten
@@ -21,16 +22,16 @@ public final class Within {
      * { type : "Polygon" ,
      * coordinates : [ [ [ <lng1>, <lat1> ] , [ <lng2>, <lat2> ] ... ] ]
      * } } } } )
-     *
+     * 
      * @return Within as a nearSphere mongo query
      */
     public DBObject getMongoCondition() {
-        final GeoJSONPolygon geom = getGeometry();
+        final GeoJSONPolygon geom = this.getGeometry();
         DBObject geoWithinArguments = new BasicDBObject();
         geoWithinArguments.put("$geometry", new BasicDBObject(new HashMap() {
             {
-                put("type", geom.getType());
-                put("coordinates", geom.getCoordinates());
+                this.put("type", geom.getType());
+                this.put("coordinates", geom.getCoordinates());
             }
         }));
         return new BasicDBObject("$geoWithin", geoWithinArguments);

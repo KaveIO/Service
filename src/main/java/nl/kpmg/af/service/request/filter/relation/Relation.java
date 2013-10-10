@@ -1,13 +1,15 @@
 package nl.kpmg.af.service.request.filter.relation;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import java.util.List;
+
 import nl.kpmg.af.service.exception.InvalidRequestException;
+
 import org.bson.types.ObjectId;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
 /**
- *
  * @author Hoekstra.Maarten
  */
 public final class Relation {
@@ -22,7 +24,7 @@ public final class Relation {
 
     /**
      * Transforms this Relation object in its corresponding DBObject.
-     *
+     * 
      * @return Relation filter as a mongo query
      * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
      */

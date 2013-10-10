@@ -1,18 +1,19 @@
 package nl.kpmg.af.service.request;
 
-import nl.kpmg.af.service.request.filter.LayerFilter;
-import nl.kpmg.af.service.request.filter.location.Location;
-import nl.kpmg.af.service.request.filter.relation.Relation;
-import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
-import com.mongodb.DBObject;
 import nl.kpmg.af.datamodel.dao.query.MongoOrder;
 import nl.kpmg.af.datamodel.dao.query.MongoQuery;
 import nl.kpmg.af.service.exception.InvalidRequestException;
 import nl.kpmg.af.service.request.aggregation.Aggregation;
+import nl.kpmg.af.service.request.filter.LayerFilter;
+import nl.kpmg.af.service.request.filter.location.Location;
+import nl.kpmg.af.service.request.filter.relation.Relation;
+import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
+
+import com.mongodb.DBObject;
 
 /**
  * Top level request object for the layer service.
- *
+ * 
  * @author Hoekstra.Maarten
  */
 public final class LayerRequest {
@@ -35,7 +36,7 @@ public final class LayerRequest {
 
     /**
      * Transforms this layerRequest object in its corresponding DBObject.
-     *
+     * 
      * @return layerRequest as a mongo query
      * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
      */
@@ -64,7 +65,7 @@ public final class LayerRequest {
 
     /**
      * Transforms sort in its corresponding MongoOrder.
-     *
+     * 
      * @return sort as a MongoOrder
      */
     public MongoOrder createMongoOrder() {

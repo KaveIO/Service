@@ -34,7 +34,7 @@ public final class InputService {
      * Default constructor fetches the DAO from MongoDBUtil.
      */
     public InputService() {
-        this.inputDao = new InputDao(MongoDBUtil.getMongoDatabase());
+        inputDao = new InputDao(MongoDBUtil.getMongoDatabase());
     }
 
     /**
@@ -51,7 +51,7 @@ public final class InputService {
     public Response post(@PathParam("collection") final String collection, InputRequest inputDto) {
         try {
             Input input = InputAssembler.assemble(collection, inputDto);
-            this.inputDao.store(input);
+            inputDao.store(input);
         } catch (DataModelException ex) {
             LOGGER.error("Error has occured. Data could not be stored.", ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

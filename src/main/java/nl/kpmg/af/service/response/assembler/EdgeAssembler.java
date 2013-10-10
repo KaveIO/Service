@@ -2,12 +2,13 @@ package nl.kpmg.af.service.response.assembler;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import nl.kpmg.af.datamodel.model.Edge;
 import nl.kpmg.af.service.response.dto.EdgeDto;
 
 /**
  * Utility class for disassembling Edge objects into EdgeDto objects.
- *
+ * 
  * @author Hoekstra.Maarten
  */
 public final class EdgeAssembler {
@@ -19,7 +20,7 @@ public final class EdgeAssembler {
 
     /**
      * Disassembles Edge object into EdgeDto object.
-     *
+     * 
      * @param edge object to disassemble
      * @return disassembled event object
      */
@@ -46,7 +47,7 @@ public final class EdgeAssembler {
 
     /**
      * Disassembles List of Edge objects into List of EdgeDto objects.
-     *
+     * 
      * @param edges objects to disassemble
      * @return disassembled node objects
      */

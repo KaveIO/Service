@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author Hoekstra.Maarten
  */
 public final class GeoJSONPointDto extends GeoJSONPositionDto {
@@ -22,7 +21,7 @@ public final class GeoJSONPointDto extends GeoJSONPositionDto {
 
     /**
      * Directly sets latitude and longitude.
-     *
+     * 
      * @param longitude longitude for this GeoJSONPoint
      * @param latitude latitude for this GeoJSONPoint
      */

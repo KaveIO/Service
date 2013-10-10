@@ -1,9 +1,11 @@
 package nl.kpmg.af.service.request.filter.timestamp;
 
+import java.util.Date;
+
+import nl.kpmg.af.service.exception.InvalidRequestException;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import java.util.Date;
-import nl.kpmg.af.service.exception.InvalidRequestException;
 
 /**
  * This class contains the information in the filter which governs the timestamp.
@@ -11,7 +13,7 @@ import nl.kpmg.af.service.exception.InvalidRequestException;
  * - the option "pastwindow" which represents the history of the data to retrieve in seconds
  * e.g. : "pastwindow" : 6000 will give all data beginngin with: (current time - 6000) up to now.
  * - the option "after" and "before" define a window in time
- *
+ * 
  * @author Hoekstra.Maarten
  */
 public final class Timestamp {
@@ -41,7 +43,7 @@ public final class Timestamp {
 
     /**
      * Transforms this timestamp object in its corresponding DBObject.
-     *
+     * 
      * @return Timestamp filter as a mongo query
      * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
      */
@@ -64,12 +66,12 @@ public final class Timestamp {
             lesserThan = new Date(before * FACTOR_SECONDS_MILLISECONDS);
         }
 
-        return getMongoCondition(greaterThan, lesserThan);
+        return this.getMongoCondition(greaterThan, lesserThan);
     }
 
     /**
      * Helper function for transforming the calculated greaterThan and lesserThan values into a mongo query.
-     *
+     * 
      * @param greaterThan Date value
      * @param lesserThan Date value
      * @return greaterThan & lesserThan as a mongo query

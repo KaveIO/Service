@@ -1,13 +1,14 @@
 package nl.kpmg.af.service.response.assembler;
 
 import java.util.Date;
+
 import nl.kpmg.af.datamodel.model.Input;
 import nl.kpmg.af.datamodel.model.input.ConcreteInput;
 import nl.kpmg.af.service.request.InputRequest;
 
 /**
  * Utility class for assembling InputDto objects into Input objects.
- *
+ * 
  * @author Hoekstra.Maarten
  */
 public final class InputAssembler {
@@ -19,7 +20,7 @@ public final class InputAssembler {
 
     /**
      * Disassembles Event object into EventDto object.
-     *
+     * 
      * @param event object to disassemble
      * @return disassembled event object
      */

@@ -1,8 +1,11 @@
 package nl.kpmg.af.service.request.filter.location;
 
+import java.util.HashMap;
+
+import nl.kpmg.af.datamodel.dao.exception.DataModelException;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import java.util.HashMap;
 
 /**
  * @author Hoekstra.Maarten
@@ -19,7 +22,6 @@ public final class Near {
 
     /**
      * $nearSphere, only gives the first 100 documents!!!!!
-     *
      * From the manual:
      * db.<collection>.find( { <location field> :
      * { $nearSphere :
@@ -27,19 +29,19 @@ public final class Near {
      * { type : "Point" , coordinates : [ <longitude> , <latitude> ] } ,
      * $maxDistance : <distance in meters>
      * } } } )
-     *
+     * 
      * @return Near as a nearSphere mongo query
      * @throws DataModelException
      */
     public DBObject getMongoCondition() {
-        double dist = getDistance().doubleValue();
-        final GeoJSONPoint geom = getGeometry();
+        double dist = this.getDistance().doubleValue();
+        final GeoJSONPoint geom = this.getGeometry();
 
         DBObject nearSphereArguments = new BasicDBObject();
         nearSphereArguments.put("$geometry", new BasicDBObject(new HashMap() {
             {
-                put("type", geom.getType());
-                put("coordinates", geom.getCoordinates());
+                this.put("type", geom.getType());
+                this.put("coordinates", geom.getCoordinates());
             }
         }));
         nearSphereArguments.put("$maxDistance", dist);

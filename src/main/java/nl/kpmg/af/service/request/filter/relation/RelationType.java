@@ -11,7 +11,7 @@ public enum RelationType {
     /**
      * relation type associated edges.
      */
-    EDGE("edgeId"), 
+    EDGE("edgeId"),
     /**
      * relation type associated MongoIds.
      */

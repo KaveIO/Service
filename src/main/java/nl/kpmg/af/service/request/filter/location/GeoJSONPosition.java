@@ -2,7 +2,7 @@ package nl.kpmg.af.service.request.filter.location;
 
 /**
  * Abstract class for some shared functionality between GeoJSON data types.
- *
+ * 
  * @author Hoekstra.Maarten
  */
 public abstract class GeoJSONPosition {

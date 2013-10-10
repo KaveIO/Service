@@ -1,17 +1,16 @@
 package nl.kpmg.af.service.request;
 
+import nl.kpmg.af.datamodel.dao.query.MongoQuery;
+import nl.kpmg.af.service.exception.InvalidRequestException;
+import nl.kpmg.af.service.request.filter.NodeFilter;
 import nl.kpmg.af.service.request.filter.location.Location;
 import nl.kpmg.af.service.request.filter.relation.Relation;
 
 import com.mongodb.DBObject;
 
-import nl.kpmg.af.datamodel.dao.query.MongoQuery;
-import nl.kpmg.af.service.exception.InvalidRequestException;
-import nl.kpmg.af.service.request.filter.NodeFilter;
-
 /**
  * Top level request object for the node service.
- *
+ * 
  * @author Hoekstra.Maarten
  */
 public final class NodeRequest {
@@ -26,7 +25,7 @@ public final class NodeRequest {
 
     /**
      * Transforms this NodeRequest object in its corresponding DBObject.
-     *
+     * 
      * @return NodeRequest as a mongo query
      * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
      */
@@ -38,7 +37,7 @@ public final class NodeRequest {
             if (location != null) {
                 DBObject locationfilter = location.getMongoCondition();
                 queryComponents.putAll(locationfilter);
-            }            
+            }
             Relation relation = filter.getRelation();
             if (relation != null) {
                 DBObject relationfilter = relation.getMongoCondition();

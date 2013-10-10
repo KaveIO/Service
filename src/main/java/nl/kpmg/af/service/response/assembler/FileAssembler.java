@@ -1,14 +1,14 @@
 package nl.kpmg.af.service.response.assembler;
 
-import com.mongodb.DBObject;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import nl.kpmg.af.service.response.dto.FileDto;
 
+import com.mongodb.DBObject;
+
 /**
- *
  * @author Hoekstra.Maarten
  */
 public class FileAssembler {

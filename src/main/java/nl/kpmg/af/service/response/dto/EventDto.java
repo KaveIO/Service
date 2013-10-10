@@ -8,7 +8,7 @@ import java.util.Map;
  * The auto-serialization of JAX-RS is really convenient but will serialize complex objects (such as ObjectId) in an
  * undesirable fashion. In order to avoid this problem a couple of DTO's are made. These are used to transfer business
  * objects to client applications.
- *
+ * 
  * @author Hoekstra.Maarten
  */
 public final class EventDto {

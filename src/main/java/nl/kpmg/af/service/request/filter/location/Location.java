@@ -1,15 +1,16 @@
 package nl.kpmg.af.service.request.filter.location;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import nl.kpmg.af.service.exception.InvalidRequestException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
 /**
  * Location part of a filter request.
- *
+ * 
  * @author Hoekstra.Maarten
  */
 public final class Location {
@@ -28,7 +29,7 @@ public final class Location {
 
     /**
      * Transforms this Location object in its corresponding DBObject.
-     *
+     * 
      * @return Location as a mongo query
      * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
      */

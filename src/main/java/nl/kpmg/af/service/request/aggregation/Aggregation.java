@@ -1,7 +1,6 @@
 package nl.kpmg.af.service.request.aggregation;
 
 /**
- *
  * @author Hoekstra.Maarten
  */
 public final class Aggregation {

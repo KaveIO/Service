@@ -1,34 +1,34 @@
 package nl.kpmg.af.service.service;
 
-import com.mongodb.DBCursor;
-import com.mongodb.gridfs.GridFS;
-import com.mongodb.gridfs.GridFSDBFile;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
-import nl.kpmg.af.service.MongoDBUtil;
 import java.util.List;
 
-import javax.ws.rs.Path;
 import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-
 import javax.ws.rs.core.Response;
+
 import nl.kpmg.af.datamodel.connection.MongoDatabase;
 import nl.kpmg.af.datamodel.connection.exception.MongoAuthenticationException;
+import nl.kpmg.af.service.MongoDBUtil;
 import nl.kpmg.af.service.response.assembler.FileAssembler;
 import nl.kpmg.af.service.response.dto.FileDto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mongodb.DBCursor;
+import com.mongodb.gridfs.GridFS;
+import com.mongodb.gridfs.GridFSDBFile;
+
 /**
  * This class represents the edges rest service.
  * Right now it's a Java re-write of the current middleware layer service.
- *
  * This service can be reached via http://jbosshost/Services/rest/layer, where
  * the relative path "rest" is defined in Activator.java.
- *
+ * 
  * @author janos4276
  */
 @Path("files")
@@ -51,7 +51,7 @@ public final class FileService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     *
+     * 
      * @param collection the collection of edges to fetch from
      * @return the list of edges
      */
@@ -72,16 +72,14 @@ public final class FileService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     *
+     * 
      * @param collection the collection of edges to fetch from
      * @return the list of edges
      */
     @GET
     @Path("{collection}/{filename}")
     @Produces("text/plain")
-    public Response get(
-            @PathParam("collection") final String collection,
-            @PathParam("filename") final String filename) {
+    public Response get(@PathParam("collection") final String collection, @PathParam("filename") final String filename) {
         try {
             GridFS gridFS = new GridFS(mongoDatabase.getDatabase(), collection);
             GridFSDBFile file = gridFS.findOne(filename);

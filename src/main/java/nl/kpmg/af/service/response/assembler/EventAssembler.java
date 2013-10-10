@@ -2,13 +2,14 @@ package nl.kpmg.af.service.response.assembler;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import nl.kpmg.af.datamodel.model.Event;
 import nl.kpmg.af.service.response.dto.EventDto;
 import nl.kpmg.af.service.response.dto.GeoJSONPointDto;
 
 /**
  * Utility class for disassembling Event objects into EventDto objects.
- *
+ * 
  * @author Hoekstra.Maarten
  */
 public final class EventAssembler {
@@ -25,7 +26,7 @@ public final class EventAssembler {
 
     /**
      * Disassembles Event object into EventDto object.
-     *
+     * 
      * @param event object to disassemble
      * @return disassembled event object
      */
@@ -56,7 +57,7 @@ public final class EventAssembler {
 
     /**
      * Disassembles List of Event objects into List of EventDto objects.
-     *
+     * 
      * @param events objects to disassemble
      * @return disassembled node objects
      */

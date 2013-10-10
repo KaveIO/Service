@@ -11,7 +11,7 @@ public final class NodeFilter {
      * Location based filter for the layer request.
      */
     private Location location;
-    
+
     /**
      * Relation based filter for the node request.
      */
@@ -23,14 +23,14 @@ public final class NodeFilter {
     public Location getLocation() {
         return location;
     }
- 
+
     /**
      * @param location Location based filter for the layer request.
      */
     public void setLocation(final Location location) {
         this.location = location;
     }
-    
+
     /**
      * @return Relation based filter for the node request.
      */

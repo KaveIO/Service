@@ -11,7 +11,7 @@ import javax.ws.rs.core.Application;
  * service in WEB-INF.xml. So yeah it's empty for a reason.
  * Not sure if this will work in other AS such as Apache Tomcat
  * or JBoss AS < 7.1.1.
- *
+ * 
  * @author janos4276
  */
 @ApplicationPath("")

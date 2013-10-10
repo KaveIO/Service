@@ -11,7 +11,7 @@ public abstract class GeoJSONPositionDto {
 
     /**
      * Sets the type of GeoJSONPosition this should be.
-     *
+     * 
      * @param type The type of the GeoJSON position
      */
     public GeoJSONPositionDto(final String type) {
