@@ -13,9 +13,7 @@ To test simple queries this does the trick:
 + install READ Console Chrome app in Chrome (just Google it)
 + setup a tunnel from your local machine at port 8080 to the remote Service at BitBrains:
 
-
-      ssh -N -L 8080:tom-001:8080 bitbrains
-
+	ssh -N -L 8080:tom-001:8080 bitbrains
 
 + In the REST Console app set the following fields:
    + Target:
