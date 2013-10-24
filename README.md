@@ -13,7 +13,9 @@ To test simple queries this does the trick:
 + install READ Console Chrome app in Chrome (just Google it)
 + setup a tunnel from your local machine at port 8080 to the remote Service at BitBrains:
 
+
       ssh -N -L 8080:tom-001:8080 bitbrains
+
 
 + In the REST Console app set the following fields:
    + Target:
@@ -48,32 +50,32 @@ To Deploy On BB
 
 
 
-POST /Service//layer/LAYER_NAME
-{
-
-		"sort": int          # The result set is always sorted on the timestamp. Value 1 for ascending, value -1 for Descending. default 1
-		"limit": int         # The maximum amount of records the result set can have. 0 is interpreted as infinite. default 0
-		"filter" {
-			"timestamp": {
-				"pastwindow": int           # Only returns items which have a timestamp less than 'age' ago. default not filtered
-				"after": int         #
-				"before": int        #
-			}
-
-			"location": {
-				"near": {
-					"geometry" : GeoJSON Point
-					"distance": Double
-				},
-				"within": {
-					"geometry" : GeoJSON Polygon
-				}
-			}
-
-			"relation": {
-				"type": "node" | "edge"
-				"ids": [ObjectId]
-			}
-		}
-	}
-}
+    POST /Service//layer/LAYER_NAME
+    {
+    
+    		"sort": int          # The result set is always sorted on the timestamp. Value 1 for ascending, value -1 for Descending. default 1
+    		"limit": int         # The maximum amount of records the result set can have. 0 is interpreted as infinite. default 0
+    		"filter" {
+    			"timestamp": {
+    				"pastwindow": int           # Only returns items which have a timestamp less than 'age' ago. default not filtered
+    				"after": int         #
+    				"before": int        #
+    			}
+    
+    			"location": {
+    				"near": {
+    					"geometry" : GeoJSON Point
+    					"distance": Double
+    				},
+    				"within": {
+    					"geometry" : GeoJSON Polygon
+    				}
+    			}
+    
+    			"relation": {
+    				"type": "node" | "edge"
+    				"ids": [ObjectId]
+    			}
+    		}
+    	}
+    }
