@@ -7,21 +7,21 @@ interface to the data contained in MongoDB.
 At the moment contains only the "/layer/{n}" sevice, which also serves as an example.
 
 
-To play
+To Play
 =======
 To test simple queries this does the trick:
 + install READ Console Chrome app in Chrome (just Google it)
 + setup a tunnel from your local machine at port 8080 to the remote Service at BitBrains:
 
-     ssh -N -L 8080:tom-001:8080 bitbrains
+      ssh -N -L 8080:tom-001:8080 bitbrains
 
 + In the REST Console app set the following fields:
-   - Target:
-      - Request URI: localhost:8080/Service/layer/twitter
-      - Request Method: POST
-   - Body: 
-      - Content Type: application/json
-      - RAW Body: see syntac below
+   + Target:
+      + Request URI: localhost:8080/Service/layer/twitter
+      + Request Method: POST
+   + Body: 
+      + Content Type: application/json
+      + RAW Body: see syntax below
 
 Setup
 =====
