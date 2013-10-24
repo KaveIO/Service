@@ -9,8 +9,8 @@ At the moment contains only the "/layer/{n}" sevice, which also serves as an exa
 
 To Play
 =======
-To test simple queries this does the trick:
-+ install READ Console Chrome app in Chrome (just Google it)
+To test simple queries with the live remote Service at BitBrains this does the trick:
++ install REST Console Chrome app in Chrome (just Google it)
 + setup a tunnel from your local machine at port 8080 to the remote Service at BitBrains:
 
     	ssh -N -L 8080:tom-001:8080 bitbrains
