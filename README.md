@@ -31,6 +31,18 @@ Setup
 + JBoss AS 7.1.1 Community Edition (Can be installed and run from within Eclipse)
 + Tunnel to mdb-001: ssh -t -L 27017:localhost:27017 user@94.143.211.214 'ssh -L 27017:localhost:27017 user@mdb-001'
 
+
+Configuration JBOS
+==================
+In the JBOSS directory <tt>standalone/configuration/mongo.properties</tt>:
+
+	 url      = mdb-001
+	 port     = 27017
+	 username = overwatch
+	 password = XXX
+	 database = overwatch
+
+
 To Test
 =======
 + Create tunnel
