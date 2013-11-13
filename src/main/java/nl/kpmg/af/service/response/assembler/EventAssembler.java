@@ -9,7 +9,7 @@ import nl.kpmg.af.service.response.dto.GeoJSONPointDto;
 
 /**
  * Utility class for disassembling Event objects into EventDto objects.
- * 
+ *
  * @author Hoekstra.Maarten
  */
 public final class EventAssembler {
@@ -26,7 +26,7 @@ public final class EventAssembler {
 
     /**
      * Disassembles Event object into EventDto object.
-     * 
+     *
      * @param event object to disassemble
      * @return disassembled event object
      */
@@ -47,8 +47,13 @@ public final class EventAssembler {
             result.setLocation(new GeoJSONPointDto(event.getLongitude(), event.getLatitude()));
         }
         result.setPriority(event.getPriority());
-        if (event.getTimestamp() != null) {
-            result.setTimestamp((int) (event.getTimestamp().getTime() / FACTOR_SECONDS_MILLISECONDS));
+        if (event.getProcessingTimestamp() != null) {
+            result.setProcessingTimestamp(
+                    (int) (event.getProcessingTimestamp().getTime() / FACTOR_SECONDS_MILLISECONDS));
+        }
+        if (event.getMeasurementTimestamp() != null) {
+            result.setMeasurementTimestamp(
+                    (int) (event.getMeasurementTimestamp().getTime() / FACTOR_SECONDS_MILLISECONDS));
         }
         result.setValue(event.getValue());
 
@@ -57,7 +62,7 @@ public final class EventAssembler {
 
     /**
      * Disassembles List of Event objects into List of EventDto objects.
-     * 
+     *
      * @param events objects to disassemble
      * @return disassembled node objects
      */

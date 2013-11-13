@@ -8,7 +8,7 @@ import java.util.Map;
  * The auto-serialization of JAX-RS is really convenient but will serialize complex objects (such as ObjectId) in an
  * undesirable fashion. In order to avoid this problem a couple of DTO's are made. These are used to transfer business
  * objects to client applications.
- * 
+ *
  * @author Hoekstra.Maarten
  */
 public final class EventDto {
@@ -39,7 +39,11 @@ public final class EventDto {
     /**
      * The timestamp expressed in seconds from epoch on which this event took place.
      */
-    private Integer timestamp;
+    private Integer processingTimestamp;
+    /**
+     * The timestamp expressed in seconds from epoch on which this event took place.
+     */
+    private Integer measurementTimestamp;
     /**
      * A map with the specific contents of this event.
      */
@@ -132,15 +136,29 @@ public final class EventDto {
     /**
      * @return The timestamp expressed in seconds from epoch on which this event took place.
      */
-    public Integer getTimestamp() {
-        return timestamp;
+    public Integer getProcessingTimestamp() {
+        return processingTimestamp;
     }
 
     /**
      * @param timestamp The timestamp expressed in seconds from epoch on which this event took place.
      */
-    public void setTimestamp(final Integer timestamp) {
-        this.timestamp = timestamp;
+    public void setProcessingTimestamp(final Integer processingTimestamp) {
+        this.processingTimestamp = processingTimestamp;
+    }
+
+    /**
+     * @return The timestamp expressed in seconds from epoch on which this event took place.
+     */
+    public Integer getMeasurementTimestamp() {
+        return measurementTimestamp;
+    }
+
+    /**
+     * @param timestamp The timestamp expressed in seconds from epoch on which this event took place.
+     */
+    public void setMeasurementTimestamp(final Integer measurementTimestamp) {
+        this.measurementTimestamp = measurementTimestamp;
     }
 
     /**
