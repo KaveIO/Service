@@ -12,7 +12,7 @@ import nl.kpmg.af.service.exception.ServiceInitializationException;
  * Utility class for initializing the MongoDatabase object.
  * This is not the prettiest solution imaginable. For now it does suffice though. This setup
  * keeps all mongo connections pooled and keeps all jboss knowledge in the Service package.
- * 
+ *
  * @author Hoekstra.Maarten
  */
 public final class MongoDBUtil {
@@ -51,9 +51,6 @@ public final class MongoDBUtil {
                 String password = properties.getProperty("password");
                 String database = properties.getProperty("database");
                 mongoDatabase = new MongoDatabase(url, port, username, password, database);
-
-                // This will make sure all Layer, Node and Edge collections contain the correct Indexes.
-                mongoDatabase.ensureIndexes();
             } catch (IOException ex) {
                 throw new ServiceInitializationException("Can't load mongo.properties. Please make sure this is "
                         + "available in your config dir. Redeployment of the Service is necessary for correct "
