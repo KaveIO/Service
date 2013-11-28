@@ -1,7 +1,6 @@
 package nl.kpmg.af.service.service;
 
 import java.net.UnknownHostException;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -22,71 +21,70 @@ import org.slf4j.LoggerFactory;
 import com.mongodb.DBCursor;
 import com.mongodb.gridfs.GridFS;
 import com.mongodb.gridfs.GridFSDBFile;
+import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 
 /**
  * This class represents the edges rest service.
  * Right now it's a Java re-write of the current middleware layer service.
  * This service can be reached via http://jbosshost/Services/rest/layer, where
  * the relative path "rest" is defined in Activator.java.
- * 
+ *
  * @author janos4276
  */
-@Path("files")
+@Path("{applicationId}/files")
 public final class FileService {
     /**
      * The logger for this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(FileService.class);
-    /**
-     * DAO object used for fetching edges.
-     */
-    private final MongoDatabase mongoDatabase;
-
-    /**
-     * Default constructor fetches the DAO from MongoDBUtil.
-     */
-    public FileService() {
-        mongoDatabase = MongoDBUtil.getMongoDatabase();
-    }
 
     /**
      * Get the corresponding json for the "collection" collection.
-     * 
+     *
      * @param collection the collection of edges to fetch from
      * @return the list of edges
      */
     @GET
     @Path("{collection}")
     @Produces("application/json")
-    public Response get(@PathParam("collection") final String collection) {
-        List<FileDto> result = new LinkedList();
+    public Response get(@PathParam("applicationId") final String applicationId,
+            @PathParam("collection") final String collection) {
         try {
-            GridFS gridFS = new GridFS(mongoDatabase.getDatabase(), collection);
+            MongoDatabase applicationDatabase = MongoDBUtil.getApplicationDatabase(applicationId);
+            GridFS gridFS = new GridFS(applicationDatabase.getDatabase(), collection);
             DBCursor fileList = gridFS.getFileList();
-            result = FileAssembler.disassemble(fileList);
+            List<FileDto> result = FileAssembler.disassemble(fileList);
+            return Response.ok(result).build();
+        } catch (ApplicationDatabaseConnectionException ex) {
+            LOGGER.error("Error has occured. The application database could not be connected.", ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         } catch (UnknownHostException | MongoAuthenticationException ex) {
-            LOGGER.error("something is wrong", ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        return Response.ok(result).build();
     }
 
     /**
      * Get the corresponding json for the "collection" collection.
-     * 
+     *
      * @param collection the collection of edges to fetch from
      * @return the list of edges
      */
     @GET
     @Path("{collection}/{filename}")
     @Produces("text/plain")
-    public Response get(@PathParam("collection") final String collection, @PathParam("filename") final String filename) {
+    public Response get(@PathParam("applicationId") final String applicationId,
+            @PathParam("collection") final String collection, @PathParam("filename") final String filename) {
         try {
-            GridFS gridFS = new GridFS(mongoDatabase.getDatabase(), collection);
+            MongoDatabase applicationDatabase = MongoDBUtil.getApplicationDatabase(applicationId);
+            GridFS gridFS = new GridFS(applicationDatabase.getDatabase(), collection);
             GridFSDBFile file = gridFS.findOne(filename);
             return Response.ok(file.getInputStream()).build();
+        } catch (ApplicationDatabaseConnectionException ex) {
+            LOGGER.error("Error has occured. The application database could not be connected.", ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         } catch (UnknownHostException | MongoAuthenticationException ex) {
             LOGGER.error("something is wrong", ex);
-            return Response.serverError().build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 }
