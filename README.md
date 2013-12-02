@@ -4,7 +4,7 @@ Service
 (REST) Service based on JBoss RESTeasy, which offers an
 interface to the data contained in MongoDB.
 
-At the moment contains only the "/layer/{n}" sevice, which also serves as an example.
+At the moment contains only the "/databasename/layer/{n}" sevice, which also serves as an example.
 
 
 To Play
@@ -17,7 +17,7 @@ To test simple queries with the live remote Service at BitBrains this does the t
 
 + In the REST Console app set the following fields:
    + Target:
-      + Request URI: localhost:8080/Service/layer/twitter
+      + Request URI: localhost:8080/Service/overwatchChep/nodes/drone
       + Request Method: POST
    + Body: 
       + Content Type: application/json
@@ -38,9 +38,9 @@ In the JBOSS directory <tt>standalone/configuration/mongo.properties</tt>:
 
 	 url      = mdb-001
 	 port     = 27017
-	 username = overwatch
+	 username = service
 	 password = XXX
-	 database = overwatch
+	 database = security
 
 
 To Test
@@ -51,14 +51,14 @@ To Test
 + copy war to jboss-as-7.1.1.Final/standalone/deployments/.
 + jboss-as-7.1.1.Final #> sh bin/standalone.sh
 + or just deploy it to a server from inside Eclipse (easier)
-+ goto http://localhost:8080/Services/rest/layer/twitter.json
++ goto http://localhost:8080/Service/overwatchChep/layer/cioHeatMap.json
 
 To Deploy On BB
 ===============
 (Note this has not been tested)
 + Comment line 21 and uncomment line 22 in AbstractDao.java. I (Jan Amoraal) need to "fix" the code to use properties.
 
-        POST /Service//layer/LAYER_NAME
+        POST /Service/DATABASE_NAME/layer/LAYER_NAME
         {
         
         		"sort": int          # The result set is always sorted on the timestamp. Value 1 for ascending, value -1 for Descending. default 1
