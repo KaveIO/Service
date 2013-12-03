@@ -7,6 +7,7 @@ interface to the data contained in MongoDB.
 At the moment contains only the "/databasename/layer/{n}" sevice, which also serves as an example.
 
 + NOTE: use JDK 1.7 for JBoss server (like all packages)!!!
+   + Eclipse plug-in: Window, Preferences, Server, Runtime Environment, Edit, JRE
 
 
 To Play
