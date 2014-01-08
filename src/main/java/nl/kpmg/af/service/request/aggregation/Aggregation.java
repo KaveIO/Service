@@ -14,21 +14,21 @@ public final class Aggregation {
      * @return Which type of ids are being filtered.
      */
     public String getBy() {
-        return by;
+        return this.by;
     }
 
     /**
-     * @param type Which type of ids are being filtered.
+     * @param by Which type of ids are being filtered.
      */
     public void setBy(final String by) {
         this.by = by;
     }
 
     public AggregationType getType() {
-        return type;
+        return this.type;
     }
 
-    public void setType(AggregationType type) {
+    public void setType(final AggregationType type) {
         this.type = type;
     }
 }

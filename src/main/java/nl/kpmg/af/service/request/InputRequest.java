@@ -9,10 +9,10 @@ public class InputRequest {
     private Map value;
 
     public Map getValue() {
-        return value;
+        return this.value;
     }
 
-    public void setValue(Map value) {
+    public void setValue(final Map value) {
         this.value = value;
     }
 }

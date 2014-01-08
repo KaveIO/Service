@@ -30,8 +30,9 @@ public final class InputService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     *
-     * @param collection the collection of events to fetch from
+     * 
+     * @param applicationId The ID of the application.
+     * @param collection the collection of events to fetch from.
      * @param request the request which determines which events to return.
      * @return a list of events
      */
@@ -40,7 +41,7 @@ public final class InputService {
     @Consumes("application/json")
     @Produces("application/json")
     public Response post(@PathParam("applicationId") final String applicationId,
-            @PathParam("collection") final String collection, InputRequest request) {
+                         @PathParam("collection") final String collection, final InputRequest request) {
         try {
             InputDao inputDao = MongoDBUtil.getDao(applicationId, InputDao.class);
             Input input = InputAssembler.assemble(collection, request);

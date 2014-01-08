@@ -43,18 +43,18 @@ public final class LayerRequest {
     public MongoQuery createMongoQuery() throws InvalidRequestException {
         MongoQuery query = new MongoQuery();
         DBObject queryComponents = query.getDBObj();
-        if (filter != null) {
-            Timestamp timestamp = filter.getTimeStamp();
+        if (this.filter != null) {
+            Timestamp timestamp = this.filter.getTimeStamp();
             if (timestamp != null) {
                 DBObject timefilter = timestamp.getMongoCondition();
                 queryComponents.putAll(timefilter);
             }
-            Location location = filter.getLocation();
+            Location location = this.filter.getLocation();
             if (location != null) {
                 DBObject locationfilter = location.getMongoCondition();
                 queryComponents.putAll(locationfilter);
             }
-            Relation relation = filter.getRelation();
+            Relation relation = this.filter.getRelation();
             if (relation != null) {
                 DBObject relationfilter = relation.getMongoCondition();
                 queryComponents.putAll(relationfilter);
@@ -69,8 +69,8 @@ public final class LayerRequest {
      * @return sort as a MongoOrder
      */
     public MongoOrder createMongoOrder() {
-        if (sort != null) {
-            return new MongoOrder(sort);
+        if (this.sort != null) {
+            return new MongoOrder(this.sort);
         } else {
             return new MongoOrder();
         }
@@ -80,7 +80,7 @@ public final class LayerRequest {
      * @return The order based on timestamp in which the events are returned.
      */
     public int getSort() {
-        return sort;
+        return this.sort;
     }
 
     /**
@@ -94,7 +94,7 @@ public final class LayerRequest {
      * @return The maximum amount of objects to be returned.
      */
     public int getLimit() {
-        return limit;
+        return this.limit;
     }
 
     /**
@@ -108,7 +108,7 @@ public final class LayerRequest {
      * @return The more complex filter parameters used to fetch only a subset of all objects.
      */
     public LayerFilter getFilter() {
-        return filter;
+        return this.filter;
     }
 
     /**
@@ -119,10 +119,10 @@ public final class LayerRequest {
     }
 
     public Aggregation getAggregation() {
-        return aggregation;
+        return this.aggregation;
     }
 
-    public void setAggregation(Aggregation aggregation) {
+    public void setAggregation(final Aggregation aggregation) {
         this.aggregation = aggregation;
     }
 }

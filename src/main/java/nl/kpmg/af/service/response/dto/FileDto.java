@@ -12,34 +12,34 @@ public class FileDto {
     private Date create;
 
     public String getFilename() {
-        return filename;
+        return this.filename;
     }
 
-    public void setFilename(String filename) {
+    public void setFilename(final String filename) {
         this.filename = filename;
     }
 
     public Long getSize() {
-        return size;
+        return this.size;
     }
 
-    public void setSize(Long size) {
+    public void setSize(final Long size) {
         this.size = size;
     }
 
     public String getMd5() {
-        return md5;
+        return this.md5;
     }
 
-    public void setMd5(String md5) {
+    public void setMd5(final String md5) {
         this.md5 = md5;
     }
 
     public Date getCreate() {
-        return create;
+        return this.create;
     }
 
-    public void setCreate(Date create) {
+    public void setCreate(final Date create) {
         this.create = create;
     }
 }
