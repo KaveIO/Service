@@ -1,7 +1,6 @@
 package nl.kpmg.af.service.service;
 
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -29,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * Right now it's a Java re-write of the current middleware layer service.
  * This service can be reached via http://jbosshost/Services/rest/layer, where
  * the relative path "rest" is defined in Activator.java.
- *
+ * 
  * @author janos4276
  */
 @Path("{applicationId}/edges")
@@ -41,7 +40,8 @@ public final class EdgeService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     *
+     * 
+     * @param applicationId The application ID.
      * @param collection the collection of edges to fetch from
      * @return the list of edges
      */
@@ -49,7 +49,7 @@ public final class EdgeService {
     @Path("{collection}")
     @Produces("application/json")
     public Response get(@PathParam("applicationId") final String applicationId,
-            @PathParam("collection") final String collection) {
+                        @PathParam("collection") final String collection) {
         try {
             EdgeDao edgeDao = MongoDBUtil.getDao(applicationId, EdgeDao.class);
             List<Edge> fetchedEdges = edgeDao.fetchAll(collection);
@@ -66,7 +66,8 @@ public final class EdgeService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     *
+     * 
+     * @param applicationId The application ID.
      * @param collection the collection of edges to fetch from
      * @param request the request which determines which edges to return.
      * @return a list of edges
@@ -76,7 +77,7 @@ public final class EdgeService {
     @Produces("application/json")
     @Consumes("application/json")
     public Response post(@PathParam("applicationId") final String applicationId,
-            @PathParam("collection") final String collection, final EdgeRequest request) {
+                         @PathParam("collection") final String collection, final EdgeRequest request) {
         try {
             EdgeDao edgeDao = MongoDBUtil.getDao(applicationId, EdgeDao.class);
             List<Edge> fetchedEdges = edgeDao.fetchByFilter(collection, request.createMongoQuery(), request.getLimit());

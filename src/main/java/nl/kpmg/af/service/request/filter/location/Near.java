@@ -53,7 +53,7 @@ public final class Near {
      * @return Adjacency based location filter for the layer request.
      */
     public GeoJSONPoint getGeometry() {
-        return geometry;
+        return this.geometry;
     }
 
     /**
@@ -67,7 +67,7 @@ public final class Near {
      * @return Adjacency distance to given geometry point in meters.
      */
     public Double getDistance() {
-        return distance;
+        return this.distance;
     }
 
     /**

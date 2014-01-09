@@ -19,12 +19,13 @@ public final class InputAssembler {
     }
 
     /**
-     * Disassembles Event object into EventDto object.
+     * Assembles EventDto object into Input object.
      * 
-     * @param event object to disassemble
-     * @return disassembled event object
+     * @param type The input type.
+     * @param inputDto The input data transfer object.
+     * @return
      */
-    public static Input assemble(String type, final InputRequest inputDto) {
+    public static Input assemble(final String type, final InputRequest inputDto) {
         Input input = new ConcreteInput();
         input.setType(type);
         input.setTimestamp(new Date());

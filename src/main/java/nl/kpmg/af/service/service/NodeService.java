@@ -1,7 +1,6 @@
 package nl.kpmg.af.service.service;
 
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -29,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * Right now it's a Java re-write of the current middleware layer service.
  * This service can be reached via http://jbosshost/Services/rest/layer, where
  * the relative path "rest" is defined in Activator.java.
- *
+ * 
  * @author janos4276
  */
 @Path("{applicationId}/nodes")
@@ -41,7 +40,8 @@ public final class NodeService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     *
+     * 
+     * @param applicationId The application ID.
      * @param collection the collection of nodes to fetch from
      * @return the list of nodes
      */
@@ -49,7 +49,7 @@ public final class NodeService {
     @Path("{collection}")
     @Produces("application/json")
     public Response get(@PathParam("applicationId") final String applicationId,
-            @PathParam("collection") final String collection) {
+                        @PathParam("collection") final String collection) {
         try {
             NodeDao nodeDao = MongoDBUtil.getDao(applicationId, NodeDao.class);
             List<Node> fetchedNodes = nodeDao.fetchAll(collection);
@@ -66,7 +66,8 @@ public final class NodeService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     *
+     * 
+     * @param applicationId The application ID.
      * @param collection the collection of nodes to fetch from
      * @param request the request which determines which nodes to return.
      * @return a list of nodes
@@ -76,7 +77,7 @@ public final class NodeService {
     @Produces("application/json")
     @Consumes("application/json")
     public Response post(@PathParam("applicationId") final String applicationId,
-            @PathParam("collection") final String collection, final NodeRequest request) {
+                         @PathParam("collection") final String collection, final NodeRequest request) {
         try {
             NodeDao nodeDao = MongoDBUtil.getDao(applicationId, NodeDao.class);
             List<Node> fetchedNodes = nodeDao.fetchByFilter(collection, request.createMongoQuery(), request.getLimit());

@@ -1,7 +1,6 @@
 package nl.kpmg.af.service.service;
 
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -31,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * Right now it's a Java re-write of the current middleware layer service.
  * This service can be reached via http://jbosshost/Services/rest/layer, where
  * the relative path "rest" is defined in Activator.java.
- *
+ * 
  * @author janos4276
  */
 @Path("{applicationId}/layer")
@@ -43,7 +42,8 @@ public final class LayerService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     *
+     * 
+     * @param applicationId The application ID.
      * @param collection the collection of events to fetch from
      * @return the list of events
      */
@@ -51,7 +51,7 @@ public final class LayerService {
     @Path("{collection}")
     @Produces("application/json")
     public Response get(@PathParam("applicationId") final String applicationId,
-            @PathParam("collection") final String collection) {
+                        @PathParam("collection") final String collection) {
         try {
             EventDao eventDao = MongoDBUtil.getDao(applicationId, EventDao.class);
             List<Event> fetchedEvents = eventDao.fetchAll(collection);
@@ -68,7 +68,8 @@ public final class LayerService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     *
+     * 
+     * @param applicationId The application ID.
      * @param collection the collection of events to fetch from
      * @param request the request which determines which events to return.
      * @return a list of events
@@ -78,18 +79,18 @@ public final class LayerService {
     @Produces("application/json")
     @Consumes("application/json")
     public Response post(@PathParam("applicationId") final String applicationId,
-            @PathParam("collection") final String collection, final LayerRequest request) {
+                         @PathParam("collection") final String collection, final LayerRequest request) {
         List<EventDto> result;
         try {
             EventDao eventDao = MongoDBUtil.getDao(applicationId, EventDao.class);
             Aggregation aggregation = request.getAggregation();
             if (aggregation == null) {
                 List<Event> fetchedEvents = eventDao.fetchByFilter(collection, request.createMongoQuery(),
-                        request.getLimit(), request.createMongoOrder());
+                                                                   request.getLimit(), request.createMongoOrder());
                 result = EventAssembler.disassemble(fetchedEvents);
             } else if (aggregation.getType() == AggregationType.LATEST) {
                 List<Event> fetchedEvents = eventDao.fetchLatestByFilter(collection, aggregation.getBy(),
-                        request.createMongoQuery());
+                                                                         request.createMongoQuery());
                 result = EventAssembler.disassemble(fetchedEvents);
             } else {
                 LOGGER.warn("Error has occured. An unknown aggregation type has been requested.");
