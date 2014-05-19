@@ -25,7 +25,7 @@ import com.mongodb.DBObject;
  * Utility class for initializing the MongoDatabase object.
  * This is not the prettiest solution imaginable. For now it does suffice though. This setup
  * keeps all mongo connections pooled and keeps all jboss knowledge in the Service package.
- * 
+ *
  * @author Hoekstra.Maarten
  */
 public final class MongoDBUtil {
@@ -53,13 +53,13 @@ public final class MongoDBUtil {
     }
 
     public static <T extends AbstractDao> T getDao(final String applicationId, final Class<T> clazz)
-                                                                                                    throws ApplicationDatabaseConnectionException {
+            throws ApplicationDatabaseConnectionException {
         MongoDatabase applicationDatabase = getApplicationDatabase(applicationId);
         try {
             Constructor<T> constructor = clazz.getConstructor(MongoDatabase.class);
             return constructor.newInstance(applicationDatabase);
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException ex) {
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException |
+                IllegalArgumentException | InvocationTargetException ex) {
             throw new ApplicationDatabaseConnectionException("Couldn't build Dao for given applicationDatabase", ex);
         }
     }
@@ -68,7 +68,7 @@ public final class MongoDBUtil {
      * @return The actual mongoDatabase objects which is being managed by this utility.
      */
     public static synchronized MongoDatabase getApplicationDatabase(final String applicationId)
-                                                                                               throws ApplicationDatabaseConnectionException {
+            throws ApplicationDatabaseConnectionException {
         if (!applicationDatabases.containsKey(applicationId)) {
 
             try {
@@ -79,28 +79,28 @@ public final class MongoDBUtil {
 
                 if (application == null) {
                     throw new ApplicationDatabaseConnectionException("No application record with id '" + applicationId
-                                                                     + "' could be found in the security database");
+                            + "' could be found in the security database");
                 } else {
                     Map<String, Object> databaseParameters = (Map<String, Object>) application.get("database");
                     String host = (String) databaseParameters.get("host");
-                    Integer port = (Integer) databaseParameters.get("port");
+                    Double port = (Double) databaseParameters.get("port");
                     String username = (String) databaseParameters.get("username");
                     String password = (String) databaseParameters.get("password");
                     String databaseName = (String) databaseParameters.get("database");
 
                     applicationDatabases.put(applicationId,
-                                             connectDatabase(host, port, username, password, databaseName));
+                            connectDatabase(host, port.intValue(), username, password, databaseName));
                 }
             } catch (UnknownHostException | MongoAuthenticationException ex) {
                 throw new ApplicationDatabaseConnectionException(
-                                                                 "Couldn't connect application database since no "
-                                                                         + "connection to the security database could be established",
-                                                                 ex);
+                        "Couldn't connect application database since no "
+                        + "connection to the security database could be established",
+                        ex);
             } catch (ClassCastException ex) {
                 throw new ApplicationDatabaseConnectionException(
-                                                                 "Couldn't connect application database since the "
-                                                                         + "configuration in the security database couldn't be parsed.",
-                                                                 ex);
+                        "Couldn't connect application database since the "
+                        + "configuration in the security database couldn't be parsed.",
+                        ex);
             }
         }
         return applicationDatabases.get(applicationId);
@@ -124,16 +124,16 @@ public final class MongoDBUtil {
                 securityDatabase = connectDatabase(url, port, username, password, database);
             } catch (IOException ex) {
                 throw new ServiceInitializationException(
-                                                         "Can't load mongo.properties. Please make sure this is "
-                                                                 + "available in your config dir. Redeployment of the Service is necessary for correct "
-                                                                 + "operation.", ex);
+                        "Can't load mongo.properties. Please make sure this is "
+                        + "available in your config dir. Redeployment of the Service is necessary for correct "
+                        + "operation.", ex);
             }
         }
         return securityDatabase;
     }
 
     private static MongoDatabase connectDatabase(final String url, final int port, final String username,
-                                                 final String password, final String database) {
+            final String password, final String database) {
         return new MongoDatabase(url, port, username, password, database);
     }
 }
