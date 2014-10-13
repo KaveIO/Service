@@ -36,6 +36,11 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+	 <repository>
+	  <id>unknown-jars-temp-repo</id>
+	  <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
+	  <url>file:${project.basedir}/lib</url>
+	 </repository>
 	</repositories>
 
 	<build>
@@ -99,6 +104,17 @@
 			<version>${resteasy.version}</version>
 			<scope>provided</scope>
 		</dependency>
+                <dependency>
+                        <artifactId>slf4j-api</artifactId>
+                        <groupId>org.slf4j</groupId>
+                        <type>jar</type>
+                        <version>1.6.6</version>
+                </dependency>
+	 <dependency>
+	  <groupId>unknown.binary</groupId>
+	  <artifactId>javax.ws.rs-api-2.0</artifactId>
+	  <version>SNAPSHOT</version>
+	 </dependency>
 	</dependencies>
 
 </project>

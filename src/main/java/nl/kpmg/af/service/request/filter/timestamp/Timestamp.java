@@ -20,7 +20,7 @@ public final class Timestamp {
     /**
      * Field name of the timestamp in mongo.
      */
-    private static final String MONGO_TIMESTAMP_FIELD = "timestamp";
+    private static final String MONGO_TIMESTAMP_FIELD = "measurementTimestamp";
     /**
      * Constant multiplication factor to move from seconds to milliseconds.
      */
