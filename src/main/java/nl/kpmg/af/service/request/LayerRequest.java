@@ -10,6 +10,8 @@ import nl.kpmg.af.service.request.filter.relation.Relation;
 import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
 
 import com.mongodb.DBObject;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 /**
  * Top level request object for the layer service.
@@ -93,7 +95,7 @@ public final class LayerRequest {
     /**
      * @return The maximum amount of objects to be returned.
      */
-    public int getLimit() {
+    public Integer getLimit() {
         return this.limit;
     }
 
