@@ -26,7 +26,7 @@ public final class LayerRequest {
     /**
      * The maximum amount of objects to be returned.
      */
-    private Integer limit = null;
+    private Integer limit = 1000;
     /**
      * The more complex filter parameters used to fetch only a subset of all objects.
      */
