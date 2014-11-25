@@ -1,5 +1,7 @@
 package nl.kpmg.af.service.response.dto;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import java.util.Map;
  *
  * @author Hoekstra.Maarten
  */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public final class EventDto {
     /**
      * The unique mongo id of this object.

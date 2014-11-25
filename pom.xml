@@ -58,7 +58,7 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.3</version>
 				<configuration>
-					<warSourceDirectory>WebContent</warSourceDirectory>
+					<!--<warSourceDirectory>WebContent</warSourceDirectory>-->
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
@@ -104,17 +104,24 @@
 			<version>${resteasy.version}</version>
 			<scope>provided</scope>
 		</dependency>
-                <dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson-provider</artifactId>
+			<version>${resteasy.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
                         <artifactId>slf4j-api</artifactId>
                         <groupId>org.slf4j</groupId>
                         <type>jar</type>
                         <version>1.6.6</version>
                 </dependency>
-	 <dependency>
-	  <groupId>unknown.binary</groupId>
-	  <artifactId>javax.ws.rs-api-2.0</artifactId>
-	  <version>SNAPSHOT</version>
-	 </dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.0</version>
+		</dependency>
 	</dependencies>
 
 </project>
