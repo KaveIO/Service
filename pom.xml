@@ -70,6 +70,12 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>DataModel</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-client</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- JBoss dependencies. Note these are "provided" by JBoss AS. Need to
