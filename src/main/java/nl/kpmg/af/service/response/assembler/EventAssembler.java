@@ -14,7 +14,7 @@ import nl.kpmg.af.service.response.dto.GeoJSONPointDto;
  */
 public final class EventAssembler {
     /**
-     * Field name of the timestamp in mongo.
+     * Timestamp conversion factor.
      */
     private static final long FACTOR_SECONDS_MILLISECONDS = 1000L;
 
