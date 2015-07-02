@@ -83,13 +83,21 @@ public final class MongoDBUtil {
                 } else {
                     Map<String, Object> databaseParameters = (Map<String, Object>) application.get("database");
                     String host = (String) databaseParameters.get("host");
-                    Double port = (Double) databaseParameters.get("port");
+                    Integer port;
+                    try {
+                        port = (Integer) databaseParameters.get("port");
+                    } catch (ClassCastException ex) {
+                        // Try parsing it as double... some (older) versions of Mongo return
+                        // ints as doubles...
+                        Double portDbl = (Double) databaseParameters.get("port");
+                        port = portDbl.intValue();
+                    }
                     String username = (String) databaseParameters.get("username");
                     String password = (String) databaseParameters.get("password");
                     String databaseName = (String) databaseParameters.get("database");
 
                     applicationDatabases.put(applicationId,
-                            connectDatabase(host, port.intValue(), username, password, databaseName));
+                            connectDatabase(host, port, username, password, databaseName));
                 }
             } catch (UnknownHostException | MongoAuthenticationException ex) {
                 throw new ApplicationDatabaseConnectionException(
