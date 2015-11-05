@@ -1,59 +1,113 @@
 package nl.kpmg.af.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import nl.kpmg.af.datamodel.connection.MongoDatabase;
 import nl.kpmg.af.datamodel.connection.exception.MongoAuthenticationException;
 import nl.kpmg.af.datamodel.dao.AbstractDao;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
-import nl.kpmg.af.service.exception.ServiceInitializationException;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import java.util.logging.Logger;
+import nl.kpmg.af.service.service.LayerService;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Utility class for initializing the MongoDatabase object.
- * This is not the prettiest solution imaginable. For now it does suffice though. This setup
- * keeps all mongo connections pooled and keeps all jboss knowledge in the Service package.
+ * Utility class for initializing the MongoDatabase object. This is not the
+ * prettiest solution imaginable. For now it does suffice though. This setup
+ * keeps all mongo connections pooled and keeps all jboss knowledge in the
+ * Service package.
  *
  * @author Hoekstra.Maarten
  */
 public final class MongoDBUtil {
-    /**
-     * The name of the properties file.
-     */
-    private static final String PROPERTIES_FILE_NAME = "mongo.properties";
-
-    /**
-     * The configuration property name which refers to the configuration directory.
-     */
-    private static final String CONFIG_DIR_PROPERTY = "jboss.server.config.dir";
 
     /**
      * The actual mongoDatabase objects which is being managed by this utility.
      */
-    private static MongoDatabase securityDatabase;
-
-    private static Map<String, MongoDatabase> applicationDatabases = new HashMap();
+    private MongoDatabase securityDatabase;
+    private final Map<String, MongoDatabase> applicationDatabases = new HashMap();
+    private String url;
+    private int port;
+    private String username;
+    private String password;
+    private String database;
 
     /**
-     * Private default constructor to make object instantiation impossible.
+     * The logger for this class.
      */
-    private MongoDBUtil() {
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MongoDBUtil.class);
+
+    /*
+     Getter setter methods
+     */
+    public String getUrl() {
+        return url;
     }
 
-    public static <T extends AbstractDao> T getDao(final String applicationId, final Class<T> clazz)
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    /**
+     * Default constructor for object initialization via spring setter
+     * injection.
+     *
+     */
+    public MongoDBUtil() {
+        LOGGER.info("MongoDBUtil.java Inside the MongoDBUtil constructor.Constructing "
+                + "the MongoDbUtil object via Spring setter injection.");
+        this.securityDatabase = null;
+    }
+
+    /**
+     * Methods for Mongo database object creation and connection.
+     *
+     */
+    public <T extends AbstractDao> T getDao(final String applicationId, final Class<T> clazz)
             throws ApplicationDatabaseConnectionException {
+        LOGGER.info("MongoDBUtil classs, inside  the getDao method.");
+        this.securityDatabase = new MongoDatabase(this.url, this.port, this.username, this.password, this.database);
         MongoDatabase applicationDatabase = getApplicationDatabase(applicationId);
         try {
             Constructor<T> constructor = clazz.getConstructor(MongoDatabase.class);
@@ -65,82 +119,62 @@ public final class MongoDBUtil {
     }
 
     /**
-     * @return The actual mongoDatabase objects which is being managed by this utility.
+     * @return The actual mongoDatabase objects which is being managed by this
+     * utility.
      */
-    public static synchronized MongoDatabase getApplicationDatabase(final String applicationId)
+    public synchronized MongoDatabase getApplicationDatabase(final String applicationId)
             throws ApplicationDatabaseConnectionException {
+        LOGGER.info(" inside  the getApplicationDatabase method.");
         if (!applicationDatabases.containsKey(applicationId)) {
+            connectApplicationDatabase(applicationId);
 
-            try {
-                MongoDatabase connection = getSecurityDatabase();
-                DB database = connection.getDatabase();
-                DBCollection collection = database.getCollection("applications");
-                DBObject application = collection.findOne(new BasicDBObject("id", applicationId));
-
-                if (application == null) {
-                    throw new ApplicationDatabaseConnectionException("No application record with id '" + applicationId
-                            + "' could be found in the security database");
-                } else {
-                    Map<String, Object> databaseParameters = (Map<String, Object>) application.get("database");
-                    String host = (String) databaseParameters.get("host");
-                    Integer port;
-                    try {
-                        port = (Integer) databaseParameters.get("port");
-                    } catch (ClassCastException ex) {
-                        // Try parsing it as double... some (older) versions of Mongo return
-                        // ints as doubles...
-                        Double portDbl = (Double) databaseParameters.get("port");
-                        port = portDbl.intValue();
-                    }
-                    String username = (String) databaseParameters.get("username");
-                    String password = (String) databaseParameters.get("password");
-                    String databaseName = (String) databaseParameters.get("database");
-
-                    applicationDatabases.put(applicationId,
-                            connectDatabase(host, port, username, password, databaseName));
-                }
-            } catch (UnknownHostException | MongoAuthenticationException ex) {
-                throw new ApplicationDatabaseConnectionException(
-                        "Couldn't connect application database since no "
-                        + "connection to the security database could be established",
-                        ex);
-            } catch (ClassCastException ex) {
-                throw new ApplicationDatabaseConnectionException(
-                        "Couldn't connect application database since the "
-                        + "configuration in the security database couldn't be parsed.",
-                        ex);
-            }
         }
         return applicationDatabases.get(applicationId);
     }
 
-    /**
-     * @return The actual mongoDatabase objects which is being managed by this utility.
-     */
-    private static synchronized MongoDatabase getSecurityDatabase() {
-        if (securityDatabase == null) {
-            String path = System.getProperty(CONFIG_DIR_PROPERTY) + File.separator + PROPERTIES_FILE_NAME;
-            Properties properties = new Properties();
-            try (FileInputStream fileInputStream = new FileInputStream(path)) {
-                properties.load(fileInputStream);
+    private void connectApplicationDatabase(String applicationId) throws ApplicationDatabaseConnectionException {
+        LOGGER.info(" inside  the connectApplicationDatabase method.");
+        try {
+            DB database = securityDatabase.getDatabase();
+            DBCollection collection = database.getCollection("applications");
+            DBObject application = collection.findOne(new BasicDBObject("id", applicationId));
 
-                String url = properties.getProperty("url");
-                int port = Integer.parseInt(properties.getProperty("port"));
-                String username = properties.getProperty("username");
-                String password = properties.getProperty("password");
-                String database = properties.getProperty("database");
-                securityDatabase = connectDatabase(url, port, username, password, database);
-            } catch (IOException ex) {
-                throw new ServiceInitializationException(
-                        "Can't load mongo.properties. Please make sure this is "
-                        + "available in your config dir. Redeployment of the Service is necessary for correct "
-                        + "operation.", ex);
+            if (application == null) {
+                throw new ApplicationDatabaseConnectionException("No application record with id '" + applicationId
+                        + "' could be found in the security database");
+            } else {
+                Map<String, Object> databaseParameters = (Map<String, Object>) application.get("database");
+                String host = (String) databaseParameters.get("host");
+                Integer port;
+                try {
+                    port = (Integer) databaseParameters.get("port");
+                } catch (ClassCastException ex) {
+                    // Try parsing it as double... some (older) versions of Mongo return
+                    // ints as doubles...
+                    Double portDbl = (Double) databaseParameters.get("port");
+                    port = portDbl.intValue();
+                }
+                String username = (String) databaseParameters.get("username");
+                String password = (String) databaseParameters.get("password");
+                String databaseName = (String) databaseParameters.get("database");
+
+                applicationDatabases.put(applicationId,
+                        connectDatabase(host, port, username, password, databaseName));
             }
+        } catch (UnknownHostException | MongoAuthenticationException ex) {
+            throw new ApplicationDatabaseConnectionException(
+                    "Couldn't connect application database since no "
+                    + "connection to the security database could be established",
+                    ex);
+        } catch (ClassCastException ex) {
+            throw new ApplicationDatabaseConnectionException(
+                    "Couldn't connect application database since the "
+                    + "configuration in the security database couldn't be parsed.",
+                    ex);
         }
-        return securityDatabase;
     }
 
-    private static MongoDatabase connectDatabase(final String url, final int port, final String username,
+    private MongoDatabase connectDatabase(final String url, final int port, final String username,
             final String password, final String database) {
         return new MongoDatabase(url, port, username, password, database);
     }

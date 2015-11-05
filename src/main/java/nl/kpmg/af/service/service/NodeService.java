@@ -22,25 +22,31 @@ import nl.kpmg.af.service.response.dto.NodeDto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * This class represents the nodes rest service.
  * Right now it's a Java re-write of the current middleware layer service.
  * This service can be reached via http://jbosshost/Services/rest/layer, where
  * the relative path "rest" is defined in Activator.java.
- * 
+ *
  * @author janos4276
  */
+@Service
 @Path("{applicationId}/nodes")
 public final class NodeService {
     /**
      * The logger for this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeService.class);
+    
+    @Autowired
+    private MongoDBUtil mongoDBUtil;
 
     /**
      * Get the corresponding json for the "collection" collection.
-     * 
+     *
      * @param applicationId The application ID.
      * @param collection the collection of nodes to fetch from
      * @return the list of nodes
@@ -51,7 +57,7 @@ public final class NodeService {
     public Response get(@PathParam("applicationId") final String applicationId,
                         @PathParam("collection") final String collection) {
         try {
-            NodeDao nodeDao = MongoDBUtil.getDao(applicationId, NodeDao.class);
+            NodeDao nodeDao = mongoDBUtil.getDao(applicationId, NodeDao.class);
             List<Node> fetchedNodes = nodeDao.fetchAll(collection);
             List<NodeDto> result = NodeAssembler.disassemble(fetchedNodes);
             return Response.ok(result).build();
@@ -66,7 +72,7 @@ public final class NodeService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     * 
+     *
      * @param applicationId The application ID.
      * @param collection the collection of nodes to fetch from
      * @param request the request which determines which nodes to return.
@@ -79,7 +85,7 @@ public final class NodeService {
     public Response post(@PathParam("applicationId") final String applicationId,
                          @PathParam("collection") final String collection, final NodeRequest request) {
         try {
-            NodeDao nodeDao = MongoDBUtil.getDao(applicationId, NodeDao.class);
+            NodeDao nodeDao = mongoDBUtil.getDao(applicationId, NodeDao.class);
             List<Node> fetchedNodes = nodeDao.fetchByFilter(collection, request.createMongoQuery(), request.getLimit());
             List<NodeDto> result = NodeAssembler.disassemble(fetchedNodes);
             return Response.ok(result).build();
@@ -93,5 +99,13 @@ public final class NodeService {
             LOGGER.error("Error has occured. Data could not be fetched.", ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    public MongoDBUtil getMongoDBUtil() {
+        return mongoDBUtil;
+    }
+    @Autowired
+    public void setMongoDBUtil(MongoDBUtil mongoDBUtil) {
+        LOGGER.info("in NodeService Injecting the MongoDBUtil bean .");
+        this.mongoDBUtil = mongoDBUtil;        
     }
 }

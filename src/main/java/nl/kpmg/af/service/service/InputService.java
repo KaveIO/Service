@@ -18,6 +18,7 @@ import nl.kpmg.af.service.response.assembler.InputAssembler;
 import nl.kpmg.af.service.response.dto.InputDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Hoekstra.Maarten
@@ -28,10 +29,12 @@ public final class InputService {
      * The logger for this class.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(InputService.class);
+    @Autowired
+    private MongoDBUtil mongoDBUtil;
 
     /**
      * Get the corresponding json for the "collection" collection.
-     * 
+     *
      * @param applicationId The application ID.
      * @param collection the collection of nodes to fetch from
      * @return the list of nodes
@@ -42,7 +45,7 @@ public final class InputService {
     public Response get(@PathParam("applicationId") final String applicationId,
                         @PathParam("collection") final String collection) {
         try {
-            InputDao inputDao = MongoDBUtil.getDao(applicationId, InputDao.class);
+            InputDao inputDao = mongoDBUtil.getDao(applicationId, InputDao.class);
             List<Input> fetchedInputs = inputDao.fetchAll(collection);
             List<InputDto> result = InputAssembler.disassemble(fetchedInputs);
             return Response.ok(result).build();
@@ -57,7 +60,7 @@ public final class InputService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     * 
+     *
      * @param applicationId The ID of the application.
      * @param collection the collection of events to fetch from.
      * @param request the request which determines which events to return.
@@ -70,7 +73,7 @@ public final class InputService {
     public Response post(@PathParam("applicationId") final String applicationId,
                          @PathParam("collection") final String collection, final InputRequest request) {
         try {
-            InputDao inputDao = MongoDBUtil.getDao(applicationId, InputDao.class);
+            InputDao inputDao = mongoDBUtil.getDao(applicationId, InputDao.class);
             Input input = InputAssembler.assemble(collection, request);
             inputDao.store(input);
         } catch (ApplicationDatabaseConnectionException ex) {
@@ -81,5 +84,13 @@ public final class InputService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
         return Response.ok().build();
+    }
+    public MongoDBUtil getMongoDBUtil() {
+        return mongoDBUtil;
+    }
+    @Autowired
+    public void setMongoDBUtil(MongoDBUtil mongoDBUtil) {
+        LOGGER.info("in InputService setting the MongoDBUtil bean.");
+        this.mongoDBUtil = mongoDBUtil;        
     }
 }

@@ -24,15 +24,18 @@ import nl.kpmg.af.service.response.dto.EventDto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * This class represents the layer rest service.
  * Right now it's a Java re-write of the current middleware layer service.
  * This service can be reached via http://jbosshost/Services/rest/layer, where
  * the relative path "rest" is defined in Activator.java.
- * 
+ *
  * @author janos4276
  */
+@Service
 @Path("{applicationId}/layer")
 public final class LayerService {
     /**
@@ -40,9 +43,12 @@ public final class LayerService {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(LayerService.class);
 
+    @Autowired
+    private MongoDBUtil mongoDBUtil;
+    
     /**
      * Get the corresponding json for the "collection" collection.
-     * 
+     *
      * @param applicationId The application ID.
      * @param collection the collection of events to fetch from
      * @return the list of events
@@ -53,7 +59,8 @@ public final class LayerService {
     public Response get(@PathParam("applicationId") final String applicationId,
                         @PathParam("collection") final String collection) {
         try {
-            EventDao eventDao = MongoDBUtil.getDao(applicationId, EventDao.class);
+            LOGGER.info(" Inside LayerService get method ,try block");
+            EventDao eventDao = mongoDBUtil.getDao(applicationId, EventDao.class);
             List<Event> fetchedEvents = eventDao.fetchAll(collection);
             List<EventDto> result = EventAssembler.disassemble(fetchedEvents);
             return Response.ok(result).build();
@@ -68,7 +75,7 @@ public final class LayerService {
 
     /**
      * Get the corresponding json for the "collection" collection.
-     * 
+     *
      * @param applicationId The application ID.
      * @param collection the collection of events to fetch from
      * @param request the request which determines which events to return.
@@ -82,7 +89,8 @@ public final class LayerService {
                          @PathParam("collection") final String collection, final LayerRequest request) {
         List<EventDto> result;
         try {
-            EventDao eventDao = MongoDBUtil.getDao(applicationId, EventDao.class);
+            LOGGER.info(" Inside LayerService post  method , try block ");
+            EventDao eventDao = mongoDBUtil.getDao(applicationId, EventDao.class);
             Aggregation aggregation = request.getAggregation();
             if (aggregation == null) {
                 List<Event> fetchedEvents = eventDao.fetchByFilter(collection, request.createMongoQuery(),
@@ -107,5 +115,13 @@ public final class LayerService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
         return Response.ok(result).build();
+    }
+    public MongoDBUtil getMongoDBUtil() {
+        return mongoDBUtil;
+    }
+    @Autowired
+    private void setMongoDBUtil(MongoDBUtil mongoDBUtil) {
+        LOGGER.info("in LayerService setting the MongoDBUtil bean.");
+        this.mongoDBUtil = mongoDBUtil;        
     }
 }
