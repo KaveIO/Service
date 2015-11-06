@@ -101,6 +101,12 @@ public final class LayerService {
     @Consumes("application/json")
     public Response post(@PathParam("applicationId") final String applicationId,
                          @PathParam("collection") final String collection, final LayerRequest request) {
+
+        if (forbiddenCollections.contains(collection)) {
+            LOGGER.error("Request for " + collection + " rejected");
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         List<EventDto> result;
         try {
             EventDao eventDao = MongoDBUtil.getDao(applicationId, EventDao.class);
