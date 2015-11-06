@@ -1,5 +1,6 @@
 package nl.kpmg.af.service.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -41,6 +42,20 @@ public final class LayerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LayerService.class);
 
     /**
+     * List of collections that should always be rejected, for example because they contain sensitive information
+     * that is never allowed to be requested by the service.
+     * Note: this is a Wi-Fi specific temporary workaround to comply with KPMG privacy regulations. The service overhaul
+     * which is currently (Nov 2015) underway should make it possible to define permissions on layer-basis, and hence
+     * this won't be needed anymore in code. For now, we need to get the DPO off our backs, so I have to hardcode it
+     * in :-(
+     */
+    private final ArrayList<String> forbiddenCollections = new ArrayList();
+
+    public LayerService() {
+        forbiddenCollections.add("trilaterationFitter");
+    }
+
+    /**
      * Get the corresponding json for the "collection" collection.
      * 
      * @param applicationId The application ID.
@@ -52,6 +67,12 @@ public final class LayerService {
     @Produces("application/json")
     public Response get(@PathParam("applicationId") final String applicationId,
                         @PathParam("collection") final String collection) {
+
+        if (forbiddenCollections.contains(collection)) {
+            LOGGER.error("Request for " + collection + " rejected");
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         try {
             EventDao eventDao = MongoDBUtil.getDao(applicationId, EventDao.class);
             List<Event> fetchedEvents = eventDao.fetchAll(collection);
