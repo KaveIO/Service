@@ -1,4 +1,4 @@
-{ 
+[{ 
     "password" : "admin",
     "id" : "test",
     "database" : {
@@ -9,3 +9,4 @@
         "database" : "test"
     }
 }
+]

@@ -15,16 +15,7 @@
     
     <context:component-scan base-package="nl.kpmg.af.service.service" />
         
-    <context:property-placeholder location="classpath:mongotest.properties"  />
-   
-         
-    <bean id="databaseInitialiser" class="nl.kpmg.af.service.request.filter.timestamp.DatabaseInitialiser"/>
-     
-    
-    
-     <!--<bean class="DatabaseInitialiser">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>-->
+    <context:property-placeholder location="classpath:mongo.properties"  />
     
     <bean id="mongoDBUtil" class="nl.kpmg.af.service.MongoDBUtil">
         <property name="url" value="${mongodb.url}"/>

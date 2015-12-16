@@ -1,28 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nl.kpmg.af.service.service;
 
-import com.mongodb.MongoClient;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.core.Response;
-import nl.kpmg.af.service.MongoDBUtil;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 import nl.kpmg.af.service.request.LayerRequest;
 import nl.kpmg.af.service.request.filter.LayerFilter;
-import nl.kpmg.af.service.request.filter.timestamp.DataLoadingTest;
 import nl.kpmg.af.service.request.filter.timestamp.DatabaseInitialiser;
 import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
 import nl.kpmg.af.service.response.dto.EventDto;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,8 +26,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author anaskar
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:testapplicationContext.xml"})
-public class LayerServiceTest extends DataLoadingTest {
+@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
+public class LayerServiceTest {
 
     /**
      * The logger for this class.
@@ -51,15 +38,9 @@ public class LayerServiceTest extends DataLoadingTest {
      */
     @Autowired
     private ApplicationContext applicationContext;
-    /**
-     * The MongoDBUtil bean is also being AutoWired .
-     */
-    @Autowired
-    private MongoDBUtil mongoDBUtil;
 
-    // commented out,can later look at how to deal
-    //    @Autowired
-    //    public DatabaseInitialiser databaseInitialiser;
+    private static DatabaseInitialiser databaseInitialiser;
+
     /**
      * The declaration of the string collection and other constants .
      */
@@ -73,49 +54,17 @@ public class LayerServiceTest extends DataLoadingTest {
     public static final int UNIX_DATE_TIME_PAST_TWO = 1434240000;
     public static final int UNIX_DATE_TIME_PAST_THREE = 1434326400;
 
-    private static MongodExecutable mongodExecutable;
-    private static MongodProcess mongod;
-    private static MongoClient mongoClient;
-
-    public LayerServiceTest() {
-    }
 
     @BeforeClass
-    public static void setUpClass() {
-
-        try {
-            DatabaseInitialiser.startMongoLayerService();
-        } catch (Exception ex) {
-            if (mongoClient != null) {
-                mongoClient.close();
-            }
-            if (mongod != null) {
-                mongod.stop();
-            }
-            if (mongodExecutable != null) {
-                mongodExecutable.stop();
-            }
-            Logger.getLogger(LayerServiceTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public static void setUpClass() throws Exception {
+        databaseInitialiser = new DatabaseInitialiser();
+        databaseInitialiser.start();
     }
+
 
     @AfterClass
     public static void tearDownClass() {
-
-        if (mongoClient != null) {
-            mongoClient.close();
-        }
-        if (mongod != null) {
-            mongod.stop();
-        }
-        if (mongodExecutable != null) {
-            mongodExecutable.stop();
-        }
-    }
-
-    @After
-    public void tearDown() {
-
+        databaseInitialiser.stop();
     }
 
     /**
@@ -137,7 +86,7 @@ public class LayerServiceTest extends DataLoadingTest {
         filter.setTimestamp(timestamp);
         request.setFilter(filter);
 
-        // declare a list to compare data retrieved from database        
+        // declare a list to compare data retrieved from database
         List<String> retrievedDatelist = new ArrayList<>();
         LayerService bean = applicationContext.getBean(LayerService.class);
         Response response = bean.post(APPLICATION_ID, COLLECTION, request);
@@ -164,7 +113,7 @@ public class LayerServiceTest extends DataLoadingTest {
         filter.setTimestamp(timestamp);
         request.setFilter(filter);
 
-        // declare a list to compare data retrieved from database        
+        // declare a list to compare data retrieved from database
         List<String> retrievedDatelist = new ArrayList<>();
 
         LayerService bean = applicationContext.getBean(LayerService.class);
@@ -222,7 +171,6 @@ public class LayerServiceTest extends DataLoadingTest {
 
     @Test
     public void testgreaterThanDate() {
-
         LayerRequest request = new LayerRequest();
         Timestamp timestamp = new Timestamp();
 
@@ -247,16 +195,5 @@ public class LayerServiceTest extends DataLoadingTest {
         boolean b = retrievedDatelist.equals(expecteddatelist);
 
         assertEquals(retrievedDatelist, expecteddatelist);
-
-    }
-
-    public MongoDBUtil getMongoDBUtil() {
-        return mongoDBUtil;
-    }
-
-    @Autowired
-    private void setMongoDBUtil(MongoDBUtil mongoDBUtil) {
-        LOGGER.info("in NewLayerServiceTest setting the MongoDBUtil bean.");
-        this.mongoDBUtil = mongoDBUtil;
     }
 }
