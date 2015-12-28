@@ -1,6 +1,7 @@
 [{ 
     "password" : "admin",
     "id" : "test",
+    "name" : "test",
     "database" : {
         "username" : "admin",
         "host" : "localhost",

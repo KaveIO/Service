@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 import nl.kpmg.af.datamodel.dao.InputDao;
 import nl.kpmg.af.datamodel.dao.exception.DataModelException;
 import nl.kpmg.af.datamodel.model.Input;
-import nl.kpmg.af.service.MongoDBUtil;
+import nl.kpmg.af.service.data.MongoDBUtil;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 import nl.kpmg.af.service.request.InputRequest;
 import nl.kpmg.af.service.response.assembler.InputAssembler;

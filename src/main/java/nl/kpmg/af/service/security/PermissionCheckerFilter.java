@@ -1,4 +1,4 @@
-package nl.kpmg.af.security;
+package nl.kpmg.af.service.security;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -11,6 +11,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import nl.kpmg.af.service.data.MongoDBUtil;
+import nl.kpmg.af.service.data.security.User;
+import nl.kpmg.af.service.data.security.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This {@link Filter} performs permission checking on requested resource. Authenticated client will have access to
@@ -21,6 +25,14 @@ import javax.servlet.http.HttpServletResponse;
  * @author Vladimir Kravtsov
  */
 public class PermissionCheckerFilter implements Filter {
+
+    @Autowired
+    private MongoDBUtil mongoDBUtil;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
 
@@ -38,23 +50,30 @@ public class PermissionCheckerFilter implements Filter {
             return;
         }
 
-        String username = userPrincipal.getName();
-        String requestedPath = httpServetRequest.getPathInfo(); // assumed that path is in the format
-                                                                // /{applicationName}/{serviceName}/{collection}
+        ServiceRequest serviceRequest = createServiceRequest(httpServetRequest);
+        User user = userRepository.findOneByUsername(userPrincipal.getName());
 
-        String[] pathParts = requestedPath.split("/");
-        if (pathParts.length >= 2) { // if path not equals to "/"
-            String applicationName = pathParts[1];
-            if (!username.equals(applicationName)) {
+        if (serviceRequest.isValid() && user != null) {
+            if (!user.isAllowed(serviceRequest)) {
                 httpServetResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
+        } else {
+            httpServetResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
         }
+
         chain.doFilter(request, response);
     }
 
     @Override
     public void destroy() {
 
+    }
+
+    private ServiceRequest createServiceRequest(HttpServletRequest httpServetRequest) {
+        ServiceRequest request = new V0ServiceRequest(httpServetRequest);
+
+        return request;
     }
 }

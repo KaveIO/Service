@@ -11,18 +11,26 @@
         http://www.springframework.org/schema/util 
         http://www.springframework.org/schema/util/spring-util.xsd 
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd">
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/data/mongo 
+        http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
     
     <context:component-scan base-package="nl.kpmg.af.service.service" />
-        
     <context:property-placeholder location="classpath:mongo.properties"  />
     
-    <bean id="mongoDBUtil" class="nl.kpmg.af.service.MongoDBUtil">
-        <property name="url" value="${mongodb.url}"/>
-        <!--<property name="host" value="${mongodb.host}"/>-->
-        <property name="port" value="${mongodb.port}"/>
-        <property name="username" value="${mongodb.username}"/>
-        <property name="password" value="${mongodb.password}"/>
-        <property name="database" value="${mongodb.database}"/>
+    <mongo:repositories base-package="nl.kpmg.af.service.data.security.repository"/>
+    <mongo:db-factory 
+        id="mongoDbFactory" 
+        host="${mongodb.url}" 
+        port="${mongodb.port}" 
+        username="${mongodb.username}" 
+        password="${mongodb.password}" 
+        dbname="${mongodb.database}" />
+    <bean id="mongoDb" factory-bean="mongoDbFactory" factory-method="getDb"/>
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
     </bean>
+    
+    <bean id="mongoDBUtil" class="nl.kpmg.af.service.data.MongoDBUtil"/>
+    <bean id="permissionCheckerFilter" class="nl.kpmg.af.service.security.PermissionCheckerFilter"/>    
 </beans>

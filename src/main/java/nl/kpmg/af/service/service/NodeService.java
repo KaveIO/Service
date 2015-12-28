@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import nl.kpmg.af.datamodel.dao.NodeDao;
 import nl.kpmg.af.datamodel.dao.exception.DataModelException;
 import nl.kpmg.af.datamodel.model.Node;
-import nl.kpmg.af.service.MongoDBUtil;
+import nl.kpmg.af.service.data.MongoDBUtil;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 import nl.kpmg.af.service.exception.InvalidRequestException;
 import nl.kpmg.af.service.request.NodeRequest;
