@@ -18,7 +18,7 @@ package nl.kpmg.af.service.security;
 import java.io.IOException;
 import java.security.Principal;
 import javax.servlet.ServletException;
-import nl.kpmg.af.service.request.filter.timestamp.DatabaseInitialiser;
+import nl.kpmg.af.service.data.DatabaseInitialiser;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;

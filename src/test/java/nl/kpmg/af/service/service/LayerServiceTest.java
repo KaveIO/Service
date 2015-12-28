@@ -1,5 +1,6 @@
 package nl.kpmg.af.service.service;
 
+import nl.kpmg.af.service.v0.LayerService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,7 +8,7 @@ import javax.ws.rs.core.Response;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 import nl.kpmg.af.service.request.LayerRequest;
 import nl.kpmg.af.service.request.filter.LayerFilter;
-import nl.kpmg.af.service.request.filter.timestamp.DatabaseInitialiser;
+import nl.kpmg.af.service.data.DatabaseInitialiser;
 import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
 import nl.kpmg.af.service.response.dto.EventDto;
 import org.junit.AfterClass;
@@ -23,7 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
- *l
+ *
  * @author anaskar
  */
 @RunWith(SpringJUnit4ClassRunner.class)

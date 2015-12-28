@@ -1,4 +1,4 @@
-package nl.kpmg.af.service.request.filter.timestamp;
+package nl.kpmg.af.service.data;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -47,7 +47,12 @@ public class DatabaseInitialiser {
 
             createMockUser(MONGO_SECURITY_DATABASE, MONGO_SECURITY_USER, MONGO_SECURITY_PASSWORD);
             createMockUser(MONGO_APPLICATION_DATABASE, MONGO_APPLICATION_USER, MONGO_APPLICATION_PASSWORD);
-            loadMockData(Arrays.asList("security.applications.json", "security.users.json", "test.visitLayer.json"));
+            loadMockData(Arrays.asList(
+                    "security.applications.json",
+                    "security.users.json",
+                    "test.visitLayer.json",
+                    "test.testA.json",
+                    "test.testB.json"));
         } catch (Exception ex) {
             stop();
             throw ex;

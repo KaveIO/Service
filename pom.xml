@@ -183,7 +183,7 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
         </dependency>
-        
+
         <!-- 
             Ok the following two dependencies require some explaination. They should be 
             in that order. Otherwise unit-testing is nigh impossible... 
