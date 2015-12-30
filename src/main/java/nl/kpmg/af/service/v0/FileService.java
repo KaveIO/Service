@@ -1,6 +1,7 @@
-package nl.kpmg.af.service.service;
+package nl.kpmg.af.service.v0;
 
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -8,27 +9,38 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import nl.kpmg.af.datamodel.dao.InputDao;
+
+import nl.kpmg.af.datamodel.dao.EdgeDao;
 import nl.kpmg.af.datamodel.dao.exception.DataModelException;
-import nl.kpmg.af.datamodel.model.Input;
+import nl.kpmg.af.datamodel.model.Edge;
 import nl.kpmg.af.service.data.MongoDBUtil;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
-import nl.kpmg.af.service.request.InputRequest;
-import nl.kpmg.af.service.response.assembler.InputAssembler;
-import nl.kpmg.af.service.response.dto.InputDto;
+import nl.kpmg.af.service.exception.InvalidRequestException;
+import nl.kpmg.af.service.request.EdgeRequest;
+import nl.kpmg.af.service.response.assembler.EdgeAssembler;
+import nl.kpmg.af.service.response.dto.EdgeDto;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
- * @author Hoekstra.Maarten
+ * This class represents the edges rest service.
+ * Right now it's a Java re-write of the current middleware layer service.
+ * This service can be reached via http://jbosshost/Services/rest/layer, where
+ * the relative path "rest" is defined in Activator.java.
+ *
+ * @author janos4276
  */
-@Path("{applicationId}/input")
-public final class InputService {
+@Service
+@Path("{applicationId}/edges")
+public final class FileService {
     /**
      * The logger for this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(InputService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EdgeService.class);
+
     @Autowired
     private MongoDBUtil mongoDBUtil;
 
@@ -36,8 +48,8 @@ public final class InputService {
      * Get the corresponding json for the "collection" collection.
      *
      * @param applicationId The application ID.
-     * @param collection the collection of nodes to fetch from
-     * @return the list of nodes
+     * @param collection the collection of edges to fetch from
+     * @return the list of edges
      */
     @GET
     @Path("{collection}")
@@ -45,9 +57,9 @@ public final class InputService {
     public Response get(@PathParam("applicationId") final String applicationId,
                         @PathParam("collection") final String collection) {
         try {
-            InputDao inputDao = mongoDBUtil.getDao(applicationId, InputDao.class);
-            List<Input> fetchedInputs = inputDao.fetchAll(collection);
-            List<InputDto> result = InputAssembler.disassemble(fetchedInputs);
+            EdgeDao edgeDao = mongoDBUtil.getDao(applicationId, EdgeDao.class);
+            List<Edge> fetchedEdges = edgeDao.fetchAll(collection);
+            List<EdgeDto> result = EdgeAssembler.disassemble(fetchedEdges);
             return Response.ok(result).build();
         } catch (ApplicationDatabaseConnectionException ex) {
             LOGGER.error("Error has occured. The application database could not be connected.", ex);
@@ -61,36 +73,31 @@ public final class InputService {
     /**
      * Get the corresponding json for the "collection" collection.
      *
-     * @param applicationId The ID of the application.
-     * @param collection the collection of events to fetch from.
-     * @param request the request which determines which events to return.
-     * @return a list of events
+     * @param applicationId The application ID.
+     * @param collection the collection of edges to fetch from
+     * @param request the request which determines which edges to return.
+     * @return a list of edges
      */
     @POST
     @Path("{collection}")
-    @Consumes("application/json")
     @Produces("application/json")
+    @Consumes("application/json")
     public Response post(@PathParam("applicationId") final String applicationId,
-                         @PathParam("collection") final String collection, final InputRequest request) {
+                         @PathParam("collection") final String collection, final EdgeRequest request) {
         try {
-            InputDao inputDao = mongoDBUtil.getDao(applicationId, InputDao.class);
-            Input input = InputAssembler.assemble(collection, request);
-            inputDao.store(input);
+            EdgeDao edgeDao = mongoDBUtil.getDao(applicationId, EdgeDao.class);
+            List<Edge> fetchedEdges = edgeDao.fetchByFilter(collection, request.createMongoQuery(), request.getLimit());
+            List<EdgeDto> result = EdgeAssembler.disassemble(fetchedEdges);
+            return Response.ok(result).build();
         } catch (ApplicationDatabaseConnectionException ex) {
             LOGGER.error("Error has occured. The application database could not be connected.", ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        } catch (InvalidRequestException ex) {
+            LOGGER.warn("Error has occured. Request can not be processed.", ex);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         } catch (DataModelException ex) {
-            LOGGER.error("Error has occured. Data could not be stored.", ex);
+            LOGGER.error("Error has occured. Data could not be fetched.", ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
-        return Response.ok().build();
-    }
-    public MongoDBUtil getMongoDBUtil() {
-        return mongoDBUtil;
-    }
-    @Autowired
-    public void setMongoDBUtil(MongoDBUtil mongoDBUtil) {
-        LOGGER.info("in InputService setting the MongoDBUtil bean.");
-        this.mongoDBUtil = mongoDBUtil;        
     }
 }

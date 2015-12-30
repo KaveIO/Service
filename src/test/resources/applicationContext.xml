@@ -15,7 +15,8 @@
         http://www.springframework.org/schema/data/mongo 
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
     
-    <context:component-scan base-package="nl.kpmg.af.service.service" />
+    <context:component-scan base-package="nl.kpmg.af.service.v0" />
+    <context:component-scan base-package="nl.kpmg.af.service.v1" />
     <context:property-placeholder location="classpath:mongo.properties"  />
     
     <mongo:repositories base-package="nl.kpmg.af.service.data.security.repository"/>

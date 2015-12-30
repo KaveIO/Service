@@ -73,7 +73,9 @@ public class PermissionCheckerFilter implements Filter {
 
     private ServiceRequest createServiceRequest(HttpServletRequest httpServetRequest) {
         ServiceRequest request = new V0ServiceRequest(httpServetRequest);
-
+        if (!request.isValid()) {
+            request = new V1ServiceRequest(httpServetRequest);
+        }
         return request;
     }
 }

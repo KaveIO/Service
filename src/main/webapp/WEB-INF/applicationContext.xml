@@ -15,7 +15,8 @@
         http://www.springframework.org/schema/data/mongo 
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
     
-    <context:component-scan base-package="nl.kpmg.af.service.service" />
+    <context:component-scan base-package="nl.kpmg.af.service.v0" />
+    <context:component-scan base-package="nl.kpmg.af.service.v1" />
     
     <context:property-placeholder location="classpath:mongo.properties"  />
     <context:property-placeholder location="file:${jboss.home}/standalone/configuration/mongo.properties" order="-1" ignore-unresolvable="true" ignore-resource-not-found="true" />
