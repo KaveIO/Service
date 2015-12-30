@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -18,10 +19,15 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @Document
 public class Measurement implements Map {
-    private int version;
 
     private final Map innerMap = new HashMap();
 
+    public ObjectId getId() {
+        if (innerMap.containsKey("_id")) {
+            return (ObjectId) innerMap.get("_id");
+        }
+        return null;
+    }
 
     public Integer getVersion() {
         if (innerMap.containsKey("version")) {

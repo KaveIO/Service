@@ -8,7 +8,6 @@ package nl.kpmg.af.service.v1;
 
 import java.net.URI;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.DefaultValue;
@@ -40,12 +39,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Path("v1/data/{applicationId}/{collection}")
-public class Data {
+public class DataService {
 
     /**
      * The logger for this class.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Data.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataService.class);
 
     @Autowired
     private MongoDBUtil mongoDBUtil;
@@ -61,7 +60,7 @@ public class Data {
             @Context final UriInfo uriInfo,
             @PathParam("applicationId") final String applicationId,
             @PathParam("collection") final String collection,
-            @QueryParam("page") @DefaultValue("0") final int pageNumber,
+            @QueryParam("pageNumber") @DefaultValue("0") final int pageNumber,
             @QueryParam("pageSize") @DefaultValue("1000") final int pageSize) {
 
         try {
@@ -96,14 +95,14 @@ public class Data {
         Map<String, Link> links = new HashMap();
         if (currentPageNumber + 1 < totalPages) {
             UriBuilder next = baseUriBuilder.clone();
-            URI nextUri = next.queryParam("pageNumber", currentPageNumber + 1).build();
+            URI nextUri = next.replaceQueryParam("pageNumber", currentPageNumber + 1).build();
             Link nextLink = Link.fromUri(nextUri).build();
             links.put("next", nextLink);
         }
 
         if (currentPageNumber > 0) {
             UriBuilder previous = baseUriBuilder.clone();
-            URI previousUri = previous.queryParam("pageNumber", currentPageNumber - 1).build();
+            URI previousUri = previous.replaceQueryParam("pageNumber", currentPageNumber - 1).build();
             Link previousLink = Link.fromUri(previousUri).build();
             links.put("previous", previousLink);
         }

@@ -19,6 +19,8 @@ import nl.kpmg.af.service.data.core.Measurement;
  */
 public class MeasurementsRepresentation {
 
+    @XmlElement(name="items")
+    @XmlJavaTypeAdapter(MeasurementsAdapter.class)
     private List<Measurement> items;
 
     @XmlElement(name="links")
