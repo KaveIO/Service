@@ -1,3 +1,9 @@
+/*
+ * Copyright 2015 KPMG N.V. (unless otherwise stated).
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 package nl.kpmg.af.service.response.dto;
 
 /**
@@ -11,7 +17,7 @@ public abstract class GeoJSONPositionDto {
 
     /**
      * Sets the type of GeoJSONPosition this should be.
-     * 
+     *
      * @param type The type of the GeoJSON position
      */
     public GeoJSONPositionDto(final String type) {

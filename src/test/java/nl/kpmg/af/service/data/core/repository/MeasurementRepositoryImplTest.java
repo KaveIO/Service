@@ -6,7 +6,6 @@
  */
 package nl.kpmg.af.service.data.core.repository;
 
-import com.mongodb.DBObject;
 import java.util.List;
 import nl.kpmg.af.service.data.DatabaseInitialiser;
 import nl.kpmg.af.service.data.MongoDBUtil;

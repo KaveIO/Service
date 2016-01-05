@@ -1,3 +1,9 @@
+/*
+ * Copyright 2015 KPMG N.V. (unless otherwise stated).
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 package nl.kpmg.af.service.response.assembler;
 
 import java.util.Date;
@@ -10,7 +16,7 @@ import nl.kpmg.af.service.response.dto.InputDto;
 
 /**
  * Utility class for assembling InputDto objects into Input objects.
- * 
+ *
  * @author Hoekstra.Maarten, Jori van Lier
  */
 public final class InputAssembler {
@@ -28,7 +34,7 @@ public final class InputAssembler {
 
     /**
      * Assembles EventDto object into Input object.
-     * 
+     *
      * @param type The input type.
      * @param inputDto The input data transfer object.
      * @return Input
@@ -45,7 +51,7 @@ public final class InputAssembler {
 
     /**
      * Disassembles Node object into NodeDto object.
-     * 
+     *
      * @param input object to disassemble
      * @return disassembled node object
      */
@@ -71,7 +77,7 @@ public final class InputAssembler {
 
     /**
      * Disassembles List of Input objects into List of InputDto objects.
-     * 
+     *
      * @param inputs objects to disassemble.
      * @return disassembled node objects
      */

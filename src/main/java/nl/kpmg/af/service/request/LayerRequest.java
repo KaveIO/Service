@@ -1,3 +1,9 @@
+/*
+ * Copyright 2015 KPMG N.V. (unless otherwise stated).
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 package nl.kpmg.af.service.request;
 
 import nl.kpmg.af.datamodel.dao.query.MongoOrder;
@@ -15,7 +21,7 @@ import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 /**
  * Top level request object for the layer service.
- * 
+ *
  * @author Hoekstra.Maarten
  */
 public final class LayerRequest {
@@ -38,7 +44,7 @@ public final class LayerRequest {
 
     /**
      * Transforms this layerRequest object in its corresponding DBObject.
-     * 
+     *
      * @return layerRequest as a mongo query
      * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
      */
@@ -67,7 +73,7 @@ public final class LayerRequest {
 
     /**
      * Transforms sort in its corresponding MongoOrder.
-     * 
+     *
      * @return sort as a MongoOrder
      */
     public MongoOrder createMongoOrder() {

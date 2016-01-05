@@ -1,3 +1,9 @@
+/*
+ * Copyright 2015 KPMG N.V. (unless otherwise stated).
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 package nl.kpmg.af.service.response.dto;
 
 import java.util.Map;
@@ -7,7 +13,7 @@ import java.util.Map;
  * The auto-serialization of JAX-RS is really convenient but will serialize complex objects (such as ObjectId) in an
  * undesirable fashion. In order to avoid this problem a couple of DTO's are made. These are used to transfer business
  * objects to client applications.
- * 
+ *
  * @author Hoekstra.Maarten
  */
 public final class EdgeDto {

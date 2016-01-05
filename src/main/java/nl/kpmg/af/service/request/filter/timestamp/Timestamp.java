@@ -1,3 +1,9 @@
+/*
+ * Copyright 2015 KPMG N.V. (unless otherwise stated).
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 package nl.kpmg.af.service.request.filter.timestamp;
 
 import java.util.Date;
@@ -13,7 +19,7 @@ import com.mongodb.DBObject;
  * - the option "pastwindow" which represents the history of the data to retrieve in seconds
  * e.g. : "pastwindow" : 6000 will give all data beginngin with: (current time - 6000) up to now.
  * - the option "after" and "before" define a window in time
- * 
+ *
  * @author Hoekstra.Maarten
  */
 public final class Timestamp {
@@ -43,7 +49,7 @@ public final class Timestamp {
 
     /**
      * Transforms this timestamp object in its corresponding DBObject.
-     * 
+     *
      * @return Timestamp filter as a mongo query
      * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
      */
@@ -71,7 +77,7 @@ public final class Timestamp {
 
     /**
      * Helper function for transforming the calculated greaterThan and lesserThan values into a mongo query.
-     * 
+     *
      * @param greaterThan Date value
      * @param lesserThan Date value
      * @return greaterThan & lesserThan as a mongo query
