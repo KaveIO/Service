@@ -18,7 +18,7 @@ import nl.kpmg.af.service.data.core.Measurement;
  */
 public class MeasurementsAdapter extends XmlAdapter<List<Map>, List<Measurement>> {
 
-    private MeasurementAdapter measurementAdapter = new MeasurementAdapter();
+    private final MeasurementAdapter measurementAdapter = new MeasurementAdapter();
 
     public MeasurementsAdapter() {
     }

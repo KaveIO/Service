@@ -6,12 +6,16 @@
  */
 package nl.kpmg.af.service.v1;
 
+import nl.kpmg.af.service.v1.types.MeasurementFilter;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -26,11 +30,15 @@ import nl.kpmg.af.service.data.core.Measurement;
 import nl.kpmg.af.service.data.core.repository.MeasurementRepository;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 import nl.kpmg.af.service.v1.types.MeasurementsRepresentation;
+import nl.kpmg.af.service.v1.types.QueryCastException;
+import nl.kpmg.af.service.v1.types.SortCastException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 /**
@@ -63,12 +71,42 @@ public class DataService {
             @QueryParam("pageNumber") @DefaultValue("0") final int pageNumber,
             @QueryParam("pageSize") @DefaultValue("1000") final int pageSize) {
 
+        return getFiltered(uriInfo, applicationId, collection, pageNumber, pageSize, null);
+    }
+
+    /**
+     * @param applicationId The application ID.
+     * @param collection the collection of edges to fetch from
+     * @return
+     */
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response getFiltered(
+            @Context final UriInfo uriInfo,
+            @PathParam("applicationId") final String applicationId,
+            @PathParam("collection") final String collection,
+            @QueryParam("pageNumber") @DefaultValue("0") final int pageNumber,
+            @QueryParam("pageSize") @DefaultValue("1000") final int pageSize,
+            MeasurementFilter filter) {
+
         try {
             validatePagination(pageNumber, pageSize);
 
             MeasurementRepository repository = mongoDBUtil.getRepository(applicationId, collection);
-
-            Page<Measurement> page = repository.findAll(new PageRequest(pageNumber, pageSize));
+            Page<Measurement> page;
+            if (filter == null) {
+                page = repository.findAll(
+                        new PageRequest(
+                                pageNumber,
+                                pageSize,
+                                Direction.DESC,
+                                "measurementTimestamp"));
+            } else {
+                Sort sort = filter.getSort();
+                PageRequest pageRequest = new PageRequest(pageNumber, pageSize, sort);
+                page = repository.find(filter.getQuery(), filter.getLimit(), pageRequest);
+            }
             List<Measurement> content = page.getContent();
 
             Map<String, Link> links = generatePaginationLinks(uriInfo.getRequestUriBuilder(), page.getNumber(), page.getTotalPages());
@@ -78,7 +116,13 @@ public class DataService {
             LOGGER.error("Error has occured. The application database could not be connected.", ex);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         } catch (PaginationException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(ex.getMessage()).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Problem detected in pagination.").build();
+        } catch (QueryCastException ex) {
+            LOGGER.warn("Erroneous query content detected", ex);
+            return Response.status(Response.Status.BAD_REQUEST).entity("Problem detected in query request, this incident is logged.").build();
+        } catch (SortCastException ex) {
+            LOGGER.info("Erroneous sort content detected", ex);
+            return Response.status(Response.Status.BAD_REQUEST).entity("Problem detected in sort request.").build();
         }
     }
 

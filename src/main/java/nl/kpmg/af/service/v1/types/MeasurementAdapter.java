@@ -37,6 +37,9 @@ public class MeasurementAdapter extends XmlAdapter<Map, Measurement> {
             }
         }
 
+        if (value.getVersion() != null) result.put("version", value.getVersion());
+        if (value.getVersion() != null) result.put("measurementTimestamp", value.getMeasurementTimestamp());
+
         return result;
     }
 }

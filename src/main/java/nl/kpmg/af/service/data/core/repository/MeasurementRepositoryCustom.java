@@ -15,20 +15,16 @@
  */
 package nl.kpmg.af.service.data.core.repository;
 
-import java.util.List;
 import nl.kpmg.af.service.data.core.Measurement;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.repository.PagingAndSortingRepository;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Query;
 /**
  *
  * @author mhoekstra
  */
-@Document(collection = "applications")
-public interface MeasurementRepository extends PagingAndSortingRepository<Measurement, Long>, MeasurementRepositoryCustom {
+public interface MeasurementRepositoryCustom {
 
-    public List<Measurement> findAll();
-
-    public List<Measurement> findByVersion(int version);
+    public Page<Measurement> find(Query adhocQuery, int limit, Pageable pageable);
 
 }

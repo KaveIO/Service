@@ -1,15 +1,23 @@
 package nl.kpmg.af.service.data;
 
 import com.mongodb.Mongo;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import nl.kpmg.af.datamodel.connection.MongoDatabase;
 import nl.kpmg.af.datamodel.dao.AbstractDao;
+import nl.kpmg.af.service.data.core.repository.MeasurementReadConverter;
 import nl.kpmg.af.service.data.core.repository.MeasurementRepository;
+import nl.kpmg.af.service.data.core.repository.MeasurementRepositoryImpl;
+import nl.kpmg.af.service.data.core.repository.MeasurementWriteConverter;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 
 import nl.kpmg.af.service.data.security.Application;
@@ -17,14 +25,20 @@ import nl.kpmg.af.service.data.security.repository.ApplicationRepository;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.authentication.UserCredentials;
+import org.springframework.data.mapping.Association;
+import org.springframework.data.mapping.PersistentEntity;
+import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
+import org.springframework.data.mongodb.core.convert.CustomConversions;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.core.mapping.MongoPersistentProperty;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 import org.springframework.data.util.TypeInformation;
 
@@ -152,11 +166,22 @@ public final class MongoDBUtil {
                     SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(mongo, database.getDatabase(), new UserCredentials(database.getUsername(), database.getPassword()));
                     DbRefResolver dbRefResolver = new DefaultDbRefResolver(simpleMongoDbFactory);
                     MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
+
+                    // In order to handle our flexible object model we have to add our own converters as well.
+                    List coversions = new LinkedList();
+                    coversions.add(new MeasurementReadConverter());
+                    coversions.add(new MeasurementWriteConverter());
+                    CustomConversions customConversions = new CustomConversions(coversions);
+                    converter.setCustomConversions(customConversions);
+
                     converter.afterPropertiesSet();
+
                     MongoTemplate mongoTemplate = new MongoTemplate(simpleMongoDbFactory, converter);
 
                     MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(mongoTemplate);
-                    repository = repositoryFactory.getRepository(MeasurementRepository.class);
+                    repository = repositoryFactory.getRepository(
+                            MeasurementRepository.class,
+                            new MeasurementRepositoryImpl(mongoTemplate, collection));
                 } catch (UnknownHostException ex) {
                     throw new ApplicationDatabaseConnectionException("Could not connect to application database", ex);
                 }
@@ -189,8 +214,23 @@ public final class MongoDBUtil {
             this.collection = collection;
         }
 
+        @Override
         public String getCollection() {
 		return collection;
 	}
+
+        /*
+        In the future we want to be able to support queries on dynamic collection fields. For this to work we need
+        correct MongoPersistentPropery objects. These objects are used to infer the datatype needed for the actual
+        query.
+        What we need to have here is a special mongo collection, a collection of collections so to say. This would
+        contain the meta data describing the objects in each collection. This should be used to generate the correct
+        persisten property objects.
+
+        @Override
+        public PersistentProperty getPersistentProperty(String name) {
+            return new StaticMongoPersistentProperty(this, name);
+        }
+        */
     }
 }

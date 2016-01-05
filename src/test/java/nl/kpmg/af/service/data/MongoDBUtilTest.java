@@ -56,8 +56,8 @@ public class MongoDBUtilTest {
 
         assertTrue(all.size() == 3);
 
-        assertTrue(all.get(0).containsKey("version"));
-        assertTrue(all.get(0).containsKey("measurementTimestamp"));
+        assertNotNull(all.get(0).getVersion());
+        assertNotNull(all.get(0).getMeasurementTimestamp());
         assertTrue(all.get(0).containsKey("processingTimestamp"));
         assertTrue(all.get(0).containsKey("value"));
         assertTrue(all.get(0).containsKey("history"));

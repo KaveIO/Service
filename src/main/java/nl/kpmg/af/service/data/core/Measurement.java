@@ -7,10 +7,12 @@
 package nl.kpmg.af.service.data.core;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -20,6 +22,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Measurement implements Map {
 
+    private Integer version;
+
+    private Date measurementTimestamp;
+
+    @Transient
     private final Map innerMap = new HashMap();
 
     public ObjectId getId() {
@@ -30,14 +37,19 @@ public class Measurement implements Map {
     }
 
     public Integer getVersion() {
-        if (innerMap.containsKey("version")) {
-            return (Integer) innerMap.get("version");
-        }
-        return null;
+        return version;
     }
 
     public void setVersion(Integer version) {
-        innerMap.put("version", version);
+        this.version = version;
+    }
+
+    public Date getMeasurementTimestamp() {
+        return measurementTimestamp;
+    }
+
+    public void setMeasurementTimestamp(Date measurementTimestamp) {
+        this.measurementTimestamp = measurementTimestamp;
     }
 
     public Map getValue() {

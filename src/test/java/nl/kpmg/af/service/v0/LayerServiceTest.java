@@ -1,6 +1,5 @@
-package nl.kpmg.af.service.service;
+package nl.kpmg.af.service.v0;
 
-import nl.kpmg.af.service.v0.LayerService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
