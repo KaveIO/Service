@@ -1,25 +1,27 @@
 Service
 =======
 
-(REST) Service based on JBoss RESTeasy, which offers an
-interface to the data contained in MongoDB.
+(REST) Service based on JBoss RESTeasy, which offers an interface to the data contained in MongoDB.
+
+NOTE: use JDK 1.7 for JBoss server (like all packages)!!!
+Eclipse plug-in: Window, Preferences, Server, Runtime Environment, Edit, JRE
 
 Contains two versions of our data interface. 
 
 ### v0 
-/Service/{applicationId}/layer/{layerName}
-/Service/{applicationId}/nodes/{nodesName}
-/Service/{applicationId}/edges/{edgesName}
-/Service/{applicationId}/input/{inputName}
+ - /Service/{applicationId}/layer/{layerName}
+ - /Service/{applicationId}/nodes/{nodesName}
+ - /Service/{applicationId}/edges/{edgesName}
+ - /Service/{applicationId}/input/{inputName}
 
 ### v1 
-/Service/v1/data/{applicationId}/{collection}
+ - /Service/v1/data/{applicationId}/{collection}
 
 The v1 interface is still under heavy development however perfectly usable. 
 
 
-+ NOTE: use JDK 1.7 for JBoss server (like all packages)!!!
-   + Eclipse plug-in: Window, Preferences, Server, Runtime Environment, Edit, JRE
+
+
 
 
 To Play
