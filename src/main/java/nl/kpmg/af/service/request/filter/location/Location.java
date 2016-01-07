@@ -1,3 +1,9 @@
+/*
+ * Copyright 2015 KPMG N.V. (unless otherwise stated).
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 package nl.kpmg.af.service.request.filter.location;
 
 import nl.kpmg.af.service.exception.InvalidRequestException;
@@ -10,7 +16,7 @@ import com.mongodb.DBObject;
 
 /**
  * Location part of a filter request.
- * 
+ *
  * @author Hoekstra.Maarten
  */
 public final class Location {
@@ -29,7 +35,7 @@ public final class Location {
 
     /**
      * Transforms this Location object in its corresponding DBObject.
-     * 
+     *
      * @return Location as a mongo query
      * @throws InvalidRequestException thrown if the request parameters aren't correctly interpretable.
      */

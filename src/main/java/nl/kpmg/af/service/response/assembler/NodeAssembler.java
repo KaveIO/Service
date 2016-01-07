@@ -1,3 +1,9 @@
+/*
+ * Copyright 2015 KPMG N.V. (unless otherwise stated).
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 package nl.kpmg.af.service.response.assembler;
 
 import java.util.LinkedList;
@@ -9,7 +15,7 @@ import nl.kpmg.af.service.response.dto.NodeDto;
 
 /**
  * Utility class for disassembling Node objects into NodeDto objects.
- * 
+ *
  * @author Hoekstra.Maarten
  */
 public final class NodeAssembler {
@@ -21,7 +27,7 @@ public final class NodeAssembler {
 
     /**
      * Disassembles Node object into NodeDto object.
-     * 
+     *
      * @param node object to disassemble
      * @return disassembled node object
      */
@@ -43,7 +49,7 @@ public final class NodeAssembler {
 
     /**
      * Disassembles List of Node objects into List of NodeDto objects.
-     * 
+     *
      * @param nodes objects to disassemble
      * @return disassembled node objects
      */

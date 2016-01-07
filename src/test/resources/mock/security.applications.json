@@ -1,0 +1,13 @@
+[{ 
+    "password" : "admin",
+    "id" : "test",
+    "name" : "test",
+    "database" : {
+        "username" : "admin",
+        "host" : "localhost",
+        "password" : "admin",
+        "port" : 20021,
+        "database" : "test"
+    }
+}
+]
