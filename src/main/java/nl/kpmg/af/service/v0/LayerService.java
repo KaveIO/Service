@@ -65,7 +65,6 @@ public final class LayerService {
     public Response get(@PathParam("applicationId") final String applicationId,
                         @PathParam("collection") final String collection) {
         try {
-            LOGGER.info(" Inside LayerService get method ,try block");
             EventDao eventDao = mongoDBUtil.getDao(applicationId, EventDao.class);
             List<Event> fetchedEvents = eventDao.fetchAll(collection);
             List<EventDto> result = EventAssembler.disassemble(fetchedEvents);
@@ -95,7 +94,6 @@ public final class LayerService {
                          @PathParam("collection") final String collection, final LayerRequest request) {
         List<EventDto> result;
         try {
-            LOGGER.info(" Inside LayerService post  method , try block ");
             EventDao eventDao = mongoDBUtil.getDao(applicationId, EventDao.class);
             Aggregation aggregation = request.getAggregation();
             if (aggregation == null) {

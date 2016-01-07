@@ -67,7 +67,6 @@ public final class MongoDBUtil {
     @Deprecated
     public <T extends AbstractDao> T getDao(final String applicationId, final Class<T> clazz)
             throws ApplicationDatabaseConnectionException {
-        LOGGER.debug("MongoDBUtil classs, inside  the getDao method.");
         MongoDatabase applicationDatabase = getApplicationDatabase(applicationId);
         try {
             Constructor<T> constructor = clazz.getConstructor(MongoDatabase.class);
@@ -84,7 +83,6 @@ public final class MongoDBUtil {
     @Deprecated
     public synchronized MongoDatabase getApplicationDatabase(final String applicationId)
             throws ApplicationDatabaseConnectionException {
-        LOGGER.info(" inside  the getApplicationDatabase method.");
         if (!applicationDatabases.containsKey(applicationId)) {
             connectApplicationDatabase(applicationId);
 
@@ -94,7 +92,6 @@ public final class MongoDBUtil {
 
     @Deprecated
     private void connectApplicationDatabase(String applicationId) throws ApplicationDatabaseConnectionException {
-        LOGGER.info(" inside  the connectApplicationDatabase method.");
         try {
             Application application = applicationRepository.findOneByName(applicationId);
 
