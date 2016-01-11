@@ -1,13 +1,27 @@
 Service
 =======
 
-(REST) Service based on JBoss RESTeasy, which offers an
-interface to the data contained in MongoDB.
+(REST) Service based on JBoss RESTeasy, which offers an interface to the data contained in MongoDB.
 
-At the moment contains only the "/databasename/layer/{n}" sevice, which also serves as an example.
+NOTE: use JDK 1.7 for JBoss server (like all packages)!!!
+Eclipse plug-in: Window, Preferences, Server, Runtime Environment, Edit, JRE
 
-+ NOTE: use JDK 1.7 for JBoss server (like all packages)!!!
-   + Eclipse plug-in: Window, Preferences, Server, Runtime Environment, Edit, JRE
+Contains two versions of our data interface. 
+
+### v0 
+ - /Service/{applicationId}/layer/{layerName}
+ - /Service/{applicationId}/nodes/{nodesName}
+ - /Service/{applicationId}/edges/{edgesName}
+ - /Service/{applicationId}/input/{inputName}
+
+### v1 
+ - /Service/v1/data/{applicationId}/{collection}
+
+The v1 interface is still under heavy development however perfectly usable. 
+
+
+
+
 
 
 To Play
@@ -39,11 +53,11 @@ Configuration JBOS
 ==================
 In the JBOSS directory <tt>standalone/configuration/mongo.properties</tt>:
 
-	 url      = mdb-001
-	 port     = 27017
-	 username = service
-	 password = XXX
-	 database = security
+	 mongodb.url      = mdb-001
+	 mongodb.port     = 27017
+	 mongodb.username = service
+	 mongodb.password = XXX
+	 mongodb.database = security
 
 
 To Test
