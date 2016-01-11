@@ -25,10 +25,12 @@ import nl.kpmg.af.service.response.dto.InputDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Hoekstra.Maarten
  */
+@Service
 @Path("{applicationId}/input")
 public final class InputService {
     /**
