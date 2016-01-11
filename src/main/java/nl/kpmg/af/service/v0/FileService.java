@@ -40,7 +40,7 @@ import org.springframework.stereotype.Service;
  * @author janos4276
  */
 @Service
-@Path("{applicationId}/edges")
+@Path("{applicationId}/files")
 public final class FileService {
     /**
      * The logger for this class.
