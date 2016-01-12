@@ -176,6 +176,9 @@ public final class MongoDBUtil {
                     repository = repositoryFactory.getRepository(
                             MeasurementRepository.class,
                             new MeasurementRepositoryImpl(mongoTemplate, collection));
+
+                    repositoryCache.put(repositoryIdentifier, repository);
+                    
                 } catch (UnknownHostException ex) {
                     throw new ApplicationDatabaseConnectionException("Could not connect to application database", ex);
                 }
