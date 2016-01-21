@@ -15,7 +15,8 @@ Contains two versions of our data interface.
  - /Service/{applicationId}/input/{inputName}
 
 ### v1 
- - /Service/v1/data/{applicationId}/{collection}
+ - /Service/v1/filter/{applicationId}/{collection} GET and POST
+ - /Service/v1/data/{applicationId}/{collection} only POST
 
 The v1 interface is still under heavy development however perfectly usable. 
 

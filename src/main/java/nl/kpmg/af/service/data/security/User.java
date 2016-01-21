@@ -120,13 +120,16 @@ public class User {
 
         private boolean match(ServiceRequest serviceRequest) {
             char operation;
+
             switch (serviceRequest.getOperation()) {
-                case "GET":
                 case "POST":
+                    operation = 'c';
+                    break;
+                case "GET":
                     operation = 'r';
                     break;
                 case "PUT":
-                    operation = 'c';
+                    operation = 'u';
                     break;
                 case "DELETE":
                     operation = 'd';

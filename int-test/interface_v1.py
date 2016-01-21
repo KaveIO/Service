@@ -25,7 +25,7 @@ class TestOAuth(unittest.TestCase):
 
   def test_get_plain(self): 
       token = self.obtain_token()
-      url = '%s/Service/v1/data/test/visitLayer' % self.target
+      url = '%s/Service/v1/filter/test/visitLayer' % self.target
 
       req = urllib2.Request(url, headers={
           "Content-Type": "application/json",
@@ -43,7 +43,7 @@ class TestOAuth(unittest.TestCase):
   def test_get_larger_set(self):
       token = self.obtain_token()
 
-      url = '%s/Service/v1/data/test/dummy' % self.target
+      url = '%s/Service/v1/filter/test/dummy' % self.target
 
       req = urllib2.Request(url, headers={
           "Content-Type": "application/json",
@@ -63,7 +63,7 @@ class TestOAuth(unittest.TestCase):
   def test_get_larger_set_via_pagination(self):
       token = self.obtain_token()
 
-      url = '%s/Service/v1/data/test/dummy?pageSize=10' % self.target
+      url = '%s/Service/v1/filter/test/dummy?pageSize=10' % self.target
       items = []
       count = 0
       while (True):

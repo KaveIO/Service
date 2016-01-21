@@ -7,6 +7,9 @@
 package nl.kpmg.af.service.data.core.repository;
 
 import com.mongodb.DBObject;
+import com.mongodb.BasicDBObject;
+import java.util.Date;
+import java.util.Set;
 import nl.kpmg.af.service.data.core.Measurement;
 import org.springframework.core.convert.converter.Converter;
 
@@ -18,7 +21,13 @@ public class MeasurementWriteConverter implements Converter<Measurement, DBObjec
 
     @Override
     public DBObject convert(Measurement s) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        DBObject dbObject = new BasicDBObject(s);
+        Date mts = s.getMeasurementTimestamp();
+        Integer v = s.getVersion();
+        dbObject.put("version", v);
+        dbObject.put("measurementTimestamp", mts);
+
+        return dbObject;
     }
 
 }

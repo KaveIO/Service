@@ -96,7 +96,7 @@ public class UserTest {
         user.setAllow(new LinkedList());
         user.getAllow().add(new User.Rule("*", "*", "r"));
         assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "GET")));
-        assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "POST")));
+        assertFalse(user.isAllowed(new MockServiceRequest(true, "x", "x", "POST")));
         assertFalse(user.isAllowed(new MockServiceRequest(true, "x", "x", "PUT")));
         assertFalse(user.isAllowed(new MockServiceRequest(true, "x", "x", "DELETE")));
 
@@ -104,8 +104,8 @@ public class UserTest {
         user.setAllow(new LinkedList());
         user.getAllow().add(new User.Rule("*", "*", "c"));
         assertFalse(user.isAllowed(new MockServiceRequest(true, "x", "x", "GET")));
-        assertFalse(user.isAllowed(new MockServiceRequest(true, "x", "x", "POST")));
-        assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "PUT")));
+        assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "POST")));
+        assertFalse(user.isAllowed(new MockServiceRequest(true, "x", "x", "PUT")));
         assertFalse(user.isAllowed(new MockServiceRequest(true, "x", "x", "DELETE")));
 
         user = new User();
@@ -121,7 +121,7 @@ public class UserTest {
         user.getAllow().add(new User.Rule("*", "*", "crd"));
         assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "GET")));
         assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "POST")));
-        assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "PUT")));
+        assertFalse(user.isAllowed(new MockServiceRequest(true, "x", "x", "PUT")));
         assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "DELETE")));
 
         user = new User();
@@ -129,7 +129,7 @@ public class UserTest {
         user.getAllow().add(new User.Rule("*", "*", "cr"));
         assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "GET")));
         assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "POST")));
-        assertTrue(user.isAllowed(new MockServiceRequest(true, "x", "x", "PUT")));
+        assertFalse(user.isAllowed(new MockServiceRequest(true, "x", "x", "PUT")));
         assertFalse(user.isAllowed(new MockServiceRequest(true, "x", "x", "DELETE")));
     }
 
