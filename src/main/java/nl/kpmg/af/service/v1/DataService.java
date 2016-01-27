@@ -6,43 +6,27 @@
  */
 package nl.kpmg.af.service.v1;
 
-import nl.kpmg.af.service.v1.types.MeasurementFilter;
-import java.net.URI;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Date;
 import java.util.ArrayList;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import nl.kpmg.af.service.data.MongoDBUtil;
 import nl.kpmg.af.service.data.core.Measurement;
 import nl.kpmg.af.service.data.core.repository.MeasurementRepository;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
-import nl.kpmg.af.service.exception.InvalidRequestException;
-import nl.kpmg.af.service.v1.types.MeasurementsRepresentation;
 import nl.kpmg.af.service.v1.types.QueryCastException;
-import nl.kpmg.af.service.v1.types.SortCastException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 /**

@@ -32,14 +32,11 @@ public class Measurement implements Map {
     private final Map innerMap = new HashMap();
 
     public ObjectId getId() {
-        if (innerMap.containsKey("_id")) {
-            return (ObjectId) innerMap.get("_id");
-        }
-        return null;
+        return id;
     }
 
     public void setId(ObjectId id) {
-        innerMap.put("_id", id);
+        this.id = id;
     }
 
     public Integer getVersion() {
