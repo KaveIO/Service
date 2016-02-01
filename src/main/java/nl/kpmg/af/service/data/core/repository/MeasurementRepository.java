@@ -8,14 +8,12 @@ package nl.kpmg.af.service.data.core.repository;
 
 import java.util.List;
 import nl.kpmg.af.service.data.core.Measurement;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  *
  * @author mhoekstra
  */
-@Document(collection = "applications")
 public interface MeasurementRepository extends PagingAndSortingRepository<Measurement, Long>, MeasurementRepositoryCustom {
 
     public List<Measurement> findAll();
