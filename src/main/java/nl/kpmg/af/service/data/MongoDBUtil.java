@@ -21,6 +21,7 @@ import nl.kpmg.af.service.data.core.repository.MeasurementReadConverter;
 import nl.kpmg.af.service.data.core.repository.MeasurementRepository;
 import nl.kpmg.af.service.data.core.repository.MeasurementRepositoryImpl;
 import nl.kpmg.af.service.data.core.repository.MeasurementWriteConverter;
+import nl.kpmg.af.service.data.core.repository.ProxyRepository;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 
 import nl.kpmg.af.service.data.security.Application;
@@ -37,6 +38,7 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.BasicMongoPersistentEntity;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
+import org.springframework.data.repository.Repository;
 import org.springframework.data.util.TypeInformation;
 
 /**
@@ -58,7 +60,8 @@ public final class MongoDBUtil {
 
     private final Map<String, MongoDatabase> applicationDatabases = new HashMap();
 
-    private final Map<String, MeasurementRepository> repositoryCache = new HashMap();
+    private final Map<String, MeasurementRepository> measurementRepositoryCache = new HashMap();
+    private final Map<String, ProxyRepository> proxyRepositoryCache = new HashMap();
 
     /**
      * Methods for Mongo database object creation and connection.
@@ -122,16 +125,52 @@ public final class MongoDBUtil {
         return new MongoDatabase(url, port, username, password, database);
     }
 
+    public ProxyRepository getProxyRepository(String applicationId) throws ApplicationDatabaseConnectionException {
+        ProxyRepository repository;
 
+        if (proxyRepositoryCache.containsKey(applicationId)) {
+            repository = proxyRepositoryCache.get(applicationId);
+        } else {
+            repository = getRepositoryForApplication(ProxyRepository.class, applicationId);
+            proxyRepositoryCache.put(applicationId, repository);
+        }
+
+        return repository;
+    }
+
+    private <T extends Repository> T getRepositoryForApplication(Class<T> repositoryInterface, String applicationId)
+            throws ApplicationDatabaseConnectionException {
+
+        Application application = applicationRepository.findOneByName(applicationId);
+        if (application == null) {
+            throw new ApplicationDatabaseConnectionException("No application record with id '" + applicationId
+                    + "' could be found in the security database");
+        } else {
+            Application.Database database = application.getDatabase();
+
+            try {
+
+                Mongo mongo = new Mongo(database.getHost(), database.getPort());
+                SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(mongo, database.getDatabase(), new UserCredentials(database.getUsername(), database.getPassword()));
+                DbRefResolver dbRefResolver = new DefaultDbRefResolver(simpleMongoDbFactory);
+                MongoTemplate mongoTemplate = new MongoTemplate(simpleMongoDbFactory);
+
+                MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(mongoTemplate);
+                return repositoryFactory.getRepository(repositoryInterface);
+            } catch (UnknownHostException ex) {
+                throw new ApplicationDatabaseConnectionException("Could not connect to application database", ex);
+            }
+        }
+    }
 
     /**
      * Creates and returns a dynamic MeasurementRepository.
      *
-     * In order to be a bit more flexible and fast in development we moved to spring-data for our DAO's. Our multi-tenant
-     * and unified model setup however doesn't play to nice with this. This method is a factory for building dynamic
-     * DAO's. In this way the Spring MongoTemple gets avoided (so we can switch db's) and the MongoMappingContext gets
-     * overloaded a bit. Especially the last part makes the magic happen. The MongoMappingContext is responsible for
-     * mapping object types to collections.
+     * In order to be a bit more flexible and fast in development we moved to spring-data for our DAO's. Our
+     * multi-tenant and unified model setup however doesn't play to nice with this. This method is a factory for
+     * building dynamic DAO's. In this way the Spring MongoTemple gets avoided (so we can switch db's) and the
+     * MongoMappingContext gets overloaded a bit. Especially the last part makes the magic happen. The
+     * MongoMappingContext is responsible for mapping object types to collections.
      *
      * @param applicationId of the application to create a DAO for
      * @param collection name fore which we create a DAO for
@@ -143,8 +182,8 @@ public final class MongoDBUtil {
         String repositoryIdentifier = applicationId + ":" + collection;
         MeasurementRepository repository;
 
-        if (repositoryCache.containsKey(repositoryIdentifier)) {
-            repository = repositoryCache.get(repositoryIdentifier);
+        if (measurementRepositoryCache.containsKey(repositoryIdentifier)) {
+            repository = measurementRepositoryCache.get(repositoryIdentifier);
         } else {
             Application application = applicationRepository.findOneByName(applicationId);
             if (application == null) {
@@ -177,8 +216,8 @@ public final class MongoDBUtil {
                             MeasurementRepository.class,
                             new MeasurementRepositoryImpl(mongoTemplate, collection));
 
-                    repositoryCache.put(repositoryIdentifier, repository);
-                    
+                    measurementRepositoryCache.put(repositoryIdentifier, repository);
+
                 } catch (UnknownHostException ex) {
                     throw new ApplicationDatabaseConnectionException("Could not connect to application database", ex);
                 }
@@ -189,21 +228,23 @@ public final class MongoDBUtil {
     }
 
     private static class StaticMongoMappingContext extends MongoMappingContext {
+
         private final String collection;
 
         private StaticMongoMappingContext(String collection) {
             this.collection = collection;
         }
 
-
         @Override
-	protected <T> BasicMongoPersistentEntity<T> createPersistentEntity(TypeInformation<T> typeInformation) {
+        protected <T> BasicMongoPersistentEntity<T> createPersistentEntity(TypeInformation<T> typeInformation) {
             BasicMongoPersistentEntity<T> entity = new StaticMongoPersistentEntity<T>(typeInformation, collection);
 
             return entity;
-	}
+        }
     }
+
     private static class StaticMongoPersistentEntity<T> extends BasicMongoPersistentEntity {
+
         private final String collection;
 
         public StaticMongoPersistentEntity(TypeInformation typeInformation, String collection) {
@@ -213,21 +254,21 @@ public final class MongoDBUtil {
 
         @Override
         public String getCollection() {
-		return collection;
-	}
+            return collection;
+        }
 
         /*
-        In the future we want to be able to support queries on dynamic collection fields. For this to work we need
-        correct MongoPersistentPropery objects. These objects are used to infer the datatype needed for the actual
-        query.
-        What we need to have here is a special mongo collection, a collection of collections so to say. This would
-        contain the meta data describing the objects in each collection. This should be used to generate the correct
-        persisten property objects.
+         In the future we want to be able to support queries on dynamic collection fields. For this to work we need
+         correct MongoPersistentPropery objects. These objects are used to infer the datatype needed for the actual
+         query.
+         What we need to have here is a special mongo collection, a collection of collections so to say. This would
+         contain the meta data describing the objects in each collection. This should be used to generate the correct
+         persisten property objects.
 
-        @Override
-        public PersistentProperty getPersistentProperty(String name) {
-            return new StaticMongoPersistentProperty(this, name);
-        }
-        */
+         @Override
+         public PersistentProperty getPersistentProperty(String name) {
+         return new StaticMongoPersistentProperty(this, name);
+         }
+         */
     }
 }
