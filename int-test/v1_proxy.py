@@ -12,7 +12,6 @@ class TestOAuth(unittest.TestCase):
   ctx = ssl.create_default_context()
   ctx.check_hostname = False
   ctx.verify_mode = ssl.CERT_NONE
-
   
   def obtain_token(self):
       data = urllib.urlencode({"grant_type":"client_credentials"})
@@ -23,50 +22,21 @@ class TestOAuth(unittest.TestCase):
       f = urllib2.urlopen(req, context=self.ctx)
       return json.loads(f.read())
 
-  def test_get_authentication_token(self):
+  def test_get_plain(self): 
       token = self.obtain_token()
+      url = '%s/Service/v1/proxy/test/test' % self.target
 
-      self.assertTrue(len(token['access_token']) > 0)
-      self.assertTrue(token['token_type'] == 'bearer')
-
-  def test_use_token(self): 
-      token = self.obtain_token()
-      url = '%s/Service/test/layer/visit' % self.target
-
-      req = urllib2.Request(url, None, {
-          "Content-Type": "application/json",
+      req = urllib2.Request(url, headers={
           "Authorization": "Bearer %s" % token['access_token']})
       f = urllib2.urlopen(req, context=self.ctx)
 
       self.assertEquals(200, f.code)
 
       body = f.read()
-      
+     
       self.assertTrue(len(body) > 0)
       
       bodyJson = json.loads(body)
-      self.assertTrue(bodyJson[0]['measurementTimestamp'] > 0)
-      
-  def test_use_basic(self):
-      url = '%s/Service/test/layer/visit' % self.target
-
-      req = urllib2.Request(url, None, {
-          "Content-Type": "application/json",
-          "Authorization": "Basic %s" % base64.encodestring('test:admin').replace('\n', '')})
-      f = urllib2.urlopen(req, context=self.ctx)
-
-      self.assertEquals(200, f.code)
-
-      body = f.read()
-
-      self.assertTrue(len(body) > 0)
-
-      bodyJson = json.loads(body)
-      self.assertTrue(bodyJson[0]['measurementTimestamp'] > 0)
-
-
-
-
 
 
 if __name__ == '__main__':

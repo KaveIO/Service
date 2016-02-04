@@ -9,19 +9,20 @@ package nl.kpmg.af.service.security;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * /{applicationName}/{serviceName}/{collection}
+ * v1/{service}/{applicationName}/{resource}
  */
-public class V1ServiceRequest implements ServiceRequest {
-    private String application = "";
-    private String resource = "";
-    String operation = "";
+public class V1ServiceRequest extends ServiceRequest {
+    private final String service;
+    private final String application;
+    private final String resource;
+    private final String operation;
     private boolean isValid = false;
 
     /**
      *
      * @param httpServetRequest
      */
-    V1ServiceRequest(HttpServletRequest httpServetRequest) {
+    public V1ServiceRequest(HttpServletRequest httpServetRequest) {
         String pathInfo = httpServetRequest.getPathInfo();
         this.operation = httpServetRequest.getMethod();
 
@@ -34,11 +35,17 @@ public class V1ServiceRequest implements ServiceRequest {
                     && pathParts[3].length() > 0
                     && pathParts[4].length() > 0) {
 
+                service = pathParts[2];
                 application = pathParts[3];
                 resource = pathParts[4];
                 isValid = true;
+                return;
             }
         }
+
+        service = "";
+        application = "";
+        resource = "";
     }
 
     @Override
@@ -59,5 +66,9 @@ public class V1ServiceRequest implements ServiceRequest {
     @Override
     public String getOperation() {
         return operation;
+    }
+
+    public String getService() {
+        return service;
     }
 }

@@ -68,15 +68,11 @@ public class ExtendedBearerTokenAuthenticatorValve extends BearerTokenAuthentica
 
             User user = userRepository.findOneByUsername(username);
             if (user.getPassword().equals(password)) {
-
-                List<String> roles = new LinkedList();
-                roles.add("user");
-
                 GenericPrincipal principal = new GenericPrincipal(
                         request.getContext().getRealm(),
                         username,
                         password,
-                        roles);
+                        user.getRoles());
 
                 request.setUserPrincipal(principal);
                 request.setAuthType("BASIC");

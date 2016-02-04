@@ -11,17 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * /{applicationName}/{serviceName}/{collection}
  */
-public class V0ServiceRequest implements ServiceRequest {
-    private String application = "";
-    private String resource = "";
-    String operation = "";
+public class V0ServiceRequest extends ServiceRequest {
+    private final String application;
+    private final String resource;
+    private final String operation;
+    private final String service = "data";
     private boolean isValid = false;
 
     /**
      *
      * @param httpServetRequest
      */
-    V0ServiceRequest(HttpServletRequest httpServetRequest) {
+    public V0ServiceRequest(HttpServletRequest httpServetRequest) {
         String pathInfo = httpServetRequest.getPathInfo();
         this.operation = httpServetRequest.getMethod();
         if (pathInfo != null) {
@@ -36,8 +37,11 @@ public class V0ServiceRequest implements ServiceRequest {
                 String resourceSuffix = pathParts[2].substring(0, 1).toUpperCase() + pathParts[2].substring(1).toLowerCase();
                 resource = pathParts[3] + resourceSuffix;
                 isValid = true;
+                return;
             }
         }
+        application = "";
+        resource = "";
     }
 
     @Override
@@ -58,6 +62,11 @@ public class V0ServiceRequest implements ServiceRequest {
     @Override
     public String getOperation() {
         return operation;
+    }
+
+    @Override
+    public String getService() {
+        return service;
     }
 
 }

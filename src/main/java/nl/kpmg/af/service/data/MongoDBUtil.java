@@ -22,6 +22,7 @@ import nl.kpmg.af.service.data.core.repository.MeasurementRepository;
 import nl.kpmg.af.service.data.core.repository.MeasurementRepositoryImpl;
 import nl.kpmg.af.service.data.core.repository.MeasurementWriteConverter;
 import nl.kpmg.af.service.data.core.repository.ProxyRepository;
+import nl.kpmg.af.service.data.core.repository.RoleRepository;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 
 import nl.kpmg.af.service.data.security.Application;
@@ -62,6 +63,7 @@ public final class MongoDBUtil {
 
     private final Map<String, MeasurementRepository> measurementRepositoryCache = new HashMap();
     private final Map<String, ProxyRepository> proxyRepositoryCache = new HashMap();
+    private final Map<String, RoleRepository> roleRepositoryCache = new HashMap();
 
     /**
      * Methods for Mongo database object creation and connection.
@@ -133,6 +135,19 @@ public final class MongoDBUtil {
         } else {
             repository = getRepositoryForApplication(ProxyRepository.class, applicationId);
             proxyRepositoryCache.put(applicationId, repository);
+        }
+
+        return repository;
+    }
+
+    public RoleRepository getRoleRepository(String applicationId) throws ApplicationDatabaseConnectionException {
+        RoleRepository repository;
+
+        if (roleRepositoryCache.containsKey(applicationId)) {
+            repository = roleRepositoryCache.get(applicationId);
+        } else {
+            repository = getRepositoryForApplication(RoleRepository.class, applicationId);
+            roleRepositoryCache.put(applicationId, repository);
         }
 
         return repository;

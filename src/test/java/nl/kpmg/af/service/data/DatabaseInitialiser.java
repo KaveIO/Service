@@ -55,10 +55,10 @@ public class DatabaseInitialiser {
             createMockUser(MONGO_APPLICATION_DATABASE, MONGO_APPLICATION_USER, MONGO_APPLICATION_PASSWORD);
             loadMockData(Arrays.asList(
                     "security.applications.json",
-                    "security.users.json",
                     "test.visitLayer.json",
                     "test.testA.json",
-                    "test.testB.json"));
+                    "test.testB.json",
+                    "test.roles.json"));
         } catch (Exception ex) {
             stop();
             throw ex;

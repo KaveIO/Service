@@ -8,8 +8,13 @@ package nl.kpmg.af.service.security;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.List;
 import javax.servlet.ServletException;
 import nl.kpmg.af.service.data.DatabaseInitialiser;
+import org.apache.catalina.Realm;
+import org.apache.catalina.realm.GenericPrincipal;
+import org.jboss.as.web.deployment.mock.MemoryRealm;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
@@ -37,6 +42,8 @@ public class PermissionCheckerFilterTest {
     @Autowired
     private PermissionCheckerFilter permissionCheckerFilter;
 
+    private final Realm realm = new MemoryRealm();
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         databaseInitialiser = new DatabaseInitialiser();
@@ -61,11 +68,13 @@ public class PermissionCheckerFilterTest {
     }
 
     @Test
-    public void testV0UserWithRulesIsAllowed() throws IOException, ServletException {
+    public void testV0UserWithRoleIsAllowed() throws IOException, ServletException {
         MockFilterChain mockFilterChain = new MockFilterChain();
         MockHttpServletRequest req = new MockHttpServletRequest("GET", "");
-        req.setPathInfo("/userWithRules/layer/visit");
-        req.setUserPrincipal(new MockPrincipal("userWithRules"));
+        req.setPathInfo("/test/layer/visit");
+        req.setAuthType("BASIC");
+        req.setUserPrincipal(new GenericPrincipal(realm, "", "", Arrays.asList(new String[]{"user"})));
+
         MockHttpServletResponse rsp = new MockHttpServletResponse();
 
         permissionCheckerFilter.doFilter(req, rsp, mockFilterChain);
@@ -74,11 +83,28 @@ public class PermissionCheckerFilterTest {
     }
 
     @Test
-    public void testV0UserWithRulesIsDeniedForSpecificResource() throws IOException, ServletException {
+    public void testV0UserWithApplicationRoleIsAllowed() throws IOException, ServletException {
         MockFilterChain mockFilterChain = new MockFilterChain();
         MockHttpServletRequest req = new MockHttpServletRequest("GET", "");
-        req.setPathInfo("/userWithRules/layer/trilaterationFitter");
-        req.setUserPrincipal(new MockPrincipal("userWithRules"));
+        req.setPathInfo("/test/layer/visit");
+        req.setAuthType("BASIC");
+        req.setUserPrincipal(new GenericPrincipal(realm, "", "", Arrays.asList(new String[]{"test.user"})));
+
+        MockHttpServletResponse rsp = new MockHttpServletResponse();
+
+        permissionCheckerFilter.doFilter(req, rsp, mockFilterChain);
+
+        assertEquals(200, rsp.getStatus());
+    }
+
+    @Test
+    public void testV0UserWithRoleIsDeniedForSpecificResource() throws IOException, ServletException {
+        MockFilterChain mockFilterChain = new MockFilterChain();
+        MockHttpServletRequest req = new MockHttpServletRequest("GET", "");
+        req.setPathInfo("/test/layer/trilaterationFitter");
+        req.setAuthType("BASIC");
+        req.setUserPrincipal(new GenericPrincipal(realm, "", "", Arrays.asList(new String[]{"user"})));
+
         MockHttpServletResponse rsp = new MockHttpServletResponse();
 
         permissionCheckerFilter.doFilter(req, rsp, mockFilterChain);
@@ -87,11 +113,13 @@ public class PermissionCheckerFilterTest {
     }
 
     @Test
-    public void testV0UserWithoutRulesIsDenied() throws IOException, ServletException {
+    public void testV0UserWithApplicationRoleIsDeniedForSpecificResource() throws IOException, ServletException {
         MockFilterChain mockFilterChain = new MockFilterChain();
         MockHttpServletRequest req = new MockHttpServletRequest("GET", "");
-        req.setPathInfo("/userWithoutRules/layer/visit");
-        req.setUserPrincipal(new MockPrincipal("userWithoutRules"));
+        req.setPathInfo("/test/layer/trilaterationFitter");
+        req.setAuthType("BASIC");
+        req.setUserPrincipal(new GenericPrincipal(realm, "", "", Arrays.asList(new String[]{"test.user"})));
+
         MockHttpServletResponse rsp = new MockHttpServletResponse();
 
         permissionCheckerFilter.doFilter(req, rsp, mockFilterChain);
@@ -99,17 +127,48 @@ public class PermissionCheckerFilterTest {
         assertEquals(403, rsp.getStatus());
     }
 
-    private class MockPrincipal implements Principal {
+    @Test
+    public void testV0UserWithAdminRoleIsAllowedForSpecificResource() throws IOException, ServletException {
+        MockFilterChain mockFilterChain = new MockFilterChain();
+        MockHttpServletRequest req = new MockHttpServletRequest("GET", "");
+        req.setPathInfo("/test/layer/trilaterationFitter");
+        req.setAuthType("BASIC");
+        req.setUserPrincipal(new GenericPrincipal(realm, "", "", Arrays.asList(new String[]{"admin"})));
 
-        private final String name;
+        MockHttpServletResponse rsp = new MockHttpServletResponse();
 
-        public MockPrincipal(String name) {
-            this.name = name;
-        }
+        permissionCheckerFilter.doFilter(req, rsp, mockFilterChain);
 
-        @Override
-        public String getName() {
-            return name;
-        }
+        assertEquals(200, rsp.getStatus());
+    }
+
+    @Test
+    public void testV0UserWithApplicationAdminRoleIsAllowedForSpecificResource() throws IOException, ServletException {
+        MockFilterChain mockFilterChain = new MockFilterChain();
+        MockHttpServletRequest req = new MockHttpServletRequest("GET", "");
+        req.setPathInfo("/test/layer/trilaterationFitter");
+        req.setAuthType("BASIC");
+        req.setUserPrincipal(new GenericPrincipal(realm, "", "", Arrays.asList(new String[]{"test.admin"})));
+
+        MockHttpServletResponse rsp = new MockHttpServletResponse();
+
+        permissionCheckerFilter.doFilter(req, rsp, mockFilterChain);
+
+        assertEquals(200, rsp.getStatus());
+    }
+
+    @Test
+    public void testV0UserWithoutRoleIsDenied() throws IOException, ServletException {
+        MockFilterChain mockFilterChain = new MockFilterChain();
+        MockHttpServletRequest req = new MockHttpServletRequest("GET", "");
+        req.setPathInfo("/test/layer/visit");
+        req.setAuthType("BASIC");
+        req.setUserPrincipal(new GenericPrincipal(realm, "", "", Arrays.asList(new String[]{})));
+
+        MockHttpServletResponse rsp = new MockHttpServletResponse();
+
+        permissionCheckerFilter.doFilter(req, rsp, mockFilterChain);
+
+        assertEquals(403, rsp.getStatus());
     }
 }

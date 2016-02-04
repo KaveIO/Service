@@ -6,18 +6,71 @@
  */
 package nl.kpmg.af.service.security;
 
+import nl.kpmg.af.service.data.core.Role;
+
 /**
  *
  * @author mhoekstra
  */
-public interface ServiceRequest {
+public abstract class ServiceRequest {
 
-    public boolean isValid();
+    public abstract boolean isValid();
 
-    public String getApplication();
+    public abstract String getApplication();
 
-    public String getResource();
+    public abstract String getResource();
 
-    public String getOperation();
+    public abstract String getOperation();
+
+    public abstract String getService();
+
+    public boolean isAllowed(Role role) {
+        if (this != null && this.isValid()) {
+
+            if (role.getDeny() != null) {
+                for (Role.Rule rule : role.getDeny()) {
+                    if (match(rule)) {
+                        return false;
+                    }
+                }
+            }
+
+            if (role.getAllow() != null) {
+                for (Role.Rule rule : role.getAllow()) {
+                    if (match(rule)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean match(Role.Rule rule) {
+        char operation;
+        switch (this.getOperation()) {
+            case "POST":
+                operation = 'c';
+                break;
+            case "GET":
+                operation = 'r';
+                break;
+            case "PUT":
+                operation = 'u';
+                break;
+            case "DELETE":
+                operation = 'd';
+                break;
+            default:
+                operation = '?';
+        }
+
+        boolean applicationMatch = rule.getService().equals(this.getService());
+        boolean resourceMatch = rule.getResource().equals("*") || rule.getResource().equals(this.getResource());
+        boolean rightsMatch = rule.getRights().equals("*") || rule.getRights().contains("" + operation);
+
+        return applicationMatch && resourceMatch && rightsMatch;
+    }
 
 }

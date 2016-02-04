@@ -1,0 +1,36 @@
+[
+    {
+        "name": "user",
+        "deny": [
+            {
+                "service": "data",
+                "resource": "trilaterationFitterLayer",
+                "rights": "*"
+            }
+        ],
+        "allow": [
+            {
+                "service": "data",
+                "resource": "*",
+                "rights": "crd"
+            }
+        ]
+    },
+    {
+        "name": "admin",
+        "deny": [
+        ],
+        "allow": [
+            {
+                "service": "data",
+                "resource": "*",
+                "rights": "*"
+            },
+            {
+                "service": "proxy",
+                "resource": "*",
+                "rights": "*"
+            }
+        ]
+    }
+]
