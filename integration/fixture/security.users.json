@@ -1,0 +1,7 @@
+[{
+    "username" : "integration_test_user",
+    "password" : "integration_test_user",
+    "roles" : [ 
+        "integration_test.user"
+    ]
+}]
