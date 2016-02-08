@@ -1,17 +1,25 @@
 # Integration Tests
 
-Testing of the Service proved to be a bit difficult. Internal Unit-test works fine however 
-running integration tests is quite tricky. Our inablity to run an nice embeded webserver 
-with multiple services (the Service and the ServiceAuth) make this tricky.
+This folder contains the integration tests for the Service. These are written are written as a python module which can be run via nosetests 
 
-In this folder there are some very crude integration tests in python. You will need:
+ - https://nose.readthedocs.org/en/latest/
 
- - A fully configured JBoss
- - A fully configured Mongo 
- - Both of the Services deployed
- - The data of the fixture loaded & some other magic data which I don't don describe here. 
+The principle of these tests is that they run against different sets of environments. This makes these tests quite difficult to set up. The \_\_init\_\_.py takes care of a big part of the common fixture loading in mongo. Currently the responsibilities of separate integration tests aren't completely separated. 
 
-All in all, this is quite unusable still. Or scratch that and call it 'work in progress'.
+## Requirements
+These tests all require a different environment to test its integration against.
 
-The main point here now is these things are at least stored somewhere.... 
+### Base 
+ - A completely deployed Service on a JBoss on 127.0.0.1. 
+ - A MongoDB on 127.0.0.1 with
+   - Authentication enabled 
+   - An user named 'admin' with password 'admin' with roles: readWriteAnyDatabase, dbAdminAnyDatabase, userAdminAnyDatabase
 
+### test_oauth.py
+ -  A completely deployed ServiceAuthKave on a JBoss on 127.0.0.1.
+
+### test_v1_data.py
+ -  Provided by base (fixture should be decoupled)
+ 
+### test_v1_proxy.py
+ -  Provided by base (fixture should be decoupled)
