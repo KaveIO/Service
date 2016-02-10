@@ -6,6 +6,7 @@
  */
 package nl.kpmg.af.service.data.core.repository;
 
+import java.util.Date;
 import java.util.List;
 import nl.kpmg.af.service.data.DatabaseInitialiser;
 import nl.kpmg.af.service.data.MongoDBUtil;
@@ -95,5 +96,21 @@ public class MeasurementRepositoryImplTest {
 
         find = repository.find(new BasicQuery("{\"measurementTimestamp\": { \"$gte\": { \"$date\": \"2015-06-14T00:00:00.00Z\" }}}"), 0, new PageRequest(0, 1000));
         assertEquals(3, find.getTotalElements());
+    }
+
+    @Test
+    public void testSave() throws ApplicationDatabaseConnectionException {
+        MeasurementRepository repository = mongoDBUtil.getRepository("test", "emptyLayer");
+        Measurement measurement = new  Measurement();
+        measurement.setVersion(2);
+        measurement.setMeasurementTimestamp(new Date());
+
+        repository.save(measurement);
+
+        List<Measurement> ms = repository.findAll();
+
+        assertEquals(1, ms.size());
+        Measurement m = ms.get(0);
+        assertEquals((Integer)2, m.getVersion());
     }
 }

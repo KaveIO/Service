@@ -22,6 +22,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Measurement implements Map {
 
+    private ObjectId id;
+
     private Integer version;
 
     private Date measurementTimestamp;
@@ -30,10 +32,11 @@ public class Measurement implements Map {
     private final Map innerMap = new HashMap();
 
     public ObjectId getId() {
-        if (innerMap.containsKey("_id")) {
-            return (ObjectId) innerMap.get("_id");
-        }
-        return null;
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     public Integer getVersion() {
