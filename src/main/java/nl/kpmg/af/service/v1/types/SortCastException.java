@@ -9,6 +9,7 @@ package nl.kpmg.af.service.v1.types;
 /**
  *
  * @author mhoekstra
+ * @deprecated 
  */
 public class SortCastException extends Exception {
 

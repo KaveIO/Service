@@ -22,6 +22,7 @@ import org.springframework.data.mongodb.core.query.Query;
 /**
  *
  * @author mhoekstra
+ * @deprecated 
  */
 public class MeasurementFilter implements Map {
 
