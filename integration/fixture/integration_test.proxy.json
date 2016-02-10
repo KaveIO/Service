@@ -1,1 +1,1 @@
-{ "name": "test", "target": "https://localhost:8443/Service/v1/data/test/visitLayer", "methods_allowed": ["GET", "POST"], "username": "test", "password": "admin" }
+{ "name": "test", "target": "https://localhost:8443/Service/v1/data/test/visitLayer", "methods_allowed": ["GET", "POST"], "username": "test", "password": "admin", "disable_ssl": true }

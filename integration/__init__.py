@@ -2,6 +2,7 @@ import json
 import inspect
 import re
 import ssl
+import base64
 from datetime import datetime 
 from glob import glob
 from pymongo import MongoClient
@@ -82,6 +83,8 @@ def get_context():
   ctx.verify_mode = ssl.CERT_NONE
   return ctx 
 
+def get_authorization():
+  return "Basic %s" % base64.encodestring('%s:%s' % (SERVICE_INTEGRATION_TEST_USER, SERVICE_INTEGRATION_TEST_PASSWORD)).replace('\n', '')
 
 class FixtureLoadException(Exception): 
   pass
