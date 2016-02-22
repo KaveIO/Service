@@ -7,7 +7,7 @@ from integration import *
 class TestV1Data(unittest.TestCase):
   
   def test_get_plain(self):
-      f = self.request('Service/v1/data/integration_test/visitLayer')
+      f = request('Service/v1/data/integration_test/visitLayer')
       self.assertEquals(200, f.code)
 
       body = f.read()
@@ -17,7 +17,7 @@ class TestV1Data(unittest.TestCase):
       bodyJson = json.loads(body)
 
   def test_get_larger_set(self):
-      f = self.request('Service/v1/data/integration_test/dummy')
+      f = request('Service/v1/data/integration_test/dummy')
       self.assertEquals(200, f.code)
 
       body = f.read()
@@ -33,7 +33,7 @@ class TestV1Data(unittest.TestCase):
       items = []
       count = 0
       while (True):
-        f = self.request(path)
+        f = request(path)
         self.assertEquals(200, f.code)
 
         body = f.read()
@@ -52,29 +52,13 @@ class TestV1Data(unittest.TestCase):
 
   def test_post_measurement(self):
       single_measurement = '[{"test": "test"}]'
-      f = self.request('Service/v1/data/integration_test/single_measurement', single_measurement)
+      f = request('Service/v1/data/integration_test/single_measurement', single_measurement)
       self.assertEquals(200, f.code)
 
-      f = self.request('Service/v1/data/integration_test/single_measurement')
+      f = request('Service/v1/data/integration_test/single_measurement')
       self.assertEquals(200, f.code)
 
       body = json.loads(f.read())
       self.assertTrue(len(body['items']) == 1)
       self.assertTrue(body['items'][0]['test'] == 'test')
-
-   
-  def request(self, url, data=None, content_type="application/json"):
-      if url[:8] != 'https://':
-          url = '%s/%s' % (SERVICE_URL, url)
-
-      req = urllib2.Request(url, data, headers={
-          "Content-Type": content_type,
-          "Authorization": get_authorization()})
-      return urllib2.urlopen(req, context=get_context())
-
-
-
-
-
-
 

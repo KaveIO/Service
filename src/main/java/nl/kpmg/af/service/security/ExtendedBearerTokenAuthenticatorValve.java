@@ -7,8 +7,6 @@
 package nl.kpmg.af.service.security;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
 import nl.kpmg.af.service.data.security.User;
@@ -36,6 +34,12 @@ public class ExtendedBearerTokenAuthenticatorValve extends BearerTokenAuthentica
 
     @Override
     protected boolean authenticate(Request request, HttpServletResponse response, LoginConfig config) throws IOException {
+
+        // While OPTIONS requests are allowed in the web.xml we still explicitly allow it in our AuthenticatorValve.
+        if (request.getMethod().equals("OPTIONS")) {
+            return true;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null) {
@@ -95,8 +99,13 @@ public class ExtendedBearerTokenAuthenticatorValve extends BearerTokenAuthentica
      * @return always false allows for sweet one-liner on a challenge
      */
     protected boolean challengeResponse(HttpServletResponse response, String error, String description) {
-        StringBuilder header = new StringBuilder("Bearer realm=\"");
+        StringBuilder header = new StringBuilder();
+
+        header.append("Basic realm=\"");
+        header.append(resourceMetadata.getRealm()).append("\", ");
+        header.append("Bearer realm=\"");
         header.append(resourceMetadata.getRealm()).append("\"");
+
         if (error != null) {
             header.append(", error=\"").append(error).append("\"");
         }

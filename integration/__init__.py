@@ -3,6 +3,7 @@ import inspect
 import re
 import ssl
 import base64
+import urllib2
 from datetime import datetime 
 from glob import glob
 from pymongo import MongoClient
@@ -85,6 +86,15 @@ def get_context():
 
 def get_authorization():
   return "Basic %s" % base64.encodestring('%s:%s' % (SERVICE_INTEGRATION_TEST_USER, SERVICE_INTEGRATION_TEST_PASSWORD)).replace('\n', '')
+
+def request(url, data=None, content_type="application/json"):
+  if url[:8] != 'https://':
+    url = '%s/%s' % (SERVICE_URL, url)
+
+  req = urllib2.Request(url, data, headers={
+      "Content-Type": content_type,
+      "Authorization": get_authorization()})
+  return urllib2.urlopen(req, context=get_context())
 
 class FixtureLoadException(Exception): 
   pass
