@@ -10,6 +10,7 @@ import com.mongodb.DBObject;
 import java.util.Date;
 import java.util.Set;
 import nl.kpmg.af.service.data.core.Measurement;
+import org.bson.types.ObjectId;
 import org.springframework.core.convert.converter.Converter;
 
 /**
@@ -26,6 +27,9 @@ public class MeasurementReadConverter implements Converter<DBObject, Measurement
         for (String key : keySet) {
 
             switch (key) {
+                case "_id":
+                    measurement.setId((ObjectId) source.get(key));
+                    break;
                 case "version":
                     measurement.setVersion((Integer) source.get(key));
                     break;

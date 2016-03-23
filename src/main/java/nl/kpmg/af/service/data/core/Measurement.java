@@ -12,8 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  *
@@ -22,6 +24,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Measurement implements Map {
 
+    @Id
+    @Field(value = "_id")
     private ObjectId id;
 
     private Integer version;
