@@ -17,6 +17,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -26,7 +27,9 @@ import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.DatatypeConverter;
+
 import nl.kpmg.af.service.data.core.Proxy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,9 +88,10 @@ public class ProxyRequest {
                     connectionSendContent(connection);
 
                     return Response
-                            .status(connection.getResponseCode())
-                            .entity(connection.getInputStream())
-                            .build();
+    	                    .status(connection.getResponseCode())
+    	                    .header("Access-Control-Allow-Origin", "*")
+    	                    .entity(connection.getInputStream())
+    	                    .build();
                 } catch (MalformedURLException ex) {
                     LOGGER.error("Proxy defintion contains malformed URL", ex);
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -108,7 +112,7 @@ public class ProxyRequest {
     }
 
     /**
-     * Sets up some basic properties. 
+     * Sets up some basic properties.
      */
     private void connectionInitialize(HttpURLConnection connection) throws ProtocolException {
         connection.setDoOutput(true);
