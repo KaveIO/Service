@@ -7,6 +7,7 @@
 package nl.kpmg.af.service.security;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
 
 /**
  * v1/{service}/{applicationName}/{resource}
@@ -38,6 +39,35 @@ public class V1ServiceRequest extends ServiceRequest {
                 service = pathParts[2];
                 application = pathParts[3];
                 resource = pathParts[4];
+                isValid = true;
+                return;
+            }
+        }
+
+        service = "";
+        application = "";
+        resource = "";
+    }
+
+    /**
+     *
+     * @param requestContext
+     */
+    public V1ServiceRequest(ContainerRequestContext requestContext){
+        String pathInfo = requestContext.getUriInfo().getPath(true);
+        this.operation = requestContext.getMethod();
+
+        if (pathInfo != null) {
+            String[] pathParts = pathInfo.split("/");
+            if (pathParts.length == 4
+                    && pathParts[0].length() > 0
+                    && pathParts[1].length() > 0
+                    && pathParts[2].length() > 0
+                    && pathParts[3].length() > 0) {
+
+                service = pathParts[1];
+                application = pathParts[2];
+                resource = pathParts[3];
                 isValid = true;
                 return;
             }
