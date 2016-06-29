@@ -53,7 +53,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
 		String method = containerRequest.getMethod();
 
 		if (method.equals("OPTIONS")) {
-			containerRequest.abortWith(Response.status(Response.Status.OK).build());
+			return;
 		}
 
 		// Get the authentification passed in HTTP headers parameters

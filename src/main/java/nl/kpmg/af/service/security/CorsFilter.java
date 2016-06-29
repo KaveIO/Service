@@ -7,59 +7,40 @@
 package nl.kpmg.af.service.security;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.Provider;
 
 /**
  * Filter created for returning CORS headers on OPTION calls.
  *
  * @author mhoekstra
  */
-public class CorsFilter implements Filter {
-
-    private static final Logger LOGGER = Logger.getLogger(CorsFilter.class.getName());
-
-    @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
-
-    }
+@Provider
+public class CorsFilter implements ContainerResponseFilter {
 
     @Override
-    public final void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
-            throws IOException, ServletException {
+    public void filter(ContainerRequestContext request,
+                       ContainerResponseContext response) throws IOException {
 
-        HttpServletRequest httpServetRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServetResponse = (HttpServletResponse) response;
+        if (request.getMethod().equals("OPTIONS")) {
+            MultivaluedMap<String, Object> headers = response.getHeaders();
 
+            headers.add("Access-Control-Allow-Origin", "*");
 
-        if (httpServetRequest.getMethod().equals("OPTIONS")) {
-            String requestHeaders = httpServetRequest.getHeader("Access-Control-Request-Headers");
+            String requestHeaders = request.getHeaderString("Access-Control-Request-Headers");
             if (requestHeaders != null) {
-                httpServetResponse.setHeader("Access-Control-Allow-Headers", requestHeaders);
+                headers.add("Access-Control-Allow-Headers", requestHeaders);
             }
 
-            String requestMethod = httpServetRequest.getHeader("Access-Control-Request-Method");
+            String requestMethod = request.getHeaderString("Access-Control-Request-Method");
             if (requestMethod != null) {
-                httpServetResponse.setHeader("Access-Control-Allow-Methods", requestMethod);
+                headers.add("Access-Control-Allow-Methods", requestMethod);
             }
 
-            httpServetResponse.setHeader("Access-Control-Allow-Origin", "*");
-            httpServetResponse.setStatus(200);
-        } else {
-            chain.doFilter(request, response);
         }
-    }
-
-    @Override
-    public void destroy() {
-
     }
 }

@@ -51,6 +51,7 @@ public class PermissionCheckerFilter implements ContainerRequestFilter {
 	@Autowired
 	private UserRepository userRepository;
 
+
 	private ServiceRequest createServiceRequest(HttpServletRequest httpServetRequest) {
 		ServiceRequest request = new V0ServiceRequest(httpServetRequest);
 		if (!request.isValid()) {
@@ -72,6 +73,7 @@ public class PermissionCheckerFilter implements ContainerRequestFilter {
 	 * @throws UserRolesException
 	 */
 	private List<String> getUserRoles(HttpServletRequest request) throws UserRolesException {
+
 		List userRoles;
 
 		String authType = request.getAuthType();
@@ -109,7 +111,13 @@ public class PermissionCheckerFilter implements ContainerRequestFilter {
 
 	@Override
 	public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+        String method = containerRequestContext.getMethod();
+        if (method.equals("OPTIONS")) {
+            return;
+        }
+
         UserSecurityContext securityContext;
+
         if(containerRequestContext.getSecurityContext() instanceof UserSecurityContext) {
             securityContext = (UserSecurityContext) containerRequestContext.getSecurityContext();
         }else{
