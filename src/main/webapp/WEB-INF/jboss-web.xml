@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jboss-web>
-    <valve>
-        <class-name>nl.kpmg.af.service.security.ExtendedBearerTokenAuthenticatorValve</class-name>
-    </valve>
-</jboss-web>

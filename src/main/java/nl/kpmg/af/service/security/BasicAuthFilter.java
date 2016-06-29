@@ -36,9 +36,10 @@ public class BasicAuthFilter implements ContainerRequestFilter {
 	@Autowired
 	MongoDBUtil mongoDBUtil;
 
+
 	private String username = "";
 	private String password = "";
-	private String realm = "DataService";
+	private String realm = "DataAnalyticsOrganizationRealm";
 
 	/**
 	 * Apply the filter : check input request, validate or not with user auth
@@ -57,18 +58,17 @@ public class BasicAuthFilter implements ContainerRequestFilter {
 
 		// Get the authentification passed in HTTP headers parameters
 		String auth = containerRequest.getHeaderString(BASIC_AUTHENTICATION_HEADER);
+		// If the user does not have the right (does not provide any HTTP Basic Auth)
+		if (auth == null || auth.equals("")) {
+			throw new WebApplicationException(challengeResponse("Authorization required", "").build());
+		}
 
 		// credentials[0] is the username, credentials[1] is the password
 		String[] credentials = BasicAuth.decode(auth);
 
-		// If the user does not have the right (does not provide any HTTP Basic Auth)
-		if (auth == null) {
-			throw new WebApplicationException(challengeResponse("", "").build());
-		}
-
 		// If login or password fail
 		if (credentials == null || credentials.length != 2) {
-			throw new WebApplicationException(challengeResponse("", "").build());
+			throw new WebApplicationException(challengeResponse("Authorization required", "").build());
 		}
 		LOGGER.debug("Filtering request with basic authentication. Input username:password = {}:{}", credentials[0],
 				credentials[1]);
@@ -84,7 +84,6 @@ public class BasicAuthFilter implements ContainerRequestFilter {
 		} else {
 			throw new WebApplicationException(challengeResponse("Wrong Password", "").build());
 		}
-
 	}
 
 	/**

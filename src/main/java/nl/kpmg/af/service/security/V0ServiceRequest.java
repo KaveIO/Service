@@ -51,15 +51,14 @@ public class V0ServiceRequest extends ServiceRequest {
 
         if (pathInfo != null) {
             String[] pathParts = pathInfo.split("/");
-            if (pathParts.length == 4
-                    && pathParts[0].length() == 0
+            if (pathParts.length == 3
+                    && pathParts[0].length() > 0
                     && pathParts[1].length() > 0
-                    && pathParts[2].length() > 0
-                    && pathParts[3].length() > 0) {
+                    && pathParts[2].length() > 0) {
 
-                application = pathParts[1];
-                String resourceSuffix = pathParts[2].substring(0, 1).toUpperCase() + pathParts[2].substring(1).toLowerCase();
-                resource = pathParts[3] + resourceSuffix;
+                application = pathParts[0];
+                String resourceSuffix = pathParts[1].substring(0, 1).toUpperCase() + pathParts[1].substring(1).toLowerCase();
+                resource = pathParts[2] + resourceSuffix;
                 isValid = true;
                 return;
             }
