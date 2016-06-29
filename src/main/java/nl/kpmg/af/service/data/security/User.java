@@ -6,6 +6,7 @@
  */
 package nl.kpmg.af.service.data.security;
 
+import java.security.Principal;
 import java.util.List;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * @author mhoekstra
  */
 @Document(collection = "users")
-public class User {
+public class User implements Principal {
 
     private String username;
 
@@ -44,5 +45,10 @@ public class User {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    @Override
+    public String getName() {
+        return username;
     }
 }

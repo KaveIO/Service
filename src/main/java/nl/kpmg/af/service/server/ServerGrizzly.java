@@ -4,6 +4,8 @@ import static nl.kpmg.af.service.Main.BASE_URI;
 
 import java.net.URI;
 
+import nl.kpmg.af.service.security.CorsFilter;
+import nl.kpmg.af.service.security.PermissionCheckerFilter2;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -23,21 +25,17 @@ public class ServerGrizzly implements Server {
   ApplicationContext context;
   private HttpServer server;
 
-  public ServerGrizzly() {
-    context = new ClassPathXmlApplicationContext(new String[] {"application-context.xml"});
-  }
+  public ServerGrizzly() {}
 
 
   @Override
   public void start() {
-
-    // Adding the packages with the web resources
-    ResourceConfig rc =
-        new ResourceConfig().packages("nl.kpmg.af.service.v0", "nl.kpmg.af.service.v1")
-            .property("ContextConfig", context).register(BasicAuthFilter.class);
+    context = new ClassPathXmlApplicationContext(new String[] {"applicationContext.xml"});
 
 
-    server = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
+    DataServiceApplication app = new DataServiceApplication();
+
+    server = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), app);
 
   }
 

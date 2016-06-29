@@ -2,7 +2,9 @@ package nl.kpmg.af.service.security;
 
 import javax.xml.bind.DatatypeConverter;
 
+
 /**
+ * Created by fziliotto on 24-6-16.
  * Decodes a HTTP Basic auth string encoded in BASE 64
  */
 public class BasicAuth {

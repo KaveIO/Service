@@ -1,26 +1,40 @@
 package nl.kpmg.af.service.security;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
+import javax.annotation.Priority;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.Provider;
 
+import nl.kpmg.af.service.data.MongoDBUtil;
+import org.apache.catalina.core.ApplicationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import nl.kpmg.af.service.data.security.User;
+import nl.kpmg.af.service.data.security.repository.UserRepository;
+import org.springframework.stereotype.Component;
 
 
 /**
- * Jersey HTTP Basic Auth filter
- * 
- * @author Deisss (LGPLv3)
+ * Created by fziliotto on 24-6-16.
  */
+@Provider
+@Priority(Priorities.AUTHENTICATION)
+@Component
 public class BasicAuthFilter implements ContainerRequestFilter {
-  @Context
-  HttpServletRequest request;
-  /**
+  @Autowired
+  UserRepository userRepository;
+
+  @Autowired
+  MongoDBUtil mongoDBUtil;
+
+    /**
    * The name of the http request header containing the authentication user.
    */
   public static final String BASIC_AUTHENTICATION_HEADER = "Authorization";
@@ -33,6 +47,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
   private String realm = "DataService";
 
 
+
   private ServiceRequest createServiceRequest(ContainerRequestContext servletRequest) {
     ServiceRequest request = new V0ServiceRequest(servletRequest);
     if (!request.isValid()) {
@@ -41,10 +56,6 @@ public class BasicAuthFilter implements ContainerRequestFilter {
     return request;
   }
 
-
-
-
-
   /**
    * Apply the filter : check input request, validate or not with user auth
    *
@@ -52,12 +63,9 @@ public class BasicAuthFilter implements ContainerRequestFilter {
    */
   @Override
   public void filter(ContainerRequestContext containerRequest) throws WebApplicationException {
+
     // GET, POST, PUT, DELETE, ...
     String method = containerRequest.getMethod();
-    // myresource/get/56bCA for example
-    String path = containerRequest.getUriInfo().getPath(true);
-
-    Response response;
 
     if (method.equals("OPTIONS")) {
       containerRequest.abortWith(Response.status(Response.Status.OK).build());
@@ -66,7 +74,7 @@ public class BasicAuthFilter implements ContainerRequestFilter {
     String auth = containerRequest.getHeaderString(BASIC_AUTHENTICATION_HEADER);
 
     // lap : loginAndPassword
-    String[] lap = BasicAuth.decode(auth);
+    String[] credentials = BasicAuth.decode(auth);
 
     // Get the authentification passed in HTTP headers parameters
 
@@ -76,38 +84,27 @@ public class BasicAuthFilter implements ContainerRequestFilter {
     }
 
     // If login or password fail
-    if (lap == null || lap.length != 2) {
+    if (credentials == null || credentials.length != 2) {
       throw new WebApplicationException(challengeResponse("","").build());
     }
     LOGGER.debug("Filtering request with basic authentication. Input username:password = {}:{}",
-            lap[0], lap[1]);
+            credentials[0], credentials[1]);
 
     ServiceRequest serviceRequest = createServiceRequest(containerRequest);
 
-
-    /*
-    // Valves aren't executed in the actual application scope so Spring is not able to inject our
-    // ApplicationContextFetch so we try to fetch this from our servlet context.
-    WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(
-            request.getContext().getServletContext());
-    UserRepository userRepository = webApplicationContext.getBean(UserRepository.class);
-
-    User user = userRepository.findOneByUsername(username);
-    if (user.getPassword().equals(password)) {
-      GenericPrincipal principal = new GenericPrincipal(
-              request.getContext().getRealm(),
-              username,
-              password,
-              user.getRoles());
-
-      request.setUserPrincipal(principal);
-      request.setAuthType("BASIC");
-      return true;
+    User user = userRepository.findOneByUsername(credentials[0]);
+    if(user==null){
+      throw new WebApplicationException(challengeResponse( "User does not exist", "").build());
+    }else
+      if(user.getPassword().equals(credentials[1])) {
+      // We configure your Security Context here
+      String scheme = containerRequest.getUriInfo().getRequestUri().getScheme();
+      containerRequest.setSecurityContext(new UserSecurityContext(user,scheme));
+      return;
+    }else{
+      throw new WebApplicationException(challengeResponse( "Wrong Password", "").build());
     }
-    if (authenticated == false) {
-      containerRequest.abortWith(Response.status(Response.Status.OK).build());
 
-    }*/
     // DO YOUR DATABASE CHECK HERE (replace that line behind)...
     // User authentificationResult = AuthentificationThirdParty.authentification(lap[0], lap[1]);
     // User authentificationResult;
@@ -120,7 +117,6 @@ public class BasicAuthFilter implements ContainerRequestFilter {
 
     // TODO : HERE YOU SHOULD ADD PARAMETER TO REQUEST, TO REMEMBER USER ON YOUR REST SERVICE...
 
-    return;
   }
 
   /**
@@ -151,6 +147,8 @@ public class BasicAuthFilter implements ContainerRequestFilter {
 
     return builder;
   }
+
+
 }
 
 
