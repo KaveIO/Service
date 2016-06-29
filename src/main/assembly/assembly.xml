@@ -49,13 +49,8 @@ limitations under the License.
         </fileSet>
 
         <fileSet>
-            <directory>${project.basedir}</directory>
+            <directory>${project.basedir}/src/main/resources</directory>
             <outputDirectory>/</outputDirectory>
-            <includes>
-                <include>README*</include>
-                <include>LICENSE*</include>
-                <include>NOTICE*</include>
-            </includes>
         </fileSet>
 
 

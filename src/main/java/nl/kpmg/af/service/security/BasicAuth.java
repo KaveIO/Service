@@ -30,4 +30,6 @@ public class BasicAuth {
 		// - the second one password
 		return new String(decodedBytes).split(":", 2);
 	}
+
+	private BasicAuth(){}
 }
