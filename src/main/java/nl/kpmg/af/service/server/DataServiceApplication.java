@@ -2,7 +2,7 @@ package nl.kpmg.af.service.server;
 
 import nl.kpmg.af.service.security.BasicAuthFilter;
 import nl.kpmg.af.service.security.CorsFilter;
-import nl.kpmg.af.service.security.PermissionCheckerFilter2;
+import nl.kpmg.af.service.security.PermissionCheckerFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
@@ -13,7 +13,7 @@ public class DataServiceApplication  extends ResourceConfig {
         packages(true,"nl.kpmg.af.service.v0");
         packages(true,"nl.kpmg.af.service.v1");
         register(BasicAuthFilter.class);
-        register(PermissionCheckerFilter2.class);
+        register(PermissionCheckerFilter.class);
         register(CorsFilter.class);
     }
 }

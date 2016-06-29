@@ -33,5 +33,5 @@
     </bean>
     
     <bean id="mongoDBUtil" class="nl.kpmg.af.service.data.MongoDBUtil"/>
-    <bean id="permissionCheckerFilter" class="nl.kpmg.af.service.security.PermissionCheckerFilter"/>    
+    <bean id="permissionCheckerFilter" class="nl.kpmg.af.service.security.PermissionCheckerFilter"/>
 </beans>

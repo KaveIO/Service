@@ -4,17 +4,12 @@ import static nl.kpmg.af.service.Main.BASE_URI;
 
 import java.net.URI;
 
-import nl.kpmg.af.service.security.CorsFilter;
-import nl.kpmg.af.service.security.PermissionCheckerFilter2;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import nl.kpmg.af.service.security.BasicAuthFilter;
 
 
 /**
