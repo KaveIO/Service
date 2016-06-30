@@ -20,10 +20,10 @@ limitations under the License.
     <!-- Specifies that our binary distribution is a zip package -->
     <formats>
         <format>zip</format>
-        <format>tar.gz</format>
-    </formats>
+    <!--  <format>tar.gz</format> -->
+  </formats>
 
-    <!-- Adds the dependencies of our application to the lib directory -->
+  <!-- Adds the dependencies of our application to the lib directory -->
     <dependencySets>
         <dependencySet>
             <!--
@@ -48,11 +48,23 @@ limitations under the License.
                 <include>*.jar</include>
             </includes>
         </fileSet>
+
+        <!-- Configuration and properties files -->
         <fileSet>
             <directory>src/main/resources</directory>
             <outputDirectory>/</outputDirectory>
         </fileSet>
+
+        <!-- Starting script -->
+        <fileSet>
+            <directory>src/scripts</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>run.sh</include>
+            </includes>
+        </fileSet>
     </fileSets>
+
 
 
 </assembly>
