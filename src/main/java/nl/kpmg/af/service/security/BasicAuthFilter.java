@@ -63,8 +63,13 @@ public class BasicAuthFilter implements ContainerRequestFilter {
 			throw new WebApplicationException(challengeResponse("Authorization required", "").build());
 		}
 
+		String[] credentials;
 		// credentials[0] is the username, credentials[1] is the password
-		String[] credentials = BasicAuth.decode(auth);
+		try {
+			credentials = BasicAuth.decode(auth);
+		}catch(Exception ex){
+			throw new WebApplicationException(challengeResponse("Authorization required", "").build());
+		}
 
 		// If login or password fail
 		if (credentials == null || credentials.length != 2) {

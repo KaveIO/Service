@@ -1,15 +1,12 @@
 package nl.kpmg.af.service.security;
 
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.DatatypeConverter;
 
 /**
- * Created by fziliotto on 24-6-16. Decodes a HTTP Basic auth string encoded in BASE 64
+ * Created by fziliotto on 24-6-16.
+ * Decodes a HTTP Basic auth string encoded in BASE 64
  */
 public class BasicAuth {
-	private BasicAuth() {
-	}
-
 	/**
 	 * Decode the basic auth and convert it to array login/password
 	 *
@@ -17,7 +14,8 @@ public class BasicAuth {
 	 *            The string encoded
 	 * @return The login (case 0), the password (case 1)
 	 */
-	public static String[] decode(@NotNull String auth) {
+	public static String[] decode(String auth) {
+		if(auth == null) return null;
 		// Replacing "Basic THE_BASE_64" to "THE_BASE_64" directly
 		auth = auth.replaceFirst("[B|b]asic ", "");
 
@@ -34,4 +32,6 @@ public class BasicAuth {
 		// - the second one password
 		return new String(decodedBytes).split(":", 2);
 	}
+
+	private BasicAuth(){}
 }
