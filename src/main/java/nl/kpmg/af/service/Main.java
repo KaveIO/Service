@@ -14,7 +14,6 @@ import nl.kpmg.af.service.server.ServerGrizzly;
  */
 public class Main {
 	// Base URI the Grizzly HTTP server will listen on
-	public static final String BASE_URI = "http://localhost:9000";
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
 	/**
@@ -27,7 +26,6 @@ public class Main {
 		final Server server = new ServerGrizzly();
 		server.start();
 
-		LOGGER.info("Server started at location: {}, press a button to stop it", BASE_URI);
 		System.in.read();
 		server.stop();
 	}

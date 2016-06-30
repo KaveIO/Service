@@ -1,6 +1,10 @@
+/*
+ * Copyright 2015 KPMG N.V. (unless otherwise stated).
+ *
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 package nl.kpmg.af.service.server;
-
-import static nl.kpmg.af.service.Main.BASE_URI;
 
 import java.net.URI;
 
@@ -11,33 +15,32 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 /**
  * Created by fziliotto on 24-6-16.
  */
 public class ServerGrizzly implements Server {
-  private static final Logger LOGGER = LoggerFactory.getLogger(ServerGrizzly.class);
-  ApplicationContext context;
-  private HttpServer server;
+	private static final Logger LOGGER = LoggerFactory.getLogger(ServerGrizzly.class);
+	ApplicationContext context;
+	private HttpServer server;
 
-  public ServerGrizzly() {}
+	public ServerGrizzly() {
+	}
 
+	@Override
+	public void start() {
+		context = new ClassPathXmlApplicationContext(new String[] { "appConfig.xml" });
+		AppConfig config = context.getBean(AppConfig.class);
+		String baseUri = "http://" + config.getServerHost() + ":" + config.getServerPort();
 
-  @Override
-  public void start() {
-    context = new ClassPathXmlApplicationContext(new String[] {"applicationContext.xml"});
+		DataServiceApplication app = new DataServiceApplication(config.getServerName());
 
+		server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUri), app);
+		LOGGER.info("Server started at location: {}, press a button to stop it", baseUri);
 
-    DataServiceApplication app = new DataServiceApplication();
+	}
 
-    server = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), app);
-
-  }
-
-  @Override
-  public void stop() {
-    server.shutdown();
-  }
+	@Override
+	public void stop() {
+		server.shutdown();
+	}
 }
-
-

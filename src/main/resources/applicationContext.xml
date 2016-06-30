@@ -5,20 +5,28 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/util 
-        http://www.springframework.org/schema/util/spring-util.xsd 
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/data/mongo 
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
-    <context:component-scan base-package="nl.kpmg.af.service.v0" />
-    <context:component-scan base-package="nl.kpmg.af.service.v1" />
+    <context:component-scan base-package="nl.kpmg.af.service.v0"/>
+    <context:component-scan base-package="nl.kpmg.af.service.v1"/>
 
-    <context:property-placeholder location="classpath:mongo.properties"  />
+    <!-- bean definitions here -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true" />
+        <property name="ignoreResourceNotFound" value="true" />
+        <property name="locations">
+            <list>
+                <value>classpath:mongo.properties</value>
+            </list>
+        </property>
+    </bean>
 
     <mongo:repositories base-package="nl.kpmg.af.service.data.security.repository"/>
     <mongo:db-factory
@@ -27,7 +35,7 @@
             port="${mongodb.port}"
             username="${mongodb.username}"
             password="${mongodb.password}"
-            dbname="${mongodb.database}" />
+            dbname="${mongodb.database}"/>
     <bean id="mongoDb" factory-bean="mongoDbFactory" factory-method="getDb"/>
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
@@ -35,4 +43,11 @@
 
     <bean id="mongoDBUtil" class="nl.kpmg.af.service.data.MongoDBUtil"/>
 
+
+    <!-- Configuration -->
+    <bean id="configuration" class="nl.kpmg.af.service.server.AppConfig">
+        <property name="serverName" value="${ds.server.name:DataService}"/>
+        <property name="serverHost" value="${ds.server.host:localhost}"/>
+        <property name="serverPort" value="${ds.server.port:9000}"/>
+    </bean>
 </beans>
