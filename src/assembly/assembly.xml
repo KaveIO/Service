@@ -48,9 +48,11 @@ limitations under the License.
                 <include>*.jar</include>
             </includes>
         </fileSet>
-
-
-
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
     </fileSets>
+
 
 </assembly>
