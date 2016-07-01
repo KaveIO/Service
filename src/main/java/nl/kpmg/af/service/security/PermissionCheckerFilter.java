@@ -10,11 +10,10 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.annotation.Priority;
 import javax.servlet.Filter;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Priorities;
@@ -24,6 +23,8 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.catalina.realm.GenericPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import nl.kpmg.af.service.data.MongoDBUtil;
@@ -43,13 +44,11 @@ import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 @Priority(Priorities.AUTHORIZATION)
 public class PermissionCheckerFilter implements ContainerRequestFilter {
 
-	private static final Logger LOGGER = Logger.getLogger(PermissionCheckerFilter.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(PermissionCheckerFilter.class);
 
 	@Autowired
 	private MongoDBUtil mongoDBUtil;
 
-	@Autowired
-	private UserRepository userRepository;
 
 
 	private ServiceRequest createServiceRequest(HttpServletRequest httpServetRequest) {
@@ -61,38 +60,12 @@ public class PermissionCheckerFilter implements ContainerRequestFilter {
 	}
 
 	/**
-	 * Helper method for retrieving the list of roles associated to an user.
-	 * <p>
-	 * Our login methods rely on the CatalinaBearerTokenAuthenticator. This is a mechanism which interprets an oAuth2
-	 * bearer token for authentication and role based authorization. This functionality hides the roles associated to
-	 * the identified userPrinciple through a SkeletonKeyPrincipal and a RequestFacade. In that case we have to get the
-	 * correct roleSet from deep down the current SecurityContext.
-	 *
-	 * @param request
+	 * Retrieves the user roles from the security context
+     *
+	 * @param securityContext
 	 * @return the roles of the current UserPrincipal
 	 * @throws UserRolesException
 	 */
-	private List<String> getUserRoles(HttpServletRequest request) throws UserRolesException {
-
-		List userRoles;
-
-		String authType = request.getAuthType();
-		if (authType == null) {
-			throw new UserRolesException("no AuthType");
-		}
-		if (authType.equals("BASIC")) {
-			Principal userPrincipal = request.getUserPrincipal();
-			if (GenericPrincipal.class.isAssignableFrom(userPrincipal.getClass())) {
-				userRoles = Arrays.asList(((GenericPrincipal) userPrincipal).getRoles());
-			} else {
-				throw new UserRolesException();
-			}
-		} else {
-			throw new UserRolesException("Unknown AuthType");
-		}
-		return userRoles;
-	}
-
 	private List<String> getUserRoles(UserSecurityContext securityContext) throws UserRolesException {
 		List userRoles;
 
@@ -134,7 +107,7 @@ public class PermissionCheckerFilter implements ContainerRequestFilter {
 		try {
 			userRoles = getUserRoles(securityContext);
 		} catch (UserRolesException ex) {
-			LOGGER.log(Level.WARNING, "Role retrieval failed for user", ex);
+			LOGGER.warn("Role retrieval failed for user: {}", ex);
 			return;
 		}
 
@@ -156,7 +129,7 @@ public class PermissionCheckerFilter implements ContainerRequestFilter {
 				}
 			}
 		} catch (ApplicationDatabaseConnectionException ex) {
-			LOGGER.log(Level.SEVERE, "", ex);
+			LOGGER.error("Database connection error: {}", ex);
 		}
 		// No error and the user role is not allowed to access the resource
 		throw new WebApplicationException(HttpServletResponse.SC_FORBIDDEN);
