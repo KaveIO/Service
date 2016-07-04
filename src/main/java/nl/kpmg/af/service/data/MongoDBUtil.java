@@ -6,7 +6,8 @@
  */
 package nl.kpmg.af.service.data;
 
-import com.mongodb.Mongo;
+import com.mongodb.*;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.UnknownHostException;
@@ -17,12 +18,7 @@ import java.util.Map;
 
 import nl.kpmg.af.datamodel.connection.MongoDatabase;
 import nl.kpmg.af.datamodel.dao.AbstractDao;
-import nl.kpmg.af.service.data.core.repository.MeasurementReadConverter;
-import nl.kpmg.af.service.data.core.repository.MeasurementRepository;
-import nl.kpmg.af.service.data.core.repository.MeasurementRepositoryImpl;
-import nl.kpmg.af.service.data.core.repository.MeasurementWriteConverter;
-import nl.kpmg.af.service.data.core.repository.ProxyRepository;
-import nl.kpmg.af.service.data.core.repository.RoleRepository;
+import nl.kpmg.af.service.data.core.repository.*;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
 
 import nl.kpmg.af.service.data.security.Application;
@@ -41,6 +37,8 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.support.MongoRepositoryFactory;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.util.TypeInformation;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Utility class for initializing the MongoDatabase object. This is not the prettiest solution imaginable. For now it
@@ -164,15 +162,19 @@ public final class MongoDBUtil {
             Application.Database database = application.getDatabase();
 
             try {
+                MongoClientURI uri = geneateMongoUri(database.getUsername(),database.getPassword(),database.getHost(),database.getDatabase(),null);
+                //this call sets also the authentication mechanism for mongo v3, which is SCRAM-SHA-1, while it v2 is MONGODB-CR
+                //MongoClientURI uri = new MongoClientURI("mongodb://" + database.getUsername() + ":" + database.getPassword() + "@" + database.getHost() + ":" + database.getPort() + "/"+database.getDatabase()+"?authMechanism=SCRAM-SHA-1");
 
-                Mongo mongo = new Mongo(database.getHost(), database.getPort());
-                SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(mongo, database.getDatabase(), new UserCredentials(database.getUsername(), database.getPassword()));
-                DbRefResolver dbRefResolver = new DefaultDbRefResolver(simpleMongoDbFactory);
+                SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(uri);
+
+                // TODO To remove since it is never used
+                //DbRefResolver dbRefResolver = new DefaultDbRefResolver(simpleMongoDbFactory);
                 MongoTemplate mongoTemplate = new MongoTemplate(simpleMongoDbFactory);
 
                 MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(mongoTemplate);
                 return repositoryFactory.getRepository(repositoryInterface);
-            } catch (UnknownHostException ex) {
+            }  catch (UnknownHostException ex) {
                 throw new ApplicationDatabaseConnectionException("Could not connect to application database", ex);
             }
         }
@@ -208,10 +210,12 @@ public final class MongoDBUtil {
                 Application.Database database = application.getDatabase();
 
                 try {
-                    Mongo mongo = new Mongo(database.getHost(), database.getPort());
+                    MongoClientURI uri = geneateMongoUri(database.getUsername(),database.getPassword(),database.getHost(),database.getDatabase(),null);
+
+                    SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(uri);
+
                     MongoMappingContext mongoMappingContext = new StaticMongoMappingContext(collection);
 
-                    SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(mongo, database.getDatabase(), new UserCredentials(database.getUsername(), database.getPassword()));
                     DbRefResolver dbRefResolver = new DefaultDbRefResolver(simpleMongoDbFactory);
                     MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext);
 
@@ -232,10 +236,13 @@ public final class MongoDBUtil {
                             new MeasurementRepositoryImpl(mongoTemplate, collection));
 
                     measurementRepositoryCache.put(repositoryIdentifier, repository);
-
                 } catch (UnknownHostException ex) {
                     throw new ApplicationDatabaseConnectionException("Could not connect to application database", ex);
+                }catch (Exception e){
+                    throw new ApplicationDatabaseConnectionException("Could not connect to application database", e);
+
                 }
+
             }
         }
 
@@ -285,5 +292,90 @@ public final class MongoDBUtil {
          return new StaticMongoPersistentProperty(this, name);
          }
          */
+    }
+
+    /**
+     * Generate a uri string to connect to a MongoDb instance in the format
+     *    mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
+     *
+     * @param username the user that access the database (if null the client will not try to connect to a database)
+     * @param password tha password (only needed if username is specified, and optional for some authentication mechanism)
+     * @param hosts the list of hosts (only host1 is mandatory), the hostname is in the form host[:port] to specify the port
+     * @param database the name of the database
+     * @return
+     */
+    public static MongoClientURI geneateMongoUri(@NotNull final String username, @NotNull final String password, @NotNull final List<String> hosts, final String database, final String options) throws UnknownHostException {
+        if(hosts == null || hosts.size()==0 || hosts.get(0)==null || hosts.get(0).equals("")){
+            throw new UnknownHostException("Unspecified host");
+        }
+        StringBuilder uriBuilder=new StringBuilder();
+        //generate a mongo uri in the format
+        uriBuilder.append("mongodb://");
+        if(username != null && !username.equals("")){
+            uriBuilder.append(username);
+            if(password!=null){
+                uriBuilder.append(":").append(password);
+            }
+            uriBuilder.append("@");
+        }
+
+        uriBuilder.append(hosts.get(0));
+
+        for (int i = 1; i < hosts.size(); i++) {
+            uriBuilder.append(",");
+            uriBuilder.append(hosts.get(i));
+        }
+        if(database!=null){
+            uriBuilder.append("/").append(database);
+        }
+
+        if(options!=null){
+            if(database==null)
+                uriBuilder.append("/");
+            uriBuilder.append("?").append(options);
+        }
+
+        return new MongoClientURI(uriBuilder.toString());
+    }
+
+    /**
+     * Generate a uri string to connect to a MongoDb instance in the format
+     *    mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
+     *
+     * This function takes a single string for the list of hosts.
+     * @param username the user that access the database (if null the client will not try to connect to a database)
+     * @param password tha password (only needed if username is specified, and optional for some authentication mechanism)
+     * @param hosts the list of hosts (only host1 is mandatory), the hostname is in the form host[:port] to specify the port
+     * @param database the name of the database
+     * @return
+     */
+    public static MongoClientURI geneateMongoUri(@NotNull final String username, @NotNull final String password, @NotNull final String hosts, final String database, final String options) throws UnknownHostException {
+        if(hosts == null || hosts.equals("")){
+            throw new UnknownHostException("Unspecified host");
+        }
+        StringBuilder uriBuilder=new StringBuilder();
+        //generate a mongo uri in the format
+        uriBuilder.append("mongodb://");
+        if(username != null && !username.equals("")){
+            uriBuilder.append(username);
+            if(password!=null){
+                uriBuilder.append(":").append(password);
+            }
+            uriBuilder.append("@");
+        }
+
+        uriBuilder.append(hosts);
+
+        if(database!=null){
+            uriBuilder.append("/").append(database);
+        }
+
+        if(options!=null){
+            if(database==null)
+                uriBuilder.append("/");
+            uriBuilder.append("?").append(options);
+        }
+
+        return new MongoClientURI(uriBuilder.toString());
     }
 }

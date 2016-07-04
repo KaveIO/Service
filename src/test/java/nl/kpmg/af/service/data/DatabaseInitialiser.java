@@ -109,7 +109,6 @@ public class DatabaseInitialiser {
             WriteResult insert = database.createCollection(split[1], new BasicDBObject())
                     .insert(mockData.toArray(new BasicDBObject[mockData.size()]), database.getWriteConcern());
 
-            String error = insert.getError();
         }
     }
 
