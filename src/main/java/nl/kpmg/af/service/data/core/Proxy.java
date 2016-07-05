@@ -24,6 +24,10 @@ public class Proxy {
 
     @Field("disable_ssl")
     private boolean disableSSL;
+
+    @Field("path_extension")
+    private boolean pathExtension;
+
     private String username;
     private String password;
 
@@ -73,5 +77,13 @@ public class Proxy {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isPathExtension() {
+        return pathExtension;
+    }
+
+    public void setPathExtension(boolean pathExtension) {
+        this.pathExtension = pathExtension;
     }
 }

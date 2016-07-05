@@ -59,7 +59,7 @@ public class V1ServiceRequest extends ServiceRequest {
 
         if (pathInfo != null) {
             String[] pathParts = pathInfo.split("/");
-            if (pathParts.length == 4
+            if (pathParts.length >= 4
                     && pathParts[0].length() > 0
                     && pathParts[1].length() > 0
                     && pathParts[2].length() > 0

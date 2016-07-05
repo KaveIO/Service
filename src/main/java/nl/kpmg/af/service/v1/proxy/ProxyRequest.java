@@ -6,9 +6,9 @@
  */
 package nl.kpmg.af.service.v1.proxy;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -24,12 +24,12 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.DatatypeConverter;
 
 import nl.kpmg.af.service.data.core.Proxy;
 
+import org.glassfish.grizzly.http.server.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,17 +66,18 @@ public class ProxyRequest {
         }
     };
 
-    private final HttpServletRequest request;
+    private final Request request;
     private final Proxy proxy;
 
-    public ProxyRequest(HttpServletRequest request, Proxy proxy) {
+
+    public ProxyRequest(Request request, Proxy proxy) {
         this.request = request;
         this.proxy = proxy;
     }
 
     public Response execute() {
         if (proxy != null) {
-            if (proxy.getMethodsAllowed().contains(request.getMethod())) {
+            if (proxy.getMethodsAllowed().contains(request.getMethod().getMethodString())) {
 
                 try {
                     URL url = new URL(proxy.getTarget());
@@ -116,7 +117,7 @@ public class ProxyRequest {
      */
     private void connectionInitialize(HttpURLConnection connection) throws ProtocolException {
         connection.setDoOutput(true);
-        connection.setRequestMethod(request.getMethod());
+        connection.setRequestMethod(request.getMethod().getMethodString());
         connection.setRequestProperty("User-Agent", "KPMG Proxy Service");
         connection.setRequestProperty("Accept", "*/*");
     }
@@ -160,7 +161,7 @@ public class ProxyRequest {
     private void connectionSendContent(HttpURLConnection connection) throws IOException {
         if (request.getContentLength() > 0) {
             connection.setRequestProperty("Content-Type", request.getContentType());
-            try (BufferedReader reader = request.getReader()) {
+            try (Reader reader = request.getReader()) {
                 OutputStream outputStream = connection.getOutputStream();
                 int intValueOfChar;
                 while ((intValueOfChar = reader.read()) != -1) {
