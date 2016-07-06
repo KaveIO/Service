@@ -100,8 +100,8 @@ public class MongoDBUtilTest {
 		hosts.add("db2.example.net:2500");
 		hostString = "db1.example.net,db2.example.net:2500";
 		uri1 = new MongoClientURI(testString);
-		uri2 = MongoDBUtil.geneateMongoUri(null, null, hosts, null, "replicaSet=test");
-		uri3 = MongoDBUtil.geneateMongoUri(null, null, hostString, null, "replicaSet=test");
+		uri2 = MongoDBUtil.generateMongoUri(null, null, hosts, null, "replicaSet=test");
+		uri3 = MongoDBUtil.generateMongoUri(null, null, hostString, null, "replicaSet=test");
 		assertEquals(uri1, uri2);
 		assertEquals(uri2, uri3);
 
@@ -110,8 +110,8 @@ public class MongoDBUtilTest {
 		hosts.add("db2.example.net:2500");
 
 		uri1 = new MongoClientURI(testStringUser);
-		uri2 = MongoDBUtil.geneateMongoUri("user", "pass", hosts, "db", "replicaSet=test");
-		uri3 = MongoDBUtil.geneateMongoUri("user", "pass", "db2.example.net:2500", "db", "replicaSet=test");
+		uri2 = MongoDBUtil.generateMongoUri("user", "pass", hosts, "db", "replicaSet=test");
+		uri3 = MongoDBUtil.generateMongoUri("user", "pass", "db2.example.net:2500", "db", "replicaSet=test");
 		assertEquals(uri1, uri2);
 		assertEquals(uri2, uri3);
 	}

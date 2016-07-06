@@ -6,19 +6,6 @@
  */
 package nl.kpmg.af.service.data;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.WriteResult;
-import com.mongodb.util.JSON;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.process.runtime.Network;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,8 +15,18 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import com.mongodb.*;
+import com.mongodb.util.JSON;
+
+import de.flapdoodle.embed.mongo.MongodExecutable;
+import de.flapdoodle.embed.mongo.MongodProcess;
+import de.flapdoodle.embed.mongo.MongodStarter;
+import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.process.runtime.Network;
+
 /**
- *
  * @author anaskar
  */
 public class DatabaseInitialiser {
@@ -83,13 +80,12 @@ public class DatabaseInitialiser {
         // create the security database
         MongodStarter securitydbstarter = MongodStarter.getDefaultInstance();
         MongodExecutable mongodExecutable = securitydbstarter.prepare(new MongodConfigBuilder()
-                .version(Version.Main.V2_4)
+                .version(Version.Main.V3_2)
                 .net(new Net(port, Network.localhostIsIPv6()))
                 .build()
         );
         MongodProcess mongod = mongodExecutable.start();
-        MongoClient mongoClient = new MongoClient(host, port);
-
+        MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://" + host + ":" + port + "/&authMechanism=SCRAM-SHA-1"));
         return new MongoMockDatabase(mongodExecutable, mongod, mongoClient);
     }
 
@@ -102,7 +98,7 @@ public class DatabaseInitialiser {
             BufferedReader jsonReader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8);
             StringBuilder json;
             for (json = new StringBuilder(); jsonReader.ready();
-                    json.append(jsonReader.readLine())) {
+                 json.append(jsonReader.readLine())) {
             }
 
             BasicDBList mockData = (BasicDBList) JSON.parse(json.toString());
