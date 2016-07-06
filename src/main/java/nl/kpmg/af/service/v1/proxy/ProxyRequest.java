@@ -6,6 +6,14 @@
  */
 package nl.kpmg.af.service.v1.proxy;
 
+import nl.kpmg.af.service.data.core.Proxy;
+import org.glassfish.grizzly.http.server.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.*;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -17,21 +25,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.DatatypeConverter;
-
-import nl.kpmg.af.service.data.core.Proxy;
-
-import org.glassfish.grizzly.http.server.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.regex.Pattern;
 
 /**
  * Helper object for passing a request to a proxy backend.
@@ -43,20 +37,20 @@ public class ProxyRequest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProxyRequest.class);
 
     private static final TrustManager[] trustAllCerts = new TrustManager[]{
-        new X509TrustManager() {
-            @Override
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return new X509Certificate[0];
-            }
+            new X509TrustManager() {
+                @Override
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
 
-            @Override
-            public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-            }
+                @Override
+                public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                }
 
-            @Override
-            public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                @Override
+                public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                }
             }
-        }
     };
 
     private static final HostnameVerifier hostnameVerifier = new HostnameVerifier() {
@@ -68,11 +62,15 @@ public class ProxyRequest {
 
     private final Request request;
     private final Proxy proxy;
+    private boolean recursive = false;
 
 
     public ProxyRequest(Request request, Proxy proxy) {
         this.request = request;
         this.proxy = proxy;
+        if(isRecursiveCall(request.getRequestURI(), proxy.getTarget())){
+            recursive=true;
+        }
     }
 
     public Response execute() {
@@ -89,10 +87,10 @@ public class ProxyRequest {
                     connectionSendContent(connection);
 
                     return Response
-    	                    .status(connection.getResponseCode())
-    	                    .header("Access-Control-Allow-Origin", "*")
-    	                    .entity(connection.getInputStream())
-    	                    .build();
+                            .status(connection.getResponseCode())
+                            .header("Access-Control-Allow-Origin", "*")
+                            .entity(connection.getInputStream())
+                            .build();
                 } catch (MalformedURLException ex) {
                     LOGGER.error("Proxy defintion contains malformed URL", ex);
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -144,6 +142,7 @@ public class ProxyRequest {
 
     /**
      * If an username is set on the proxy object this will be used to Authenticate against the backend.
+     *
      * @param connection
      */
     private void connectionAuthorize(HttpURLConnection connection) {
@@ -155,7 +154,7 @@ public class ProxyRequest {
 
     /**
      * If the request contains a body here we try and pass it on.
-     *
+     * <p>
      * This happens by tying the input to the output.
      */
     private void connectionSendContent(HttpURLConnection connection) throws IOException {
@@ -174,5 +173,33 @@ public class ProxyRequest {
              */
             connection.setRequestProperty("Content-Type", "*/*");
         }
+    }
+
+    public static boolean isRecursiveCall(String request, String proxy) {
+        try {
+            URL targetUrl = new URL(proxy);
+            URL requestUrl = new URL(request);
+           Pattern pattern = Pattern.compile(".*/v\\d+/proxy.*");
+
+            if(requestUrl.getHost().equals(targetUrl.getHost())
+                    && requestUrl.getProtocol().equals(targetUrl.getProtocol())
+                    && requestUrl.getPort() == targetUrl.getPort()
+                    && pattern.matcher(proxy).matches()){
+                LOGGER.info("The proxy target is another call to the proxy server. To avoid recursive call this is not permitted");
+                return true;
+            }
+        } catch (MalformedURLException e) {
+            LOGGER.info("The targed URL {} is invalid");
+            return false;
+        }
+        return false;
+    }
+
+    public Proxy getProxy() {
+        return proxy;
+    }
+
+    public boolean isRecursive() {
+        return recursive;
     }
 }

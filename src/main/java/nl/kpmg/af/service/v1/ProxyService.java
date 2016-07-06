@@ -42,7 +42,6 @@ public class ProxyService {
     @GET
     public Response getProxy(
             @Context final Request request,
-            @Context SecurityContext secContext,
             @PathParam("applicationId") final String applicationId,
             @PathParam("name") final String name,
             @PathParam("ext") final String extension) {
@@ -89,9 +88,15 @@ public class ProxyService {
             // Add path extension to the proxy target
             if(proxy.isPathExtension()== true){
                 proxy.setTarget(extendPath(proxy.getTarget(), extension));
-                LOGGER.info("Proxy target string extended with {}", extension);
+                LOGGER.info("Proxy target string extended with: /{}", extension);
             }
+
             ProxyRequest proxyRequest = new ProxyRequest(request, proxy);
+
+            if(proxyRequest.isRecursive()){
+                return Response.status(Response.Status.FORBIDDEN).entity("Can't make a request to the proxy server from "+request.getRequestURI()+"!").build();
+            }
+
             LOGGER.info("Proxy target is: {}",proxy.getTarget());
             return proxyRequest.execute();
         } catch (ApplicationDatabaseConnectionException ex) {
