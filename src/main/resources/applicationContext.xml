@@ -24,13 +24,13 @@
         <property name="locations">
             <list>
                 <value>classpath:mongo.properties</value>
+                <value>file:config/mongo.properties</value>
             </list>
         </property>
     </bean>
 
     <mongo:repositories  base-package="nl.kpmg.af.service.data.security.repository"/>
 
-    <context:property-placeholder location="classpath:mongo.properties"  />
 
     <mongo:repositories base-package="nl.kpmg.af.service.data.security.repository"/>
     <mongo:mongo host="${mongodb.host}" port="${mongodb.port}" id="mongo" >

@@ -20,16 +20,17 @@
     <context:property-placeholder location="classpath:mongo.properties"  />
 
     <mongo:repositories base-package="nl.kpmg.af.service.data.security.repository"/>
-    <mongo:db-factory
-            id="mongoDbFactory"
-            host="${mongodb.url}"
-            port="${mongodb.port}"
-            username="${mongodb.username}"
-            password="${mongodb.password}"
-            dbname="${mongodb.database}" />
-    <bean id="mongoDb" factory-bean="mongoDbFactory" factory-method="getDb"/>
+    <mongo:mongo host="${mongodb.host}" port="${mongodb.port}" id="mongo" >
+    </mongo:mongo>
+
+    <mongo:mongo-client host="${mongodb.host}" port="${mongodb.port}" credentials="${mongodb.username}:${mongodb.password}@${mongodb.database}">
+        <mongo:client-options write-concern="NORMAL" />
+    </mongo:mongo-client>
+
+
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+        <constructor-arg name="mongo" ref="mongo"/>
+        <constructor-arg name="databaseName" value="${mongodb.database}" />
     </bean>
 
     <bean id="mongoDBUtil" class="nl.kpmg.af.service.data.MongoDBUtil"/>

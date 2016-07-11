@@ -51,8 +51,8 @@ limitations under the License.
 
         <!-- Configuration and properties files -->
         <fileSet>
-            <directory>src/main/resources</directory>
-            <outputDirectory>/</outputDirectory>
+            <directory>src/main/config</directory>
+            <outputDirectory>config</outputDirectory>
         </fileSet>
 
         <!-- Starting script -->
