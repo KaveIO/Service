@@ -18,6 +18,7 @@ import nl.kpmg.af.service.request.filter.timestamp.Timestamp;
 import nl.kpmg.af.service.response.dto.EventDto;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
@@ -33,6 +34,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author anaskar
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+@Ignore
 @ContextConfiguration(locations = {"classpath:applicationContext.xml"})
 @DirtiesContext
 public class LayerServiceTest {

@@ -85,7 +85,7 @@ public class DatabaseInitialiser {
                 .build()
         );
         MongodProcess mongod = mongodExecutable.start();
-        MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://" + host + ":" + port + "/&authMechanism=SCRAM-SHA-1"));
+        MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://" + host + ":" + port));
         return new MongoMockDatabase(mongodExecutable, mongod, mongoClient);
     }
 

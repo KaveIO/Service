@@ -49,27 +49,6 @@
     </dependencyManagement>
 
 
-    <!--    <distributionManagement>
-            <repository>
-                <id>internal</id>
-                <url>http://waarisdekoning.nl:8080/archiva/repository/internal/</url>
-            </repository>
-        </distributionManagement>
-
-        <repositories>
-                            <repository>
-                    <id>internal</id>
-                    <name>Archiva Managed Internal Repository</name>
-                    <url>http://waarisdekoning.nl:8080/archiva/repository/internal/</url>
-                    <releases>
-                            <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                            <enabled>false</enabled>
-                    </snapshots>
-            </repository>
-        </repositories>-->
-
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>
@@ -97,7 +76,9 @@
                 </executions>
                 <configuration>
                     <mainClass>nl.kpmg.af.service.Main</mainClass>
+
                 </configuration>
+
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -107,7 +88,6 @@
                     <descriptors>
                         <descriptor>src/assembly/assembly.xml</descriptor>
                     </descriptors>
-
                 </configuration>
                 <executions>
                     <execution>
@@ -131,6 +111,9 @@
                             <mainClass>nl.kpmg.af.service.Main</mainClass>
                         </manifest>
                     </archive>
+                    <excludes>
+                        <exclude>*.properties</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -142,6 +125,7 @@
                 </configuration>
             </plugin>
         </plugins>
+
     </build>
 
     <dependencies>
