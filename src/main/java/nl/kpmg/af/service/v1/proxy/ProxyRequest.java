@@ -15,6 +15,7 @@ import javax.net.ssl.*;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.net.HttpURLConnection;
@@ -160,10 +161,10 @@ public class ProxyRequest {
     private void connectionSendContent(HttpURLConnection connection) throws IOException {
         if (request.getContentLength() > 0) {
             connection.setRequestProperty("Content-Type", request.getContentType());
-            try (Reader reader = request.getReader()) {
+            try (InputStream inputStream = request.getInputStream()) {
                 OutputStream outputStream = connection.getOutputStream();
                 int intValueOfChar;
-                while ((intValueOfChar = reader.read()) != -1) {
+                while ((intValueOfChar = inputStream.read()) != -1) {
                     outputStream.write(intValueOfChar);
                 }
             }
