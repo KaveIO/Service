@@ -35,7 +35,6 @@ public class ServerGrizzly implements Server {
 		DataServiceApplication app = new DataServiceApplication(config.getServerName());
 
 		server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUri), app);
-		LOGGER.info("Server started at location: {}, press a button to stop it", baseUri);
 
 	}
 

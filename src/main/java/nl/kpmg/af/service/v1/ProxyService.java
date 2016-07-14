@@ -97,7 +97,6 @@ public class ProxyService {
                 return Response.status(Response.Status.FORBIDDEN).entity("Can't make a request to the proxy server from "+request.getRequestURI()+"!").build();
             }
 
-            LOGGER.info("Proxy target is: {}",proxy.getTarget());
             return proxyRequest.execute();
         } catch (ApplicationDatabaseConnectionException ex) {
             LOGGER.error("Application proxyRepository couldn't be created", ex);

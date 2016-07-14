@@ -26,7 +26,13 @@ public class Main {
 		final Server server = new ServerGrizzly();
 		server.start();
 
-		System.in.read();
-		server.stop();
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				System.out.println("Shutting down server...");
+
+				server.stop();
+			}
+		});
 	}
 }
