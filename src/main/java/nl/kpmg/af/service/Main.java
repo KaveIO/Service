@@ -13,26 +13,26 @@ import nl.kpmg.af.service.server.ServerGrizzly;
  * Created by fziliotto on 24-6-16.
  */
 public class Main {
-	// Base URI the Grizzly HTTP server will listen on
-	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+  // Base URI the Grizzly HTTP server will listen on
+  private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-	/**
-	 * Main method.
-	 *
-	 * @param args
-	 */
-	public static void main(String[] args) throws IOException {
+  /**
+   * Main method.
+   *
+   * @param args
+   */
+  public static void main(String[] args) throws IOException {
 
-		final Server server = new ServerGrizzly();
-		server.start();
+    final Server server = new ServerGrizzly();
+    server.start();
 
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				System.out.println("Shutting down server...");
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
+      public void run() {
+        System.out.println("Shutting down server...");
 
-				server.stop();
-			}
-		});
-	}
+        server.stop();
+      }
+    });
+  }
 }

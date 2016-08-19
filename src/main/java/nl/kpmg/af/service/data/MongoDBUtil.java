@@ -7,12 +7,12 @@
 package nl.kpmg.af.service.data;
 
 import com.mongodb.MongoClientURI;
-import nl.kpmg.af.datamodel.connection.MongoDatabase;
-import nl.kpmg.af.datamodel.dao.AbstractDao;
+
 import nl.kpmg.af.service.data.core.repository.*;
 import nl.kpmg.af.service.data.security.Application;
 import nl.kpmg.af.service.data.security.repository.ApplicationRepository;
 import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
+
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -28,8 +28,7 @@ import org.springframework.data.repository.Repository;
 import org.springframework.data.util.TypeInformation;
 
 import javax.validation.constraints.NotNull;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,72 +50,11 @@ public final class MongoDBUtil {
      * The logger for this class.
      */
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(MongoDBUtil.class);
-    private final Map<String, MongoDatabase> applicationDatabases = new HashMap();
     private final Map<String, MeasurementRepository> measurementRepositoryCache = new HashMap();
     private final Map<String, ProxyRepository> proxyRepositoryCache = new HashMap();
     private final Map<String, RoleRepository> roleRepositoryCache = new HashMap();
     @Autowired
     private ApplicationRepository applicationRepository;
-
-
-    /**
-     * Methods for Mongo database object creation and connection.
-     */
-    @Deprecated
-    public <T extends AbstractDao> T getDao(final String applicationId, final Class<T> clazz)
-            throws ApplicationDatabaseConnectionException {
-        MongoDatabase applicationDatabase = getApplicationDatabase(applicationId);
-        try {
-            Constructor<T> constructor = clazz.getConstructor(MongoDatabase.class);
-            return constructor.newInstance(applicationDatabase);
-        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException ex) {
-            throw new ApplicationDatabaseConnectionException("Couldn't build Dao for given applicationDatabase", ex);
-        }
-    }
-
-    /**
-     * @return The actual mongoDatabase objects which is being managed by this utility.
-     */
-    @Deprecated
-    public synchronized MongoDatabase getApplicationDatabase(final String applicationId)
-            throws ApplicationDatabaseConnectionException {
-        if (!applicationDatabases.containsKey(applicationId)) {
-            connectApplicationDatabase(applicationId);
-
-        }
-        return applicationDatabases.get(applicationId);
-    }
-
-    @Deprecated
-    private void connectApplicationDatabase(String applicationId) throws ApplicationDatabaseConnectionException {
-        try {
-            Application application = applicationRepository.findOneByName(applicationId);
-
-            if (application == null) {
-                throw new ApplicationDatabaseConnectionException("No application record with id '" + applicationId
-                        + "' could be found in the security database");
-            } else {
-                Application.Database database = application.getDatabase();
-
-                applicationDatabases.put(applicationId, connectDatabase(
-                        database.getHost(),
-                        database.getPort(),
-                        database.getUsername(),
-                        database.getPassword(),
-                        database.getDatabase()));
-            }
-        } catch (ClassCastException ex) {
-            throw new ApplicationDatabaseConnectionException("Couldn't connect application database since the "
-                    + "configuration in the security database couldn't be parsed.", ex);
-        }
-    }
-
-    @Deprecated
-    private MongoDatabase connectDatabase(final String url, final int port, final String username,
-                                          final String password, final String database) {
-        return new MongoDatabase(url, port, username, password, database);
-    }
 
     public ProxyRepository getProxyRepository(String applicationId) throws ApplicationDatabaseConnectionException {
         ProxyRepository repository;
