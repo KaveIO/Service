@@ -21,13 +21,15 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.UriInfo;
 
 /**
  *
  * @author mhoekstra
  */
 @Service
-@Path("v1/proxy/{applicationId}/{name}{noop: (/)?}{ext : ((?<=/)[\\w\\d\\=\\?\\.\\,\\+\\!\\_\\(\\)\\/#\\-\\~\\*\\$\\|\"]*)?}")
+//@Path("v1/proxy/{applicationId}/{name}{noop: (/)?}{ext : ((?<=/)[\\w\\d\\=\\?\\.\\,\\+\\!\\_\\(\\)\\/#\\-\\~\\*\\$\\|\"]*)?}")
+@Path("v1/proxy/{applicationId}/{name}{noop : (/)?}{ext : .*}")
 public class ProxyService {
 
     /**
@@ -42,9 +44,15 @@ public class ProxyService {
     @GET
     public Response getProxy(
             @Context final Request request,
-            @PathParam("applicationId") final String applicationId,
+            //@PathParam("applicationId") final String applicationId,
+            @Context final UriInfo uriInfo,
+            @PathParam("applicationId")final String applicationId,
             @PathParam("name") final String name,
-            @PathParam("ext") final String extension) {
+            //@PathParam("ext") final String extension) {
+            @PathParam("ext") String extension) {
+    	if(uriInfo.getRequestUri().getQuery() != null){
+    	     extension = extension +"?" + uriInfo.getRequestUri().getQuery();
+    	}
         return executeProxy(request, applicationId, name, extension);
     }
 
@@ -88,7 +96,8 @@ public class ProxyService {
             // Add path extension to the proxy target
             if(proxy.isPathExtension()== true){
                 proxy.setTarget(extendPath(proxy.getTarget(), extension));
-                LOGGER.info("Proxy target string extended with: /{}", extension);
+                //LOGGER.info("Proxy target string extended with: /{}", extension);
+                LOGGER.debug("Proxy target string extended with: {}", extension);
             }
 
             ProxyRequest proxyRequest = new ProxyRequest(request, proxy);
@@ -109,13 +118,15 @@ public class ProxyService {
      * The extension string obtained in the request doesn't start with the slash ('/') character while
      * the proxy target (from the repository) may or may not contain a trailing slash. This method check if
      *  there is a trailing slash and adds it if it is absent during the concatenation, so that the URL is well formed.
+     *  It doesn't add the slash if the extension starts with "?" because there is no path extension but only query parameters
      *
      * @param target the original target url
      * @param extension the url path extension from the proxy service
      */
     public static String extendPath(String target, String extension){
         String newTarget = target;
-        if(!target.endsWith("/")){
+        //if(!target.endsWith("/")){
+        if(!target.endsWith("/") && !extension.equals("") && !extension.startsWith("?")){
             newTarget+="/";
         }
         newTarget+=extension;

@@ -69,7 +69,8 @@ public class ProxyRequest {
     public ProxyRequest(Request request, Proxy proxy) {
         this.request = request;
         this.proxy = proxy;
-        if(isRecursiveCall(request.getRequestURI(), proxy.getTarget())){
+        //if(isRecursiveCall(request.getRequestURI(), proxy.getTarget())){
+        if(isRecursiveCall(request.getRequestURL().toString(), proxy.getTarget() )){
             recursive=true;
         }
     }
@@ -190,7 +191,8 @@ public class ProxyRequest {
                 return true;
             }
         } catch (MalformedURLException e) {
-            LOGGER.info("The targed URL {} is invalid");
+            //LOGGER.info("The targed URL {} is invalid");
+        	LOGGER.debug("Error parsing the url: {}", e.getCause());
             return false;
         }
         return false;
