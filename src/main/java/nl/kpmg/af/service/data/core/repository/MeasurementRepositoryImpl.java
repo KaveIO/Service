@@ -49,4 +49,9 @@ public class MeasurementRepositoryImpl implements MeasurementRepositoryCustom {
         List<Measurement> find = mongoTemplate.find(adhocQuery, Measurement.class, collectionName);
         return new PageImpl(find);
     }
+
+    @Override
+    public List<Measurement> findPageless(Query adHocQuery) {
+        return mongoTemplate.find(adHocQuery, Measurement.class, collectionName);
+    }
 }

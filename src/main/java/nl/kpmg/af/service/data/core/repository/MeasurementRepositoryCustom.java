@@ -10,6 +10,9 @@ import nl.kpmg.af.service.data.core.Measurement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Query;
+
+import java.util.List;
+
 /**
  *
  * @author mhoekstra
@@ -18,4 +21,5 @@ public interface MeasurementRepositoryCustom {
 
     public Page<Measurement> find(Query adhocQuery, int limit, Pageable pageable);
 
+    public List<Measurement> findPageless(Query adHocQuery);
 }

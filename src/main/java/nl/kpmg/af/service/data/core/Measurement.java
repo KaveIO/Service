@@ -22,7 +22,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
  * @author mhoekstra
  */
 @Document
-public class Measurement implements Map {
+public class Measurement implements Map<String, Object> {
 
     @Id
     @Field(value = "_id")
@@ -33,7 +33,7 @@ public class Measurement implements Map {
     private Date measurementTimestamp;
 
     @Transient
-    private final Map innerMap = new HashMap();
+    private final Map<String, Object> innerMap = new HashMap<>();
 
     public ObjectId getId() {
         return id;
@@ -59,14 +59,14 @@ public class Measurement implements Map {
         this.measurementTimestamp = measurementTimestamp;
     }
 
-    public Map getValue() {
+    public Map<String, Object> getValue() {
         if (innerMap.containsKey("value")) {
-            return (Map) innerMap.get("value");
+            return (Map<String, Object>) innerMap.get("value");
         }
         return null;
     }
 
-    public void setValue(Map value) {
+    public void setValue(Map<String, Object> value) {
         innerMap.put("value", value);
     }
 
@@ -96,8 +96,8 @@ public class Measurement implements Map {
     }
 
     @Override
-    public Object put(Object arg0, Object arg1) {
-        return innerMap.put(arg0, arg1);
+    public Object put(String key, Object arg1) {
+        return innerMap.put(key, arg1);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class Measurement implements Map {
     }
 
     @Override
-    public void putAll(Map m) {
+    public void putAll(Map<? extends String, ?> m) {
         innerMap.putAll(m);
     }
 
