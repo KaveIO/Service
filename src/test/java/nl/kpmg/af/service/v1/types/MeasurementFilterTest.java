@@ -1,25 +1,31 @@
 /*
- * Copyright 2015 KPMG N.V. (unless otherwise stated).
+ * Copyright 2016 KPMG N.V. (unless otherwise stated).
  *
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
+
 package nl.kpmg.af.service.v1.types;
 
-import com.mongodb.DBObject;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import nl.kpmg.af.service.data.DatabaseInitialiser;
-import nl.kpmg.af.service.data.MongoDBUtil;
-import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import com.mongodb.DBObject;
+
+import nl.kpmg.af.service.data.DatabaseInitialiser;
+import nl.kpmg.af.service.data.MongoDBUtil;
+import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +37,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 /**
  *
  * @author mhoekstra
@@ -40,149 +52,156 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @DirtiesContext
 public class MeasurementFilterTest {
 
-    private static DatabaseInitialiser databaseInitialiser;
+  private static DatabaseInitialiser databaseInitialiser;
 
-    @Autowired
-    private MongoDBUtil mongoDBUtil;
+  @Autowired
+  private MongoDBUtil mongoDBUtil;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        databaseInitialiser = new DatabaseInitialiser();
-        databaseInitialiser.start();
+  @BeforeClass
+  public static void setUpClass() throws Exception {
+    databaseInitialiser = new DatabaseInitialiser();
+    databaseInitialiser.start();
+  }
+
+  @AfterClass
+  public static void tearDownClass() {
+    databaseInitialiser.stop();
+  }
+
+  @Test
+  public void testGetQueryEmptyWhenNull()
+      throws ApplicationDatabaseConnectionException, QueryCastException {
+    MeasurementFilter measurementFilter = new MeasurementFilter();
+    Query query = measurementFilter.getQuery();
+
+    assertEquals(new Query(), query);
+  }
+
+  @Test(expected = QueryCastException.class)
+  public void testGetQueryThrowsWhitNonSringContent()
+      throws ApplicationDatabaseConnectionException, QueryCastException {
+    MeasurementFilter measurementFilter = new MeasurementFilter();
+    measurementFilter.put("query", new Integer(1));
+    Query query = measurementFilter.getQuery();
+  }
+
+  @Test
+  public void testGetQueryParsesContent()
+      throws ApplicationDatabaseConnectionException, QueryCastException {
+    MeasurementFilter measurementFilter = new MeasurementFilter();
+    measurementFilter.put("query", "{version: 2}");
+    Query query = measurementFilter.getQuery();
+
+    DBObject queryObject = query.getQueryObject();
+
+    assertTrue(queryObject.containsField("version"));
+    assertTrue(queryObject.get("version").equals(2));
+  }
+
+  public void testGetQueryAvoidsNoSQLInjetion() {
+    MeasurementFilter measurementFilter = new MeasurementFilter();
+    measurementFilter.put("query",
+        "{ \"$where\"  : function() { return obj.credits - obj.debits < 0; } }");
+
+    Query query;
+    try {
+      query = measurementFilter.getQuery();
+      fail();
+    } catch (QueryCastException ex) {
     }
 
-    @AfterClass
-    public static void tearDownClass() {
-        databaseInitialiser.stop();
+
+    measurementFilter.put("query",
+        "{ \"$where\"  : \"function() { return obj.credits - obj.debits < 0; } }\"");
+    try {
+      query = measurementFilter.getQuery();
+      fail();
+    } catch (QueryCastException ex) {
     }
+  }
 
-    @Test
-    public void testGetQueryEmptyWhenNull() throws ApplicationDatabaseConnectionException, QueryCastException {
-        MeasurementFilter measurementFilter = new MeasurementFilter();
-        Query query = measurementFilter.getQuery();
+  @Test
+  public void testGetSortDefaultMeasuermentTimestampSortWhenNull() throws SortCastException {
+    MeasurementFilter measurementFilter = new MeasurementFilter();
+    Sort sort = measurementFilter.getSort();
 
-        assertEquals(new Query(), query);
-    }
+    Iterator<Sort.Order> iterator = sort.iterator();
+    Sort.Order next;
 
-    @Test(expected = QueryCastException.class)
-    public void testGetQueryThrowsWhitNonSringContent() throws ApplicationDatabaseConnectionException, QueryCastException {
-        MeasurementFilter measurementFilter = new MeasurementFilter();
-        measurementFilter.put("query", new Integer(1));
-        Query query = measurementFilter.getQuery();
-    }
+    next = iterator.next();
+    assertEquals("measurementTimestamp", next.getProperty());
+    assertEquals(Direction.DESC, next.getDirection());
 
-    @Test
-    public void testGetQueryParsesContent() throws ApplicationDatabaseConnectionException, QueryCastException {
-        MeasurementFilter measurementFilter = new MeasurementFilter();
-        measurementFilter.put("query", "{version: 2}");
-        Query query = measurementFilter.getQuery();
+    assertFalse(iterator.hasNext());
+  }
 
-        DBObject queryObject = query.getQueryObject();
+  @Test
+  public void testGetSortParsesSortStatement() throws SortCastException {
+    MeasurementFilter measurementFilter = new MeasurementFilter();
 
-        assertTrue(queryObject.containsField("version"));
-        assertTrue(queryObject.get("version").equals(2));
-    }
+    List<Map> sortStatement = new LinkedList();
 
-    public void testGetQueryAvoidsNoSQLInjetion() {
-        MeasurementFilter measurementFilter = new MeasurementFilter();
-        measurementFilter.put("query", "{ \"$where\"  : function() { return obj.credits - obj.debits < 0; } }");
+    Map<String, Integer> sortClause1 = new HashMap();
+    sortClause1.put("fieldA", 1);
 
-        Query query;
-        try {
-            query = measurementFilter.getQuery();
-            fail();
-        } catch (QueryCastException ex) { }
+    Map<String, Integer> sortClause2 = new HashMap();
+    sortClause2.put("fieldB", 0);
 
+    sortStatement.add(sortClause1);
+    sortStatement.add(sortClause2);
 
-        measurementFilter.put("query", "{ \"$where\"  : \"function() { return obj.credits - obj.debits < 0; } }\"");
-        try {
-            query = measurementFilter.getQuery();
-            fail();
-        } catch (QueryCastException ex) { }
-    }
+    measurementFilter.put("sort", sortStatement);
 
-    @Test
-    public void testGetSortDefaultMeasuermentTimestampSortWhenNull() throws SortCastException {
-        MeasurementFilter measurementFilter = new MeasurementFilter();
-        Sort sort = measurementFilter.getSort();
+    Sort sort = measurementFilter.getSort();
 
-        Iterator<Sort.Order> iterator = sort.iterator();
-        Sort.Order next;
+    Iterator<Sort.Order> iterator = sort.iterator();
+    Sort.Order next;
 
-        next = iterator.next();
-        assertEquals("measurementTimestamp", next.getProperty());
-        assertEquals(Direction.DESC, next.getDirection());
+    next = iterator.next();
+    assertEquals("fieldA", next.getProperty());
+    assertEquals(Direction.ASC, next.getDirection());
 
-        assertFalse(iterator.hasNext());
-    }
+    next = iterator.next();
+    assertEquals("fieldB", next.getProperty());
+    assertEquals(Direction.DESC, next.getDirection());
 
-    @Test
-    public void testGetSortParsesSortStatement() throws SortCastException {
-        MeasurementFilter measurementFilter = new MeasurementFilter();
+    assertFalse(iterator.hasNext());
+  }
 
-        List<Map> sortStatement = new LinkedList();
+  @Test(expected = SortCastException.class)
+  public void testGetSortThrowsOnDoubleClause() throws SortCastException {
+    MeasurementFilter measurementFilter = new MeasurementFilter();
 
-        Map<String, Integer> sortClause1 = new HashMap();
-        sortClause1.put("fieldA", 1);
+    List<Map> sortStatement = new LinkedList();
 
-        Map<String, Integer> sortClause2 = new HashMap();
-        sortClause2.put("fieldB", 0);
+    Map<String, Integer> doubleSortClause = new HashMap();
+    doubleSortClause.put("fieldA", 1);
+    doubleSortClause.put("fieldB", 0);
 
-        sortStatement.add(sortClause1);
-        sortStatement.add(sortClause2);
+    sortStatement.add(doubleSortClause);
 
-        measurementFilter.put("sort", sortStatement);
+    measurementFilter.put("sort", sortStatement);
 
-        Sort sort = measurementFilter.getSort();
+    measurementFilter.getSort();
+  }
 
-        Iterator<Sort.Order> iterator = sort.iterator();
-        Sort.Order next;
+  @Test(expected = SortCastException.class)
+  public void testGetSortThrowsOnDupplicateFieldClauses() throws SortCastException {
+    MeasurementFilter measurementFilter = new MeasurementFilter();
 
-        next = iterator.next();
-        assertEquals("fieldA", next.getProperty());
-        assertEquals(Direction.ASC, next.getDirection());
+    List<Map> sortStatement = new LinkedList();
 
-        next = iterator.next();
-        assertEquals("fieldB", next.getProperty());
-        assertEquals(Direction.DESC, next.getDirection());
+    Map<String, Integer> sortClause1 = new HashMap();
+    sortClause1.put("duplicateField", 1);
 
-        assertFalse(iterator.hasNext());
-    }
+    Map<String, Integer> sortClause2 = new HashMap();
+    sortClause2.put("duplicateField", 0);
 
-    @Test(expected = SortCastException.class)
-    public void testGetSortThrowsOnDoubleClause() throws SortCastException {
-        MeasurementFilter measurementFilter = new MeasurementFilter();
+    sortStatement.add(sortClause1);
+    sortStatement.add(sortClause2);
 
-        List<Map> sortStatement = new LinkedList();
+    measurementFilter.put("sort", sortStatement);
 
-        Map<String, Integer> doubleSortClause = new HashMap();
-        doubleSortClause.put("fieldA", 1);
-        doubleSortClause.put("fieldB", 0);
-
-        sortStatement.add(doubleSortClause);
-
-        measurementFilter.put("sort", sortStatement);
-
-        measurementFilter.getSort();
-    }
-
-    @Test(expected = SortCastException.class)
-    public void testGetSortThrowsOnDupplicateFieldClauses() throws SortCastException {
-        MeasurementFilter measurementFilter = new MeasurementFilter();
-
-        List<Map> sortStatement = new LinkedList();
-
-        Map<String, Integer> sortClause1 = new HashMap();
-        sortClause1.put("duplicateField", 1);
-
-        Map<String, Integer> sortClause2 = new HashMap();
-        sortClause2.put("duplicateField", 0);
-
-        sortStatement.add(sortClause1);
-        sortStatement.add(sortClause2);
-
-        measurementFilter.put("sort", sortStatement);
-
-        measurementFilter.getSort();
-    }
+    measurementFilter.getSort();
+  }
 }

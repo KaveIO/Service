@@ -1,17 +1,27 @@
 /*
  * Copyright 2016 KPMG N.V. (unless otherwise stated).
  *
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
+
 package nl.kpmg.af.service.data.core.repository;
 
-import com.mongodb.DBObject;
 import com.mongodb.BasicDBObject;
-import java.util.Date;
-import java.util.Set;
+import com.mongodb.DBObject;
+
 import nl.kpmg.af.service.data.core.Measurement;
+
 import org.springframework.core.convert.converter.Converter;
+
+import java.util.Date;
 
 /**
  *
@@ -19,15 +29,14 @@ import org.springframework.core.convert.converter.Converter;
  */
 public class MeasurementWriteConverter implements Converter<Measurement, DBObject> {
 
-    @Override
-    public DBObject convert(Measurement s) {
-        DBObject dbObject = new BasicDBObject(s);
-        Date mts = s.getMeasurementTimestamp();
-        Integer v = s.getVersion();
-        dbObject.put("version", v);
-        dbObject.put("measurementTimestamp", mts);
+  @Override
+  public DBObject convert(Measurement s) {
+    DBObject dbObject = new BasicDBObject(s);
+    Date mts = s.getMeasurementTimestamp();
+    Integer v = s.getVersion();
+    dbObject.put("version", v);
+    dbObject.put("measurementTimestamp", mts);
 
-        return dbObject;
-    }
-
+    return dbObject;
+  }
 }

@@ -1,21 +1,30 @@
 /*
- * Copyright 2015 KPMG N.V. (unless otherwise stated).
+ * Copyright 2016 KPMG N.V. (unless otherwise stated).
  *
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
+
 package nl.kpmg.af.service.data.core;
+
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  *
@@ -24,119 +33,119 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document
 public class Measurement implements Map<String, Object> {
 
-    @Id
-    @Field(value = "_id")
-    private ObjectId id;
+  @Id
+  @Field(value = "_id")
+  private ObjectId id;
 
-    private Integer version;
+  private Integer version;
 
-    private Date measurementTimestamp;
+  private Date measurementTimestamp;
 
-    @Transient
-    private final Map<String, Object> innerMap = new HashMap<>();
+  @Transient
+  private final Map<String, Object> innerMap = new HashMap<>();
 
-    public ObjectId getId() {
-        return id;
+  public ObjectId getId() {
+    return id;
+  }
+
+  public void setId(ObjectId id) {
+    this.id = id;
+  }
+
+  public Integer getVersion() {
+    return version;
+  }
+
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
+
+  public Date getMeasurementTimestamp() {
+    return measurementTimestamp;
+  }
+
+  public void setMeasurementTimestamp(Date measurementTimestamp) {
+    this.measurementTimestamp = measurementTimestamp;
+  }
+
+  public Map<String, Object> getValue() {
+    if (innerMap.containsKey("value")) {
+      return (Map<String, Object>) innerMap.get("value");
     }
+    return null;
+  }
 
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
+  public void setValue(Map<String, Object> value) {
+    innerMap.put("value", value);
+  }
 
-    public Integer getVersion() {
-        return version;
-    }
+  @Override
+  public int size() {
+    return innerMap.size();
+  }
 
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
+  @Override
+  public boolean isEmpty() {
+    return innerMap.isEmpty();
+  }
 
-    public Date getMeasurementTimestamp() {
-        return measurementTimestamp;
-    }
+  @Override
+  public boolean containsKey(Object key) {
+    return innerMap.containsKey(key);
+  }
 
-    public void setMeasurementTimestamp(Date measurementTimestamp) {
-        this.measurementTimestamp = measurementTimestamp;
-    }
+  @Override
+  public boolean containsValue(Object value) {
+    return innerMap.containsValue(value);
+  }
 
-    public Map<String, Object> getValue() {
-        if (innerMap.containsKey("value")) {
-            return (Map<String, Object>) innerMap.get("value");
-        }
-        return null;
-    }
+  @Override
+  public Object get(Object key) {
+    return innerMap.get(key);
+  }
 
-    public void setValue(Map<String, Object> value) {
-        innerMap.put("value", value);
-    }
+  @Override
+  public Object put(String key, Object arg1) {
+    return innerMap.put(key, arg1);
+  }
 
-    @Override
-    public int size() {
-        return innerMap.size();
-    }
+  @Override
+  public Object remove(Object key) {
+    return innerMap.remove(key);
+  }
 
-    @Override
-    public boolean isEmpty() {
-        return innerMap.isEmpty();
-    }
+  @Override
+  public void putAll(Map<? extends String, ?> m) {
+    innerMap.putAll(m);
+  }
 
-    @Override
-    public boolean containsKey(Object key) {
-        return innerMap.containsKey(key);
-    }
+  @Override
+  public void clear() {
+    innerMap.clear();
+  }
 
-    @Override
-    public boolean containsValue(Object value) {
-        return innerMap.containsValue(value);
-    }
+  @Override
+  public Set keySet() {
+    return innerMap.keySet();
+  }
 
-    @Override
-    public Object get(Object key) {
-        return innerMap.get(key);
-    }
+  @Override
+  public Collection values() {
+    return innerMap.values();
+  }
 
-    @Override
-    public Object put(String key, Object arg1) {
-        return innerMap.put(key, arg1);
-    }
+  @Override
+  public Set entrySet() {
+    return innerMap.entrySet();
+  }
 
-    @Override
-    public Object remove(Object key) {
-        return innerMap.remove(key);
-    }
+  @Override
+  public boolean equals(Object o) {
+    return innerMap.equals(o);
+  }
 
-    @Override
-    public void putAll(Map<? extends String, ?> m) {
-        innerMap.putAll(m);
-    }
-
-    @Override
-    public void clear() {
-        innerMap.clear();
-    }
-
-    @Override
-    public Set keySet() {
-        return innerMap.keySet();
-    }
-
-    @Override
-    public Collection values() {
-        return innerMap.values();
-    }
-
-    @Override
-    public Set entrySet() {
-        return innerMap.entrySet();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return innerMap.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return innerMap.hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return innerMap.hashCode();
+  }
 }

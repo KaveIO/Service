@@ -1,4 +1,26 @@
+/*
+ * Copyright 2016 KPMG N.V. (unless otherwise stated).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
 package nl.kpmg.af.service.security;
+
+import nl.kpmg.af.service.data.MongoDBUtil;
+import nl.kpmg.af.service.data.security.User;
+import nl.kpmg.af.service.data.security.repository.UserRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
@@ -7,14 +29,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import nl.kpmg.af.service.data.MongoDBUtil;
-import nl.kpmg.af.service.data.security.User;
-import nl.kpmg.af.service.data.security.repository.UserRepository;
 
 /**
  * Created by fziliotto on 24-6-16.
@@ -74,8 +88,8 @@ public class BasicAuthFilter implements ContainerRequestFilter {
     if (credentials == null || credentials.length != 2) {
       throw new WebApplicationException(challengeResponse("Authorization required", "").build());
     }
-    LOGGER.debug("Filtering request with basic authentication. Input username:password = {}:{}", credentials[0],
-        credentials[1]);
+    LOGGER.debug("Filtering request with basic authentication. Input username:password = {}:{}",
+        credentials[0], credentials[1]);
 
     User user = userRepository.findOneByUsername(credentials[0]);
     if (user == null) {
