@@ -1,0 +1,57 @@
+#!/bin/bash
+
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )
+SCRIPT=$DIR/bin/start-service.sh
+RUNAS=$USER
+
+PIDFILE=$DIR/run/service.pid
+LOGFILE=$DIR/logs/output.log
+
+if ! id -u "$RUNAS" &> /dev/null; then
+  echo "Error: user '$RUNAS' not found"
+  exit 1
+fi
+
+start() {
+  if [ -f $PIDFILE ] && kill -0 $(cat $PIDFILE); then
+    echo 'Service already running' >&2
+    return 1
+  fi
+  echo 'Starting service' >&2
+
+  if [ "$USER" = "$RUNAS" ]; then
+    nohup $SCRIPT &> "$LOGFILE" & echo $! > "$PIDFILE"
+  else
+    local CMD="$SCRIPT &> \"$LOGFILE\" & echo \$!"
+    su -c "$CMD" $RUNAS > "$PIDFILE"
+  fi
+
+  echo 'Service started' >&2
+}
+
+stop() {
+  if [ ! -f "$PIDFILE" ] || ! kill -0 $(cat "$PIDFILE"); then
+    echo 'Service not running' >&2
+    return 1
+  fi
+  echo 'Stopping service' >&2
+
+  local child=$(ps -o pid= --ppid "$(cat $PIDFILE)")
+  kill -15 $(cat "$PIDFILE") $child && rm -f "$PIDFILE"
+  echo 'Service stopped' >&2
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  retart)
+    stop
+    start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+esac

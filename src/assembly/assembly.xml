@@ -20,7 +20,7 @@ limitations under the License.
     <!-- Specifies that our binary distribution is a zip package -->
     <formats>
         <format>zip</format>
-    <!--  <format>tar.gz</format> -->
+        <format>tar.gz</format>
   </formats>
 
   <!-- Adds the dependencies of our application to the lib directory -->
@@ -59,13 +59,23 @@ limitations under the License.
         <!-- Starting script -->
         <fileSet>
             <directory>src/scripts</directory>
-            <outputDirectory></outputDirectory>
-            <includes>
-                <include>run.sh</include>
-            </includes>
+            <outputDirectory>bin</outputDirectory>
+        </fileSet>
+        
+        <!-- 
+            Assemblies and git don't allow for empty folders. Abuse 
+            src/main/assembly (a random folder with content) to create empty 
+            folders by excluding everyting in it. 
+        -->
+        <fileSet>
+            <directory>src/assembly</directory>
+            <outputDirectory>logs</outputDirectory>
+            <excludes><exclude>**/*</exclude></excludes>
+        </fileSet>
+        <fileSet>
+            <directory>src/assembly</directory>
+            <outputDirectory>run</outputDirectory>
+            <excludes><exclude>**/*</exclude></excludes>
         </fileSet>
     </fileSets>
-
-
-
 </assembly>
