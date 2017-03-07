@@ -1,39 +1,35 @@
 Service
 =======
+(REST) Service based on Grizzly and Jersey which offers an interface to data 
+contained in MongoDB.
 
-(REST) Service based on JBoss RESTeasy, which offers an interface to the data contained in MongoDB.
-
-NOTE: use JDK 1.7 for JBoss server (like all packages)!!!
-Eclipse plug-in: Window, Preferences, Server, Runtime Environment, Edit, JRE
-
-Contains two versions of our data interface. 
-
-### v0 
- - /Service/{applicationId}/layer/{layerName}
- - /Service/{applicationId}/nodes/{nodesName}
- - /Service/{applicationId}/edges/{edgesName}
- - /Service/{applicationId}/input/{inputName}
-
-### v1 
- - /Service/v1/filter/{applicationId}/{collection} GET and POST
- - /Service/v1/data/{applicationId}/{collection} only POST
-
-The v1 interface is still under heavy development however perfectly usable.
-
+This project offers two Interfaces: 
+### Data 
+ - /v1/data/{applicationId}/{collectionName}
+ 
+### Proxy 
+ - /v1/proxy/{applicationId}/{proxyName}
+ 
 
 Setup
 =====
-+ Ubuntu 14.04
-+ JDK 7 or JDK 8
++ JDK 8
 + MongoDB version 3.0.12
 
 ## To install from source
 * Go to the root folder of the project
-* `maven install`
-* target/Service-bin.zip contains the Data Service application
+* `maven package`
+* target/Service-1.0.3-SNAPSHOT-bin contains the Data Service application
 
 ## To run the Data Service
-Download the package Service-bin.zip. Extract the content and run the script run.sh.
+Configure you database. Download the package Service-bin.zip. Extract the content 
+and run the script. 
+
+
+```
+   bin/service start
+```
+
 Alternatively:
 * Open a terminal windows and execute `cd path/to/service`
 * `java -jar Service.jar`
