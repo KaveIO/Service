@@ -56,6 +56,11 @@ limitations under the License.
             <includes><include>*.properties</include></includes>
         </fileSet>
 
+	<fileSet>
+            <directory>src/main/resources/ssl-keys</directory>
+            <outputDirectory>config/ssl-keys</outputDirectory>
+            <includes><include>*</include></includes>
+        </fileSet>
         <!-- Starting script -->
         <fileSet>
             <directory>src/scripts</directory>

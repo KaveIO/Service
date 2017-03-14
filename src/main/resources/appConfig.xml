@@ -24,4 +24,21 @@
         <property name="serverHost" value="${ds.server.host:localhost}"/>
         <property name="serverPort" value="${ds.server.port:9000}"/>
     </bean>
+    
+    <bean id="serverConfiguration" class="nl.kpmg.af.service.server.ServerConfiguration">
+        <property name="serviceHost" value="${ds.server.host:localhost}" />
+        <property name="serviceName" value="${ds.server.name:DataService}" />
+        <property name="servicePort" value="${ds.server.port:9000}" />
+        <property name="secureServicePort" value="${ds.server.securePort}" />
+        <property name="keystore" value="${ds.server.security.keystore}" />
+        <property name="keystoreType" value="${ds.server.security.keystoreType}" />
+        <property name="keystorePassword" value="${ds.server.security.keystorePassword}" />
+        <property name="keystoreAlias" value="${ds.server.security.keystoreAlias}" />
+        <property name="keystoreKeypass" value="${ds.server.security.keystoreKeypass}" />
+        <property name="truststore" value="${ds.server.security.truststore}" />
+        <property name="truststoreType" value="${ds.server.security.truststoreType}" />
+        <property name="truststorePassword" value="${ds.server.security.truststorePassword}" />
+        <property name="unsafe" value="${ds.server.unsafe}" />
+        <property name="serverStorage" value="${ds.server.storage}" />
+    </bean>
 </beans>
