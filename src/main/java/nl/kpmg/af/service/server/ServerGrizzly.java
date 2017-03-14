@@ -19,7 +19,8 @@ import nl.kpmg.af.service.server.ServerConfiguration;
 
 
 /**
- * Created by sdowerah
+ * Created by fziliotto on 24-6-16.
+ * Edited by sdowerah: Changes for SSL
  */
 public class ServerGrizzly implements Server {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ServerGrizzly.class);
