@@ -14,8 +14,6 @@
 
 package nl.kpmg.af.service.server;
 
-import nl.kpmg.af.service.server.BasicConfiguration;
-
 import org.glassfish.grizzly.ssl.SSLContextConfigurator;
 
 public class SslProvider {

@@ -33,13 +33,13 @@ public abstract class BasicConfiguration {
   protected boolean unsafe;
 
   public String getServiceHost() {
-	return serviceHost;
+    return serviceHost;
   }
 
   public void setServiceHost(String ServiceHost) {
     this.serviceHost = ServiceHost;
   }
-  
+
   public String getServiceName() {
     return serviceName;
   }

@@ -20,7 +20,8 @@ package nl.kpmg.af.service.server;
  */
 public class SslConfigurationException extends Exception {
 
-  public SslConfigurationException() {}
+  public SslConfigurationException() {
+  }
 
   public SslConfigurationException(String message) {
     super(message);

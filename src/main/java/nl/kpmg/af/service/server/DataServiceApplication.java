@@ -14,14 +14,14 @@
 
 package nl.kpmg.af.service.server;
 
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import nl.kpmg.af.service.security.BasicAuthFilter;
 import nl.kpmg.af.service.security.CorsFilter;
 import nl.kpmg.af.service.security.PermissionCheckerFilter;
-
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.glassfish.jersey.server.ResourceConfig;
 
 /**
  * Created by fziliotto on 29-6-16.

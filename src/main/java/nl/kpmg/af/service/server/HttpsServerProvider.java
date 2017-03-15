@@ -14,7 +14,10 @@
 
 package nl.kpmg.af.service.server;
 
-import nl.kpmg.af.service.server.BasicConfiguration;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -31,11 +34,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
 public class HttpsServerProvider {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(HttpsServerProvider.class.getName());
@@ -48,21 +46,21 @@ public class HttpsServerProvider {
       LOGGER.warn(
           "Server configured as unsafe. Server will start on the non-secure port and run on HTTP only");
 
-      HttpServer server =
-          GrizzlyHttpServerFactory.createHttpServer(URI.create(baseFallbackUri), rc);
+      HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseFallbackUri),
+          rc);
       initListeners(server.getListeners());
       return new HttpsServerWrapper(server);
     } else {
       try {
-        SSLContextConfigurator sslContextConfigurator =
-            SslProvider.createSSLContextConfigurator(configuration);
+        SSLContextConfigurator sslContextConfigurator = SslProvider
+            .createSSLContextConfigurator(configuration);
 
         HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUri), rc, true,
             new SSLEngineConfigurator(sslContextConfigurator).setClientMode(false)
                 .setNeedClientAuth(clientAuth));
         initListeners(server.getListeners());
-        HttpServer redirectServer =
-            HttpServer.createSimpleServer(null, configuration.getServicePort());
+        HttpServer redirectServer = HttpServer.createSimpleServer(null,
+            configuration.getServicePort());
         initListeners(redirectServer.getListeners());
         redirectServer.getServerConfiguration().addHttpHandler(new HttpHandler() {
           @Override
@@ -77,7 +75,7 @@ public class HttpsServerProvider {
 
         return new HttpsServerWrapper(server, redirectServer);
       } catch (SslConfigurationException ex) {
-        LOGGER.error( "Invalid SSL configuration and unsafe mode off, abort");
+        LOGGER.error("Invalid SSL configuration and unsafe mode off, abort");
         throw ex;
       }
     }
