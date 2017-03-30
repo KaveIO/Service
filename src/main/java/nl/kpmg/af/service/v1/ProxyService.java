@@ -14,11 +14,15 @@
 
 package nl.kpmg.af.service.v1;
 
-import nl.kpmg.af.service.data.MongoDBUtil;
-import nl.kpmg.af.service.data.core.Proxy;
-import nl.kpmg.af.service.data.core.repository.ProxyRepository;
-import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
-import nl.kpmg.af.service.v1.proxy.ProxyRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.glassfish.grizzly.http.server.Request;
 import org.slf4j.Logger;
@@ -26,18 +30,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import nl.kpmg.af.service.data.MongoDBUtil;
+import nl.kpmg.af.service.data.core.Proxy;
+import nl.kpmg.af.service.data.core.repository.ProxyRepository;
+import nl.kpmg.af.service.exception.ApplicationDatabaseConnectionException;
+import nl.kpmg.af.service.v1.proxy.ProxyRequest;
 
 /**
  *
  * @author mhoekstra
  */
 @Service
-// @Path("v1/proxy/{applicationId}/{name}{noop: (/)?}{ext :
-// ((?<=/)[\\w\\d\\=\\?\\.\\,\\+\\!\\_\\(\\)\\/#\\-\\~\\*\\$\\|\"]*)?}")
 @Path("v1/proxy/{applicationId}/{name}{noop : (/)?}{ext : .*}")
 public class ProxyService {
 
@@ -46,23 +49,18 @@ public class ProxyService {
    */
   private static final Logger LOGGER = LoggerFactory.getLogger(ProxyService.class);
 
-
   @Autowired
   private MongoDBUtil mongoDBUtil;
 
   @GET
-  public Response getProxy(@Context final Request request,
-      // @PathParam("applicationId") final String applicationId,
-      @Context final UriInfo uriInfo, @PathParam("applicationId") final String applicationId,
-      @PathParam("name") final String name,
-      // @PathParam("ext") final String extension) {
+  public Response getProxy(@Context final Request request, @Context final UriInfo uriInfo,
+      @PathParam("applicationId") final String applicationId, @PathParam("name") final String name,
       @PathParam("ext") String extension) {
     if (uriInfo.getRequestUri().getQuery() != null) {
       extension = extension + "?" + uriInfo.getRequestUri().getQuery();
     }
     return executeProxy(request, applicationId, name, extension);
   }
-
 
   @POST
   public Response postProxy(@Context final Request request,
@@ -94,7 +92,6 @@ public class ProxyService {
       // Add path extension to the proxy target
       if (proxy.isPathExtension() == true) {
         proxy.setTarget(extendPath(proxy.getTarget(), extension));
-        // LOGGER.info("Proxy target string extended with: /{}", extension);
         LOGGER.debug("Proxy target string extended with: {}", extension);
       }
 
@@ -114,7 +111,6 @@ public class ProxyService {
     }
   }
 
-
   /**
    * The extension string obtained in the request doesn't start with the slash ('/') character while
    * the proxy target (from the repository) may or may not contain a trailing slash. This method
@@ -122,12 +118,13 @@ public class ProxyService {
    * that the URL is well formed. It doesn't add the slash if the extension starts with "?" because
    * there is no path extension but only query parameters
    *
-   * @param target the original target url
-   * @param extension the url path extension from the proxy service
+   * @param target
+   *          the original target url
+   * @param extension
+   *          the url path extension from the proxy service
    */
   public static String extendPath(String target, String extension) {
     String newTarget = target;
-    // if(!target.endsWith("/")){
     if (!target.endsWith("/") && !extension.equals("") && !extension.startsWith("?")) {
       newTarget += "/";
     }

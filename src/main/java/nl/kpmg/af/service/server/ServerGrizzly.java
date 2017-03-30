@@ -1,51 +1,61 @@
 /*
  * Copyright 2016 KPMG N.V. (unless otherwise stated).
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
  */
-
 package nl.kpmg.af.service.server;
 
-import org.glassfish.grizzly.http.server.HttpServer;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.net.URI;
-
 /**
- * Created by fziliotto on 24-6-16.
+ * Created by fziliotto on 24-6-16. Edited by sdowerah: Changes for SSL
  */
 public class ServerGrizzly implements Server {
   private static final Logger LOGGER = LoggerFactory.getLogger(ServerGrizzly.class);
   ApplicationContext context;
-  private HttpServer server;
+  private final AppConfig configuration;
+  private final BasicConfiguration config;
+  private HttpsServerWrapper server;
+  private final String baseUri;
+  private final String baseFallbackUri;
 
-  public ServerGrizzly() {}
+  public ServerGrizzly() {
+    context = new ClassPathXmlApplicationContext(new String[] { "appConfig.xml" });
+    configuration = context.getBean(AppConfig.class);
+    config = context.getBean(ServerConfiguration.class);
 
-  @Override
-  public void start() {
-    context = new ClassPathXmlApplicationContext(new String[] {"appConfig.xml"});
-    AppConfig config = context.getBean(AppConfig.class);
-    String baseUri = "http://" + config.getServerHost() + ":" + config.getServerPort();
+    baseUri = String.format("%s://%s:%d/", "https", config.getServiceHost(),
+        config.getSecureServicePort());
+    baseFallbackUri = String.format("%s://%s:%d/", "http", config.getServiceHost(),
+        config.getServicePort());
 
-    DataServiceApplication app = new DataServiceApplication(config.getServerName());
+  }
 
-    server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUri), app);
+  public HttpsServerWrapper startRestInterface() throws SslConfigurationException, IOException {
+    DataServiceApplication app = new DataServiceApplication(configuration.getServerName());
+
+    return HttpsServerProvider.createHttpsServer(config, baseUri, baseFallbackUri, app, false);
   }
 
   @Override
+  public void start() {
+    try {
+      server = startRestInterface();
+    } catch (SslConfigurationException ex) {
+      LOGGER.error("Failed due to invalid SSL configuration", ex);
+    } catch (IOException ex) {
+      LOGGER.error("Failed starting due to the redirect server ", ex);
+    }
+  };
+
+  @Override
   public void stop() {
-    server.shutdown();
+    server.stop();
   }
 }
